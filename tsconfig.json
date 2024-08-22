@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "components/*": [
+        "components/*"
+      ],
+      "assets/*": [
+        "assets/*"
+      ],
+      "auth/*": [
+        "auth/*"
+      ],
+      "config/*": [
+        "config/*"
+      ],
+      "constants/*": [
+        "constants/*"
+      ],
+      "context/*": [
+        "context/*"
+      ],
+      "functions/*": [
+        "functions/*"
+      ],
+      "models/*": [
+        "models/*"
+      ],
+      "screens/*": [
+        "screens/*"
+      ],
+      "services/*": [
+        "services/*"
+      ],
+      "stacks/*": [
+        "stacks/*"
+      ],
+      "test/*": [
+        "test/*"
+      ],
+      "utils/*": [
+        "utils/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js"
+  ],
+  "extends": "expo/tsconfig.base"
+}

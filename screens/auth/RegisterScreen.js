@@ -1,0 +1,194 @@
+import {
+   View,
+   Text,
+   StyleSheet,
+   TouchableOpacity,
+   KeyboardAvoidingView,
+   Platform,
+   Alert,
+} from 'react-native';
+import React, { useState } from 'react';
+import { Colors } from '../../lib';
+import Feather from '@expo/vector-icons/Feather';
+import {
+   TextInputComponent,
+   ContainerBack,
+   SpinLoading,
+} from '../../components';
+import { authRoutes as routes } from '../../constants/routes';
+import { Register } from "../../services/firebase/Register"
+
+const RegisterScreen = ({ navigation }) => {
+   const [loading, setLoading] = useState(false)
+   const handleLogin = () => navigation.push(routes.LOGIN);
+   const [user, setUser] = useState({
+      email: '',
+      password: '',
+      confirmPassword: '',
+   });
+
+   const handleInput = (key, value) => {
+      setUser(prevUser => ({
+         ...prevUser,
+         [key]: value,
+      }));
+   };
+
+   const handleRegisterUser = async () => {
+      setLoading(true)
+      await Register(user).catch((e) => {
+         Alert.alert("Error", e.message)
+      }).finally(() => {
+         setLoading(false)
+      })
+   };
+
+   return (
+      <ContainerBack navigation={navigation}>
+         <View style={styles.top}>
+            <Feather name="user" color="#F66" size={52} />
+            <Text style={styles.top.title}>Registrate ahora</Text>
+            <Text style={styles.top.description}>
+               Registrate ahora, y tendras todos tus servicios a un solo click.
+            </Text>
+         </View>
+         <KeyboardAvoidingView
+            style={styles.fills}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={50}
+         >
+            <TextInputComponent
+               value={user.email}
+               onChangeText={e => handleInput('email', e)}
+               label="Email"
+               placeholder="email@hotmail.com"
+               autoComplete="email"
+               keyboardType="email-address"
+               autoCapitalize="none"
+            />
+
+            <TextInputComponent
+               hide
+               value={user.password}
+               onChangeText={e => handleInput('password', e)}
+               label="Password"
+               placeholder="password"
+               autoComplete="password"
+               autoCapitalize="none"
+            />
+
+            <TextInputComponent
+               hide
+               value={user.confirmPassword}
+               onChangeText={e => handleInput('confirmPassword', e)}
+               label="Confirm Password"
+               placeholder="password"
+               autoComplete="password"
+               autoCapitalize="none"
+            />
+         </KeyboardAvoidingView>
+         <View
+            style={{
+               display: 'flex',
+               flexDirection: 'column',
+               gap: 8,
+            }}
+         >
+            <View style={styles.bottom}>
+               <TouchableOpacity
+                  onPress={handleRegisterUser}
+                  style={styles.bottom.button}
+               >
+                  {!loading ? (
+                     <Text style={styles.bottom.button.text}>Sign Up</Text>
+                  ) : (
+                     <SpinLoading />
+                  )}
+               </TouchableOpacity>
+            </View>
+
+            <View style={styles.bottom.login}>
+               <Text style={{ color: Colors.secondary.DEFAULT }}>
+                  Ya tienes cuenta?
+               </Text>
+               <TouchableOpacity onPress={handleLogin}>
+                  <Text style={{ color: '#040048', fontWeight: '600' }}>
+                     Inicia Sesion
+                  </Text>
+               </TouchableOpacity>
+            </View>
+         </View>
+      </ContainerBack>
+   );
+};
+
+const styles = StyleSheet.create({
+   container: {
+      backgroundColor: 'white',
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      width: '85%',
+      marginHorizontal: 'auto',
+      height: '100%',
+   },
+
+   top: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+      marginHorizontal: 'auto',
+      alignItems: 'center',
+      maxWidth: '75%',
+      title: {
+         marginTop: 8,
+         color: '#040048',
+         fontWeight: '700',
+         fontSize: 26,
+      },
+      description: {
+         color: Colors.secondary.DEFAULT,
+         textAlign: 'center',
+      },
+   },
+
+   fills: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 24,
+      input: {
+         paddingVertical: 8,
+         flex: 1,
+      },
+   },
+
+   bottom: {
+      width: '100%',
+      marginHorizontal: 'auto',
+      gap: 24,
+      button: {
+         width: '100%',
+         height: 52,
+         borderRadius: 50,
+         backgroundColor: '#040048',
+         borderColor: '#040048',
+         borderWidth: 2,
+         text: {
+            color: Colors.white,
+            marginHorizontal: 'auto',
+            fontSize: 16,
+            marginVertical: 'auto',
+         },
+      },
+
+      login: {
+         display: 'flex',
+         flexDirection: 'row',
+         gap: 4,
+         marginHorizontal: 'auto',
+      },
+   },
+});
+
+export default RegisterScreen;

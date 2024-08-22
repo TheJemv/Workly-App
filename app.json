@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "WorkIt",
+    "slug": "workit",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "entryPoint": "./node_modules/expo/AppEntry.js",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.thejemv.workit",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrar información relevante.",
+        "NSLocationAlwaysUsageDescription": "Necesitamos tu ubicación para proporcionar funcionalidades avanzadas incluso cuando la aplicación no esté en uso."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.thejemv.workit"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "18a55c2d-e0f8-4f85-ab82-33152be81e8e"
+      }
+    },
+    "owner": "thejemv",
+    "scheme": "workit",
+    "plugins": [
+      "expo-router",
+      ["expo-image-picker", {
+        "photosPermission": "Work It, te pide permiso para acceder a tus fotos."
+      }],
+      ["expo-dev-launcher", {
+        "launchMode": "most-recent"
+      }],
+      ["expo-location", {
+        "locationAlwaysAndWhenInUsePermission": "Allow Work It to use your location."
+      }]
+    ],
+    "assets": []
+  }
+}

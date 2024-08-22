@@ -1,0 +1,8 @@
+<resources>
+  <string name="app_name">WorkIt</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="facebook_app_id">1543934623185040</string>
+  <string name="facebook_client_token">1ba4d95d69014660961c36c5eac4e35b</string>
+  <string name="fb_login_protocol_scheme">fb1543934623185040</string>
+</resources>
