@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { SafeAreaView, ScrollView, View } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { invoiceDataResolver, InvoiceData, defaultInvoiceData } from "./types";
@@ -10,26 +11,31 @@ type Props = {
    route: any;
 };
 export function EditInvoiceScreen({ navigation, route }: Props): JSX.Element {
-   const id = route.params.id;
-   console.log("id: ", id);
+   const data: InvoiceData = route.params.data;
 
-   const { control, handleSubmit } = useForm<InvoiceData>({
+   const { control, handleSubmit, reset } = useForm<InvoiceData>({
       resolver: invoiceDataResolver,
       defaultValues: defaultInvoiceData,
    });
 
-   const handleScreen = (name: string) => (): void => {
-      navigation.navigate(name);
+   useEffect(() => {
+      if (data) {
+         reset(data);
+      }
+   }, []);
+
+   const handleBack = (): void => {
+      navigation.goBack();
    };
 
    const handleUpdate = async (data: InvoiceData): Promise<void> => {
-      console.log("data: ", data);
-      handleScreen("InvoiceData");
+      console.log("DATA: ", data);
+      handleBack();
    };
 
    return (
       <SafeAreaView className="flex-1">
-         <Header>Editar datos de facturacion</Header>
+         <Header onBack={handleBack}>Editar datos de facturacion</Header>
          <ScrollView className="flex-1">
             <View className="flex flex-col space-y-5 px-3 py-5 mb-10">
                <View>

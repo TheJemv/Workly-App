@@ -14,18 +14,18 @@ export function CreateInvoiceScreen({ navigation }: Props): JSX.Element {
       defaultValues: defaultInvoiceData,
    });
 
-   const handleScreen = (name: string) => (): void => {
-      navigation.navigate(name);
+   const handleBack = (): void => {
+      navigation.goBack();
    };
 
    const handleCreate = async (data: InvoiceData): Promise<void> => {
-      console.log("data: ", data);
-      handleScreen("InvoiceData");
+      console.log("DATA: ", data);
+      handleBack();
    };
 
    return (
       <SafeAreaView className="flex-1">
-         <Header>Crear datos de facturacion</Header>
+         <Header onBack={handleBack}>Crear datos de facturacion</Header>
          <ScrollView className="flex-1">
             <View className="flex flex-col space-y-5 px-3 py-5 mb-10">
                <View>

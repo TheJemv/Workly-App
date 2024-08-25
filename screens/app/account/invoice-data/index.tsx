@@ -5,11 +5,30 @@ import { ButtonOption } from "./components/button-option";
 import { Button } from "./components/button";
 import { DetailInfo } from "./components/detail-info";
 import { Header } from "./components/header";
+import { InvoiceData } from "./types";
 
 type Props = {
    navigation: any;
 };
 export function InvoiceDataScreen({ navigation }: Props): JSX.Element {
+   const data: InvoiceData = {
+      name: "Montes",
+      rfc: "12345678",
+      calle: "Valle de Mexico 18 Int",
+      colonia: "Valle Alto",
+      del: "Matamoros",
+      cp: "87380",
+      state: "Tamaulipas",
+      phone: "(555) 555-5555",
+      email: "amontes990@gmail.com",
+      tax_regime: "Resico",
+      cfdi: "No",
+   };
+
+   const handleBack = (): void => {
+      navigation.goBack();
+   };
+
    const handleScreen = (name: string, params?: any) => (): void => {
       navigation.navigate(name, params);
    };
@@ -20,7 +39,7 @@ export function InvoiceDataScreen({ navigation }: Props): JSX.Element {
 
    return (
       <SafeAreaView className="flex-1">
-         <Header>Datos de Facturacion</Header>
+         <Header onBack={handleBack}>Datos de Facturacion</Header>
          <ScrollView className="flex-1">
             <View className="flex flex-col space-y-5 px-3 py-5 mb-20">
                <Button
@@ -36,7 +55,7 @@ export function InvoiceDataScreen({ navigation }: Props): JSX.Element {
                      color={Colors.principal.DEFAULT}
                   />
                   <Text className="text-base text-text font-medium">
-                     Montes
+                     {data.name}
                   </Text>
                </View>
                <View className="flex flex-row items-center space-x-3">
@@ -46,7 +65,7 @@ export function InvoiceDataScreen({ navigation }: Props): JSX.Element {
                      color={Colors.principal.DEFAULT}
                   />
                   <View className="flex flex-col">
-                     <DetailInfo title="RFC:">12345678</DetailInfo>
+                     <DetailInfo title="RFC:">{data.rfc}</DetailInfo>
                   </View>
                </View>
                <View className="flex flex-row items-baseline space-x-3">
@@ -56,13 +75,11 @@ export function InvoiceDataScreen({ navigation }: Props): JSX.Element {
                      color={Colors.principal.DEFAULT}
                   />
                   <View className="flex flex-col">
-                     <DetailInfo title="Calle:">
-                        Valle de Mexico 18 Int
-                     </DetailInfo>
-                     <DetailInfo title="Colonia:">Valle Alto</DetailInfo>
-                     <DetailInfo title="Del.">Matamoros</DetailInfo>
-                     <DetailInfo title="C.P.">87380</DetailInfo>
-                     <DetailInfo title="Estado:">Tamaulipas</DetailInfo>
+                     <DetailInfo title="Calle:">{data.calle}</DetailInfo>
+                     <DetailInfo title="Colonia:">{data.colonia}</DetailInfo>
+                     <DetailInfo title="Del.">{data.del}</DetailInfo>
+                     <DetailInfo title="C.P.">{data.cp}</DetailInfo>
+                     <DetailInfo title="Estado:">{data.state}</DetailInfo>
                   </View>
                </View>
                <View className="flex flex-row items-center space-x-3">
@@ -72,7 +89,7 @@ export function InvoiceDataScreen({ navigation }: Props): JSX.Element {
                      color={Colors.principal.DEFAULT}
                   />
                   <View className="flex flex-col space-y-1">
-                     <DetailInfo title="Tel.">(555) 555-5555</DetailInfo>
+                     <DetailInfo title="Tel.">{data.phone}</DetailInfo>
                   </View>
                </View>
                <View className="flex flex-row items-baseline space-x-3">
@@ -82,18 +99,18 @@ export function InvoiceDataScreen({ navigation }: Props): JSX.Element {
                      color={Colors.principal.DEFAULT}
                   />
                   <View className="flex flex-col">
-                     <DetailInfo title="Correo:">
-                        amontes990@gmail.com
+                     <DetailInfo title="Correo:">{data.email}</DetailInfo>
+                     <DetailInfo title="Regimen fiscal:">
+                        {data.tax_regime}
                      </DetailInfo>
-                     <DetailInfo title="Regimen fiscal:">Resico</DetailInfo>
-                     <DetailInfo title="Uso CFDI:">No</DetailInfo>
+                     <DetailInfo title="Uso CFDI:">{data.cfdi}</DetailInfo>
                   </View>
                </View>
             </View>
             <View className="flex flex-row items-baseline">
                <ButtonOption
                   icon="pencil"
-                  onPress={handleScreen("EditInvoice", { id: 1 })}
+                  onPress={handleScreen("EditInvoice", { data })}
                >
                   Editar
                </ButtonOption>
