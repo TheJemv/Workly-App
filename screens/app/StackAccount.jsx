@@ -7,6 +7,7 @@ import PaymentScreen from "./account/Payment";
 import { InvoiceDataScreen } from "./account/invoice-data";
 import { CreateInvoiceScreen } from "./account/invoice-data/create-invoice-data";
 import { EditInvoiceScreen } from "./account/invoice-data/edit-invoice-data";
+import { SupportScreen } from "./account/support";
 
 const Stack = createNativeStackNavigator();
 const StackAccount = () => {
@@ -42,6 +43,13 @@ const StackAccount = () => {
          <Stack.Screen
             name="EditInvoice"
             component={EditInvoiceScreen}
+            options={{
+               headerShown: false,
+            }}
+         />
+         <Stack.Screen
+            name="Support"
+            component={SupportScreen}
             options={{
                headerShown: false,
             }}

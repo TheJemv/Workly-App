@@ -79,6 +79,7 @@ const AccountScreen = ({ navigation }) => {
                      icon={MaterialIcons}
                      iconName="support-agent"
                      label="Soporte"
+                     onPress={() => handleScreen("Support")}
                   />
                </View>
 
