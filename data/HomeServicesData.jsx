@@ -1,72 +1,56 @@
-// Icons
-import Octicons from "@expo/vector-icons/Octicons"
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
-import FontAwesome from "@expo/vector-icons/FontAwesome"
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5"
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6"
-import MaterialIcons from "@expo/vector-icons/MaterialIcons"
-import Entypo from "@expo/vector-icons/Entypo"
-import Ionicons from "@expo/vector-icons/Ionicons"
-
-
 // Data
-const HomeServicesData = [{                  // Row 1
-   Icon: Ionicons,
-   IconName: "star",
-   handle: () => console.log("Leyes"),
-   label: "populares"
-}, {
-   Icon: FontAwesome6,
+const HomeServicesData = [{
+   Icon: require("assets/Icons/Home/hammer.png"),
    IconName: "hammer",
    handle: () => console.log("USER"),
    label: "oficios"
 }, {
-   Icon: FontAwesome,
+   Icon: require("assets/Icons/Home/heartbeat.png"),
    IconName: "heartbeat",
    handle: () => console.log("USER"),
    label: "medicina"
 }, {                                         // Row 2
-   Icon: FontAwesome5,
+   Icon: require("assets/Icons/Home/theater.png"),
    IconName: "theater-masks",
    handle: () => console.log("USER"),
    label: "recreacion"
 }, {
-   Icon: FontAwesome5,
+   Icon: require("assets/Icons/Home/building.png"),
    IconName: "building",
    handle: () => console.log("USER"),
    label: "construccion"
 }, {
-   Icon: MaterialCommunityIcons,
+   Icon: require("assets/Icons/Home/marketing.png"),
    IconName: "finance",
    handle: () => console.log("USER"),
    label: "marketing"
 }, {                                         // Row 3
-   Icon: Octicons,
+   Icon: require("assets/Icons/Home/law.png"),
    IconName: "law",
    handle: () => console.log("Leyes"),
    label: "leyes"
 }, {
-   Icon: Entypo,
+   Icon: require("assets/Icons/Home/school.png"),
    IconName: "graduation-cap",
    handle: () => console.log("USER"),
    label: "educacion"
 }, {
-   Icon: FontAwesome6,
+   Icon: require("assets/Icons/Home/gastronomy.png"),
    IconName: "utensils",
    handle: () => console.log("USER"),
    label: "gastronomia"
 }, {                                         // Row 4
-   Icon: Entypo,
+   Icon: require("assets/Icons/Home/coding.png"),
    IconName: "code",
    handle: () => console.log("USER"),
    label: "programacion"
 }, {
-   Icon: MaterialIcons,
+   Icon: require("assets/Icons/Home/money.png"),
    IconName: "attach-money",
    handle: () => console.log("USER"),
    label: "finanzas"
 }, {
-   Icon: FontAwesome6,
+   Icon: require("assets/Icons/Home/gas.png"),
    IconName: "gas-pump",
    handle: () => console.log("USER"),
    label: "servicios"
