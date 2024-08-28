@@ -6,6 +6,7 @@ import { HomeServicesData } from "data"
 import HomeScreen from "./home"
 import ServicesScreenCategory from "./home/ServicesCategory"
 import ServiceHire from "./home/ServiceHire"
+import SearchScreen from "./home/SearchScreen"
 
 const Stack = createNativeStackNavigator()
 const StackHome = () => {
@@ -15,6 +16,8 @@ const StackHome = () => {
          screenOptions={NativeStackOptions}
       >
          <Stack.Screen name="home" component={HomeScreen} />
+         <Stack.Screen name="search" component={SearchScreen} />
+
          <Stack.Screen
             name="service"
             component={ServiceHire}
@@ -29,7 +32,7 @@ const StackHome = () => {
                   name={`${data.label}screen`} i
                   initialParams={data}
                   component={ServicesScreenCategory}
-                  options={{
+                  option={{
                      headerTitle: data.label.charAt(0).toUpperCase() + data.label.slice(1),
                   }}
                   key={data.label}

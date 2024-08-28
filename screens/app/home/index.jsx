@@ -1,5 +1,4 @@
-import { FlatList, Text, ImageBackground, ScrollView, View } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { FlatList, Text, ScrollView, View, Image } from "react-native"
 import { useLayoutEffect } from "react"
 import { HomeServicesData } from "data"
 import { BlurView } from "expo-blur"
@@ -7,9 +6,11 @@ import Constants from 'expo-constants';
 
 import CategoryItem from "./components/CategoryItem"
 import PopularItem from "./components/PopularItem"
+import SearchBar from "./components/SearchBar"
+import Companies from "./components/Companies"
 
-const HomeScreen = () => {
-   const navigation = useNavigation()
+
+const HomeScreen = ({ navigation }) => {
    useLayoutEffect(() => {
       navigation.setOptions({
          headerShown: false,
@@ -17,16 +18,23 @@ const HomeScreen = () => {
    }, [navigation])
 
    return (
-      <ImageBackground
-         style={{ flex: 1 }}
-         source={require("assets/BackgroundHome.jpg")}
-         imageStyle={{
-            transform: [{
-               rotate: "180deg"
-            }],
-            opacity: 0.7,
-         }}
-      >
+      <View style={{flex:1, backgroundColor:"#F7F7F9"}}>
+         <Image
+            source={require("assets/BackgroundHome.jpg")}
+            style={{
+               width: "100%",
+               height: "100%",
+               opacity: 0.5,
+               position: 'absolute',
+               top: "-40%",
+               left: 0,
+               transform: [{
+                  rotate: "180deg"
+               }],
+            }}
+            resizeMode="cover"
+         />
+
          <BlurView
             intensity={100}
             style={{ flex: 1 }}
@@ -69,7 +77,7 @@ const HomeScreen = () => {
                      >
                         <FlatList
                            data={HomeServicesData}
-                           renderItem={({ item, id }) => <CategoryItem item={item} key={id} />}
+                           renderItem={({ item, index }) => <CategoryItem navigation={navigation} item={item} key={index} />}
                            keyExtractor={(item) => item.id}
                            horizontal
                            showsHorizontalScrollIndicator={false}
@@ -83,7 +91,7 @@ const HomeScreen = () => {
                            style={{
                               display: "flex",
                               flexDirection: "column",
-                              gap: 24,
+                              gap: 12,
                            }}
                         >
                            <View
@@ -99,26 +107,30 @@ const HomeScreen = () => {
                            </View>
 
                            <FlatList
-                              renderItem={({ item, id }) => <PopularItem item={item} key={id} />}
+                              renderItem={({ item, index }) => <PopularItem item={item} key={index} />}
+                              keyExtractor={(item) => item.id}
                               horizontal={true}
                               data={[{
                                  Image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimagenes.elpais.com%2Fresizer%2FaIHR-EpBhcuUzFOObwnjcKr7HoA%3D%2F1960x0%2Farc-anglerfish-eu-central-1-prod-prisa.s3.amazonaws.com%2Fpublic%2F24ESUXKGCOFX7UGZFVTU2W2BPI.jpg",
                                  name: "BK Chicken Lover",
                                  company: {
                                     Image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F04%2FBurger-King-Logo-1994-1999.png"
-                                 }
+                                 },
+                                 id: "1"
                               }, {
                                  Image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimagenes.elpais.com%2Fresizer%2FaIHR-EpBhcuUzFOObwnjcKr7HoA%3D%2F1960x0%2Farc-anglerfish-eu-central-1-prod-prisa.s3.amazonaws.com%2Fpublic%2F24ESUXKGCOFX7UGZFVTU2W2BPI.jpg",
                                  name: "BK Chicken Lover",
                                  company: {
                                     Image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F04%2FBurger-King-Logo-1994-1999.png"
-                                 }
+                                 },
+                                 id: "2"
                               }, {
                                  Image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimagenes.elpais.com%2Fresizer%2FaIHR-EpBhcuUzFOObwnjcKr7HoA%3D%2F1960x0%2Farc-anglerfish-eu-central-1-prod-prisa.s3.amazonaws.com%2Fpublic%2F24ESUXKGCOFX7UGZFVTU2W2BPI.jpg",
                                  name: "BK Chicken Lover",
                                  company: {
                                     Image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F04%2FBurger-King-Logo-1994-1999.png"
-                                 }
+                                 },
+                                 id: "3"
                               }]}
                               contentContainerStyle={{
                                  paddingHorizontal: 12,
@@ -129,12 +141,17 @@ const HomeScreen = () => {
                               scrollEnabled={true}
                            />
                         </View>
-                        <Text>Hola Mundo</Text>
+
+                        {/* Buscar Servicios */}
+                        <SearchBar />
+
+                        {/* Empresas recomendadas */}
+                        <Companies />
                      </View>
                   </View>
             </ScrollView>
          </BlurView>
-      </ImageBackground>
+      </View>
    )
 }
 
