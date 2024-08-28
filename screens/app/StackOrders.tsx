@@ -15,44 +15,29 @@ const Tab = createMaterialTopTabNavigator();
 type Props = {};
 function StackOrders({}: Props): JSX.Element {
    const isBusiness: boolean = true;
+
    return (
-      <>
+      <SafeAreaView className="flex-1">
          {isBusiness ? (
-            <SafeAreaView className="flex-1">
-               <Tab.Navigator
-                  initialRouteName="Orders"
-                  screenOptions={{
-                     tabBarStyle: {
-                        backgroundColor: Colors.white,
-                     },
-                     tabBarIndicatorStyle: {
-                        backgroundColor: Colors.principal.DEFAULT,
-                     },
-                     tabBarLabelStyle: {
-                        fontWeight: 800,
-                        textTransform: "capitalize",
-                     },
-                     tabBarActiveTintColor: Colors.principal.DEFAULT,
-                     tabBarInactiveTintColor: Colors.secondary.DEFAULT,
-                     animationEnabled: true,
+            <Stack.Navigator
+               initialRouteName="OrdersTab"
+               screenOptions={NativeStackOptions}
+            >
+               <Stack.Screen
+                  name="OrdersTab"
+                  component={TabOrders}
+                  options={{
+                     headerShown: false,
                   }}
-               >
-                  <Tab.Screen
-                     name="Orders"
-                     options={{
-                        tabBarLabel: "Ordenes",
-                     }}
-                     component={OrdersScreen}
-                  />
-                  <Tab.Screen
-                     name="Sales"
-                     options={{
-                        tabBarLabel: "Ventas",
-                     }}
-                     component={SalesScreen}
-                  />
-               </Tab.Navigator>
-            </SafeAreaView>
+               />
+               <Stack.Screen
+                  name="TrackOrders"
+                  component={TrackOrdersScreen}
+                  options={{
+                     headerShown: false,
+                  }}
+               />
+            </Stack.Navigator>
          ) : (
             <Stack.Navigator
                initialRouteName="Orders"
@@ -74,8 +59,46 @@ function StackOrders({}: Props): JSX.Element {
                />
             </Stack.Navigator>
          )}
-      </>
+      </SafeAreaView>
    );
 }
+
+const TabOrders = (): JSX.Element => {
+   return (
+      <Tab.Navigator
+         initialRouteName="Orders"
+         screenOptions={{
+            tabBarStyle: {
+               backgroundColor: Colors.white,
+            },
+            tabBarIndicatorStyle: {
+               backgroundColor: Colors.principal.DEFAULT,
+            },
+            tabBarLabelStyle: {
+               fontWeight: 800,
+               textTransform: "capitalize",
+            },
+            tabBarActiveTintColor: Colors.principal.DEFAULT,
+            tabBarInactiveTintColor: Colors.secondary.DEFAULT,
+            animationEnabled: true,
+         }}
+      >
+         <Tab.Screen
+            name="Orders"
+            options={{
+               tabBarLabel: "Ordenes",
+            }}
+            component={OrdersScreen}
+         />
+         <Tab.Screen
+            name="Sales"
+            options={{
+               tabBarLabel: "Ventas",
+            }}
+            component={SalesScreen}
+         />
+      </Tab.Navigator>
+   );
+};
 
 export default StackOrders;

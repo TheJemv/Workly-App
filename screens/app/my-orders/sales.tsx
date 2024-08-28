@@ -1,10 +1,15 @@
 import { SafeAreaView, ScrollView } from "react-native";
 import { OrderTrackCard } from "./components/order-track-card";
+import { Order } from "./types";
 
 type Props = {
    navigation: any;
 };
-export function SalesScreen({}: Props): JSX.Element {
+export function SalesScreen({ navigation }: Props): JSX.Element {
+   const handleScreen =
+      (name: string, params?: { data: Order }) => (): void => {
+         navigation.navigate(name, params);
+      };
    return (
       <SafeAreaView className="flex-1">
          <ScrollView className="flex-1 px-3 my-3 space-y-2">
@@ -17,6 +22,15 @@ export function SalesScreen({}: Props): JSX.Element {
                   name: "Pedido 1",
                   percentComplete: 20,
                }}
+               onPress={handleScreen("TrackOrders", {
+                  data: {
+                     numberOrder: 999012,
+                     dateCreated: "20-Dic-2019, 3:00 PM",
+                     deliveryDate: "22 Dic",
+                     rating: 0,
+                     name: "Pedido 1",
+                  },
+               })}
             />
          </ScrollView>
       </SafeAreaView>
