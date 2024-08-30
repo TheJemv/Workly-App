@@ -60,23 +60,23 @@ export const AuthProvider = ({ children }) => {
             throw new Error("Error al cargar el customer");
          });
 
-         if (accountType === "account") {
-            await getCompany(token).then((data) => {
-               setIsCompany(true);
-               setCompanyData(data);
-               setStatusSubscription(statusSubscription === "active");
-            }).catch(async () => {
-               setIsCompany(false);
-               setCompanyData({});
-               setStatusSubscription(false);
-               await signOut(auth)
-               throw new Error("Error al cargar la empresa");
-            });
-         } else {
-            setIsCompany(false);
-            setCompanyData({});
-            setStatusSubscription(false);
-         }
+         // if (accountType === "account") {
+         //    await getCompany(token).then((data) => {
+         //       setIsCompany(true);
+         //       setCompanyData(data);
+         //       setStatusSubscription(statusSubscription === "active");
+         //    }).catch(async () => {
+         //       setIsCompany(false);
+         //       setCompanyData({});
+         //       setStatusSubscription(false);
+         //       await signOut(auth)
+         //       throw new Error("Error al cargar la empresa");
+         //    });
+         // } else {
+         //    setIsCompany(false);
+         //    setCompanyData({});
+         //    setStatusSubscription(false);
+         // }
 
          await init();
          await socketConnect();

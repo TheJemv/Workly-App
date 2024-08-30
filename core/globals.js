@@ -81,6 +81,13 @@ const responseCustomerGet = (set, get, data) => {
    utils.log('responseCustomerGet', data)
 }
 
+const responseCompanyGet = (set, get, data) => {
+   utils.log('responseCompanyGet', data)
+   set((state) => ({
+      company: data
+   }))
+}
+
 
 
 const useGlobal = create((set, get) => ({
@@ -97,6 +104,8 @@ const useGlobal = create((set, get) => ({
    messagesUser: null,
    messagesRoom: null,
 
+   company: null,
+
    init: async () => {
       const credentials = getAuth().currentUser
       if(credentials) {
@@ -110,6 +119,7 @@ const useGlobal = create((set, get) => ({
 
    socketConnect: async () => {
       const { token } = get()
+      if(!token) return
       const socket = new WebSocket(`${API_WEBHOOK}/?token=${token}`)
 
       socket.onopen = () => {
@@ -125,6 +135,8 @@ const useGlobal = create((set, get) => ({
             'message.list':      responseMessageList,
 
             'customer.get':      responseCustomerGet,
+
+            'company.get':   responseCompanyGet,
          }
 
          const resp = responses[parsed.type]
@@ -178,6 +190,15 @@ const useGlobal = create((set, get) => ({
 			page: page
 		}))
    },
+
+   companyReload: () => {
+      console.log('companyReload')
+
+      const { socket } = get()
+      socket.send(JSON.stringify({
+         source: 'company.reload'
+      }))
+   }
 }))
 
 

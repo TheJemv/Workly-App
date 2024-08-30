@@ -8,17 +8,23 @@ import RNFS from "react-native-fs"
 import { fetchOnboardingCompany, updateCompany } from "services/api/company.api"
 import SpinLoading from "components/SpinLoading"
 import { Colors } from "lib"
+import useGlobal from "core/globals"
 
 
 const MAX_FILE_SIZE = 10485760; // 10 MB en bytes
 const ScreenEdit = () => {
    const navigation = useNavigation()
    const route = useRoute()
+
+   const companyData = useGlobal((state) => state.company);
+   const reloadCompany = useGlobal((state) => state.companyReload);
+
    const Options = route.params
    const [loadingImage, setLoadingImage] = useState(false)
    const [linkOnboarding, setLinkOnboarding] = useState(null)
-   const { companyData, token, reloadCompany } = useContext(AuthContext)
-   const [currentImage, setCurrentImage] = useState(companyData.profile.photo)
+   const { token } = useContext(AuthContext)
+   const [currentImage, setCurrentImage] = useState(companyData?.profile?.photo)
+
 
 
    useLayoutEffect(() => {

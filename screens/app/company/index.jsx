@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "context/AuthContext";
-import { useContext, useLayoutEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import {
    View, Text,
    SafeAreaView, Image,
@@ -10,11 +10,13 @@ import {
    Animated,
    Easing
 } from "react-native";
-import { ServiceItem, SpinLoading } from "components"
+import { ServiceItem } from "components"
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign"
 import PaymentSubscription from "components/PaymentSubscription";
+
+import useGlobal from "core/globals";
 
 
 const openLink = (url) => {
@@ -36,9 +38,13 @@ const handlePhonePress = (phoneNumber) => {
 
 
 const ProfileScreen = () => {
-   const { companyData, statusSubscription, reloadCompany } = useContext(AuthContext);
+   const { statusSubscription, reloadCompany } = useContext(AuthContext);
    const navigation = useNavigation();
 
+   const companyData = useGlobal((state) => state.company);
+   const companyReload = useGlobal((state) => state.companyReload);
+
+   const [servicesData, setServicesData] = useState(companyData?.services);
    const [loading, setLoading] = useState(false)
    const [translateYAnim] = useState(new Animated.Value(-100)); // Inicialmente fuera de la pantalla
    const [opacityAnim] = useState(new Animated.Value(0));
@@ -48,7 +54,15 @@ const ProfileScreen = () => {
       navigation.setOptions({
          headerShown: false,
       });
+
+      companyReload();
    }, [navigation]);
+
+   useEffect(() => {
+      if (companyData) {
+         setServicesData(companyData?.services);
+      }
+   }, [companyData]);
 
 
    const handleScroll = async (event) => {
@@ -78,7 +92,7 @@ const ProfileScreen = () => {
 
    return (
       <SafeAreaView style={{ flex: 1 }}>
-         {statusSubscription ? (
+         {companyData ? ( //  Urgente: Cambiar a una variable para verificar si esta pagado.
             <View style={{flex: 1}}>
                <View
                      className="px-2 py-2 w-full bg-transparent flex flex-row items-center"
@@ -156,7 +170,7 @@ const ProfileScreen = () => {
                         </View>
                      </TouchableOpacity>
 
-                     {companyData.services.slice().reverse().map((item, index) => (
+                     {servicesData.slice().reverse().map((item, index) => (
                         <ServiceItem key={index} data={item} />
                      ))}
                   </View>
@@ -167,7 +181,6 @@ const ProfileScreen = () => {
          )}
       </SafeAreaView>
    )
-
 };
 
 

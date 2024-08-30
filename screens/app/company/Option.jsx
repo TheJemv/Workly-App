@@ -13,16 +13,18 @@ import getChangedProperties from "utils/CompareObjects"
 import { updateCompany } from "services/api/company.api"
 import getValue from "utils/getValue"
 import { Colors } from "lib";
+import useGlobal from "core/globals";
 
 
 const OptionScreen = ({ route }) => {
-   const { companyData, token, reloadCompany } = useContext(AuthContext)
+   const { token } = useContext(AuthContext)
    const navigation = useNavigation()
    const dataOption = route.params
    const phoneInput = useRef()
    const inputRef = useRef(null);
-   
-   
+
+   const companyData = useGlobal((state) => state.company);
+
    const [value, setValue] = useState(getValue(companyData, dataOption.key))
    const [loading, setLoading] = useState(false)
 
@@ -33,7 +35,6 @@ const OptionScreen = ({ route }) => {
          const editingData = updateValue(companyData, dataOption.key, value)
          const newData = getChangedProperties(companyData, editingData);
          await updateCompany(token, newData);
-         await reloadCompany();
          navigation.goBack()
       } catch (error) {
          Alert.alert('Error', error.message);
@@ -52,7 +53,7 @@ const OptionScreen = ({ route }) => {
          ),
          headerBackVisible: !loading
       });
-      inputRef.current?.focus(); 
+      inputRef.current?.focus();
    }, [navigation, value, dataOption?.value, loading]);
 
 
@@ -91,7 +92,7 @@ const OptionScreen = ({ route }) => {
                   </View>
                </View>
             ) : dataOption.key === 'phone' ? (
-               <PhoneInput 
+               <PhoneInput
                   ref={phoneInput}
                   value={value.slice(-10)}
                   defaultCode={getValue(companyData, dataOption.key) ? CountryCodeMap.find(c => c.dial_code === getValue(companyData, dataOption.key).substring(0, getValue(companyData, dataOption.key).length - 10)).code : 'MX'}
