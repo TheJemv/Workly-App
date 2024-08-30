@@ -1,74 +1,85 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { mainRoutes } from "@/constants/routes";
-import { StackHome, StackChat, StackAccount, StackCompany } from "screens/app";
+import {
+   StackHome,
+   StackChat,
+   StackAccount,
+   StackCompany,
+   StackOrders,
+} from "screens/app";
 import { Colors } from "@/lib";
 import { Animated, StyleSheet } from "react-native";
 import { TabItem } from "@/components";
-import { BlurView } from "expo-blur"
+import { BlurView } from "expo-blur";
 
 // Icons
-import Ionicons from "@expo/vector-icons/Ionicons"
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
-const Tabs = createBottomTabNavigator()
+const Tabs = createBottomTabNavigator();
 const AppTabs = () => {
-   const AppTabsData = [{
-      name: "StackHome",
-      Component: StackHome,
+   const AppTabsData = [
+      {
+         name: "StackHome",
+         Component: StackHome,
 
-      IconComponent: Ionicons,
-      icon: "home",
+         IconComponent: Ionicons,
+         icon: "home",
 
-      FocusIconComponent: Ionicons,
-      focusIcon: "home",
-   }, {
-      name: "StackOrders",
-      Component: StackChat,
+         FocusIconComponent: Ionicons,
+         focusIcon: "home",
+      },
+      {
+         name: "StackOrders",
+         Component: StackOrders,
 
-      IconComponent: Ionicons,
-      icon: "bag",
+         IconComponent: Ionicons,
+         icon: "bag",
 
-      FocusIconComponent: Ionicons,
-      focusIcon: "bag",
-   }, {
-      name: "StackChat",
-      Component: StackChat,
+         FocusIconComponent: Ionicons,
+         focusIcon: "bag",
+      },
+      {
+         name: "StackChat",
+         Component: StackChat,
 
-      IconComponent: Ionicons,
-      icon: "chatbubble",
+         IconComponent: Ionicons,
+         icon: "chatbubble",
 
-      FocusIconComponent: Ionicons,
-      focusIcon: "chatbubble",
-   }, {
-      name: "StackCompany",
-      Component: StackCompany,
+         FocusIconComponent: Ionicons,
+         focusIcon: "chatbubble",
+      },
+      {
+         name: "StackCompany",
+         Component: StackCompany,
 
-      IconComponent: Ionicons,
-      icon: "prism",
+         IconComponent: Ionicons,
+         icon: "prism",
 
-      FocusIconComponent: Ionicons,
-      focusIcon: "prism",
-   }, {
-      name: "StackAccount",
-      Component: StackAccount,
+         FocusIconComponent: Ionicons,
+         focusIcon: "prism",
+      },
+      {
+         name: "StackAccount",
+         Component: StackAccount,
 
-      IconComponent: Ionicons,
-      icon: "settings",
+         IconComponent: Ionicons,
+         icon: "settings",
 
-      FocusIconComponent: Ionicons,
-      focusIcon: "settings",
-   }]
+         FocusIconComponent: Ionicons,
+         focusIcon: "settings",
+      },
+   ];
 
    return (
-      <Animated.View style={{flex: 1}}>
+      <Animated.View style={{ flex: 1 }}>
          <Tabs.Navigator
             initialRouteName={mainRoutes.Home}
             sceneContainerStyle={{
                backgroundColor: Colors.transparent,
             }}
-
             screenOptions={() => {
-               const navigation = useNavigation()
+               const navigation = useNavigation();
                return {
                   tabBarLabel: () => null,
                   headerShown: false,
@@ -85,10 +96,13 @@ const AppTabs = () => {
                   tabBarStyle: [
                      {
                         position: "absolute",
-                        display: navigation?.getCurrentRoute()?.name === "UserChat" ? "none" : "flex",
+                        display:
+                           navigation?.getCurrentRoute()?.name === "UserChat"
+                              ? "none"
+                              : "flex",
                      },
                   ],
-               }
+               };
             }}
          >
             {AppTabsData.map((data, index) => (
@@ -99,7 +113,8 @@ const AppTabs = () => {
                   options={{
                      tabBarIcon: ({ focused }) => (
                         <TabItem
-                           iconName={data.icon} focusName={data.focusIcon}
+                           iconName={data.icon}
+                           focusName={data.focusIcon}
                            icon={data.IconComponent}
                            focusIcon={data.FocusIconComponent}
                            focused={focused}
@@ -110,8 +125,7 @@ const AppTabs = () => {
             ))}
          </Tabs.Navigator>
       </Animated.View>
-   )
-}
+   );
+};
 
-
-export default AppTabs
+export default AppTabs;
