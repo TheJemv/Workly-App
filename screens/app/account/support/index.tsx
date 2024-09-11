@@ -9,14 +9,18 @@ import {
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 import { Buttonlink } from "./components/button-link";
+import { useLayoutEffect } from "react";
 
 type Props = {
    navigation: any;
 };
 export function SupportScreen({ navigation }: Props): JSX.Element {
-   const handleBack = (): void => {
-      navigation.goBack();
-   };
+   useLayoutEffect(() => {
+      navigation.setOptions({
+         headerTitle: "Soporte",
+      });
+   }, []);
+
    const handleSendEmail = async (): Promise<void> => {
       try {
          const email: string = "example@example.com";
@@ -59,15 +63,6 @@ export function SupportScreen({ navigation }: Props): JSX.Element {
 
    return (
       <SafeAreaView className="flex-1">
-         <View className="flex flex-row items-center space-x-4 px-3 py-2">
-            <FontAwesome
-               name="arrow-left"
-               size={20}
-               color={Colors.principal.DEFAULT}
-               onPress={handleBack}
-            />
-            <Text className="text-lg text-dark font-bold">Soporte</Text>
-         </View>
          <ScrollView className="flex-1 px-3 my-3 space-y-5">
             <View>
                <Buttonlink

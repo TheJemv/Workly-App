@@ -41,32 +41,14 @@ const AccountScreen = ({ navigation }) => {
 
                <View className="rounded-lg overflow-hidden flex flex-col">
                   <Option
-                     styles="bg-red-500"
-                     icon={Entypo}
-                     iconName="notification"
-                     label="Notificaciones"
-                  />
-                  <Option
                      styles="bg-gray-500"
                      icon={Feather}
                      iconName="lock"
                      label="Privacidad"
                   />
-                  <Option
-                     styles="bg-green-500"
-                     icon={Entypo}
-                     iconName="phone"
-                     label="Telefono"
-                  />
                </View>
 
                <View className="rounded-lg overflow-hidden flex flex-col">
-                  <Option
-                     styles="bg-green-500"
-                     icon={Feather}
-                     iconName="message-circle"
-                     label="Chats"
-                  />
                   <Option
                      styles="bg-cyan-400"
                      icon={AntDesign}
@@ -84,12 +66,6 @@ const AccountScreen = ({ navigation }) => {
                </View>
 
                <View className="rounded-lg overflow-hidden flex flex-col">
-                  <Option
-                     styles="bg-amber-700"
-                     icon={Feather}
-                     iconName="package"
-                     label="Pedidos"
-                  />
                   <Option
                      onPress={() => handleScreen("Payment")}
                      styles="bg-red-500"

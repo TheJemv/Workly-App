@@ -111,10 +111,14 @@ export const getService = async (token: string, id: string) => {
    }
 };
 
-export const getServicePayment = async (token: string, id: string) => {
+export const getServicePayment = async (
+   token: string,
+   id: string,
+   data: object
+) => {
    try {
       const response: any = await axios
-         .get(`${API_HOST}/service/pay/${id}`, {
+         .post(`${API_HOST}/service/pay/${id}`, data, {
             headers: {
                Authorization: `Bearer ${token}`,
             },

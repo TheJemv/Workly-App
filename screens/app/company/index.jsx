@@ -8,7 +8,8 @@ import {
    Linking, Platform,
    Alert, ScrollView,
    Animated,
-   Easing
+   Easing,
+   FlatList
 } from "react-native";
 import { ServiceItem } from "components"
 
@@ -17,6 +18,7 @@ import AntDesign from "@expo/vector-icons/AntDesign"
 import PaymentSubscription from "components/PaymentSubscription";
 
 import useGlobal from "core/globals";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 
 const openLink = (url) => {
@@ -38,13 +40,17 @@ const handlePhonePress = (phoneNumber) => {
 
 
 const ProfileScreen = () => {
-   const { statusSubscription, reloadCompany } = useContext(AuthContext);
+   const { reloadCompany } = useContext(AuthContext);
    const navigation = useNavigation();
 
+   // Variables globales
    const companyData = useGlobal((state) => state.company);
-   const companyReload = useGlobal((state) => state.companyReload);
+   const servicesData = useGlobal((state) => state.services);
 
-   const [servicesData, setServicesData] = useState(companyData?.services);
+   // Funciones globales
+   const companyReload = useGlobal((state) => state.companyReload);
+   const getServices = useGlobal((state) => state.getServices);
+
    const [loading, setLoading] = useState(false)
    const [translateYAnim] = useState(new Animated.Value(-100)); // Inicialmente fuera de la pantalla
    const [opacityAnim] = useState(new Animated.Value(0));
@@ -59,9 +65,7 @@ const ProfileScreen = () => {
    }, [navigation]);
 
    useEffect(() => {
-      if (companyData) {
-         setServicesData(companyData?.services);
-      }
+      getServices();
    }, [companyData]);
 
 
@@ -93,7 +97,7 @@ const ProfileScreen = () => {
    return (
       <SafeAreaView style={{ flex: 1 }}>
          {companyData ? ( //  Urgente: Cambiar a una variable para verificar si esta pagado.
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, marginBottom: useBottomTabBarHeight()}}>
                <View
                      className="px-2 py-2 w-full bg-transparent flex flex-row items-center"
                      style={{ gap: 8 }}
@@ -162,7 +166,7 @@ const ProfileScreen = () => {
                   </View>
 
 
-                  <View className="py-2 px-2 flex flex-col" style={{gap:8,paddingBottom: 55}}>
+                  <View className="flex py-3 px-2 flex-col space-y-3">
                      <TouchableOpacity onPress={() => navigation.navigate("newservice")} style={styles.container} className="shadow-lg">
                         <View className="flex items-center py-4" style={{gap:24}}>
                            <Text className="text-[#92929D]" style={{fontWeight:700,fontSize:20}}>Agregar un nuevo servicio</Text>
@@ -170,9 +174,15 @@ const ProfileScreen = () => {
                         </View>
                      </TouchableOpacity>
 
-                     {servicesData.slice().reverse().map((item, index) => (
-                        <ServiceItem key={index} data={item} />
-                     ))}
+
+                     <FlatList
+                        data={servicesData?.data?.slice().reverse()}
+                        renderItem={({ item }) => <ServiceItem data={item} />}
+                        keyExtractor={item => item.id.toString()}
+                        contentContainerStyle={{
+                           gap: 12,
+                        }}
+                     />
                   </View>
                </ScrollView>
             </View>

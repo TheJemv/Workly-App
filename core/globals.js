@@ -77,34 +77,64 @@ const responseCustomerGet = (set, get, data) => {
    set((state) => ({
       customer: data
    }))
-
-   utils.log('responseCustomerGet', data)
 }
 
 const responseCompanyGet = (set, get, data) => {
-   utils.log('responseCompanyGet', data)
    set((state) => ({
       company: data
+   }))
+}
+
+const responseServicesGet = (set, get, data) => {
+   set((state) => ({
+      services: data
+   }))
+}
+
+const responseSalesGet = (set, get, data) => {
+   console.log(data)
+   set((state) => ({
+      sales: data
+   }))
+}
+
+const responseOrdersGet = (set, get, data) => {
+   console.log(data)
+
+   set((state) => ({
+      orders: data
    }))
 }
 
 
 
 const useGlobal = create((set, get) => ({
+   // Server
    initiainitialized: false,
-   user: null,
-   customer: null,
-   token: null,
    socket: null,
 
+   // user
+   token: null,
+   user: null,
+
+
+   // customer
+   customer: null,
+   orders: null,
    chats: [],
 
+
+   // messages
    messagesList: [],
    messagesNext: null,
    messagesUser: null,
    messagesRoom: null,
 
+
+   // company
    company: null,
+   services: null,
+   sales: null,
 
    init: async () => {
       const credentials = getAuth().currentUser
@@ -136,14 +166,19 @@ const useGlobal = create((set, get) => ({
 
             'customer.get':      responseCustomerGet,
 
-            'company.get':   responseCompanyGet,
+            'company.get':       responseCompanyGet,
+            'sales.list':        responseSalesGet,
+
+            'services.list':     responseServicesGet,
+            'orders.list':       responseOrdersGet,
          }
 
-         const resp = responses[parsed.type]
-         // if(resp) {
-         //    resp(parsed)
-         // }
 
+         const resp = responses[parsed.type]
+         console.log({
+            type: parsed.type,
+            data: parsed.data
+         })
          resp(set, get, parsed.data)
       }
 
@@ -192,13 +227,53 @@ const useGlobal = create((set, get) => ({
    },
 
    companyReload: () => {
-      console.log('companyReload')
-
       const { socket } = get()
       socket.send(JSON.stringify({
          source: 'company.reload'
       }))
-   }
+   },
+
+   getServices: () => {
+      set((state) => ({
+         services: {
+            loaded: false,
+            data: state.services?.data || []
+         }
+      }))
+      const { socket } = get()
+      socket.send(JSON.stringify({
+         source: 'services.list'
+      }))
+   },
+
+   getOrders: () => {
+      console.log('getOrders')
+
+      set((state) => ({
+         orders: {
+            loaded: false,
+            data: state.orders?.data || []
+         }
+      }))
+      const { socket } = get()
+      socket.send(JSON.stringify({
+         source: 'orders.list'
+      }))
+   },
+
+   getSales: () => {
+      console.log('getSales')
+      set((state) => ({
+         sales: {
+            loaded: false,
+            data: state.sales?.data || []
+         }
+      }))
+      const { socket } = get()
+      socket.send(JSON.stringify({
+         source: 'sales.list'
+      }))
+   },
 }))
 
 

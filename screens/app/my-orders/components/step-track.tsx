@@ -4,7 +4,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 
 type Props = {
-   icon: "file-text" | "credit-card" | "check" | "dropbox" | "bus";
+   icon: "file-text" | "credit-card" | "check" | "dropbox" | "bus" | "times";
    title: string;
    description: string;
    stepProcess?: boolean;

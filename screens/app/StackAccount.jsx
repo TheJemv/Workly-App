@@ -29,30 +29,18 @@ const StackAccount = () => {
          <Stack.Screen
             name="InvoiceData"
             component={InvoiceDataScreen}
-            options={{
-               headerShown: false,
-            }}
          />
          <Stack.Screen
             name="CreateInvoice"
             component={CreateInvoiceScreen}
-            options={{
-               headerShown: false,
-            }}
          />
          <Stack.Screen
             name="EditInvoice"
             component={EditInvoiceScreen}
-            options={{
-               headerShown: false,
-            }}
          />
          <Stack.Screen
             name="Support"
             component={SupportScreen}
-            options={{
-               headerShown: false,
-            }}
          />
       </Stack.Navigator>
    );

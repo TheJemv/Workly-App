@@ -1,4 +1,4 @@
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import NativeStackOptions from "constants/NativeStackOptions";
@@ -7,59 +7,66 @@ import { TrackOrdersScreen } from "./my-orders/track-orders";
 import { OrdersScreen } from "./my-orders/orders";
 import { SalesScreen } from "./my-orders/sales";
 import { Colors } from "lib";
+import useGlobal from "core/globals";
+import { useEffect } from "react";
 
 const Stack = createNativeStackNavigator();
-
 const Tab = createMaterialTopTabNavigator();
 
 type Props = {};
 function StackOrders({}: Props): JSX.Element {
-   const isBusiness: boolean = true;
+   const isBusiness: object = useGlobal((state) => state.company);
+
+   useEffect(() => {
+      console.log("StackOrders rendered");
+   }, []);
 
    return (
-      <SafeAreaView className="flex-1">
-         {isBusiness ? (
-            <Stack.Navigator
-               initialRouteName="OrdersTab"
-               screenOptions={NativeStackOptions}
-            >
-               <Stack.Screen
-                  name="OrdersTab"
-                  component={TabOrders}
-                  options={{
-                     headerShown: false,
-                  }}
-               />
-               <Stack.Screen
-                  name="TrackOrders"
-                  component={TrackOrdersScreen}
-                  options={{
-                     headerShown: false,
-                  }}
-               />
-            </Stack.Navigator>
-         ) : (
-            <Stack.Navigator
-               initialRouteName="Orders"
-               screenOptions={NativeStackOptions}
-            >
-               <Stack.Screen
-                  name="MyOrders"
-                  component={MyOrdersScreen}
-                  options={{
-                     headerShown: false,
-                  }}
-               />
-               <Stack.Screen
-                  name="TrackOrders"
-                  component={TrackOrdersScreen}
-                  options={{
-                     headerShown: false,
-                  }}
-               />
-            </Stack.Navigator>
-         )}
-      </SafeAreaView>
+      <View className="flex-1 bg-[#eee]">
+         <SafeAreaView className="flex-1">
+            {isBusiness ? (
+               <Stack.Navigator
+                  screenOptions={NativeStackOptions}
+                  initialRouteName="OrdersTab"
+               >
+                  <Stack.Screen
+                     name="OrdersTab"
+                     component={TabOrders}
+                     options={{
+                        headerShown: false,
+                     }}
+                  />
+                  <Stack.Screen
+                     name="TrackOrders"
+                     component={TrackOrdersScreen}
+                     options={{
+                        headerShown: true,
+                     }}
+                  />
+               </Stack.Navigator>
+            ) : (
+               <Stack.Navigator
+                  initialRouteName="Orders"
+                  screenOptions={NativeStackOptions}
+               >
+                  <Stack.Screen
+                     name="MyOrders"
+                     component={MyOrdersScreen}
+                     options={{
+                        headerShown: true,
+                     }}
+                  />
+                  <Stack.Screen
+                     name="TrackOrders"
+                     component={TrackOrdersScreen}
+                     options={{
+                        headerShown: true,
+                     }}
+                  />
+               </Stack.Navigator>
+            )}
+         </SafeAreaView>
+      </View>
    );
 }
 
@@ -69,7 +76,16 @@ const TabOrders = (): JSX.Element => {
          initialRouteName="Orders"
          screenOptions={{
             tabBarStyle: {
-               backgroundColor: Colors.white,
+               backgroundColor: "#eee",
+               // Shadow
+               shadowColor: "#000",
+               shadowOffset: {
+                  width: 0,
+                  height: 2,
+               },
+               shadowOpacity: 0.25,
+               shadowRadius: 3.84,
+               elevation: 5,
             },
             tabBarIndicatorStyle: {
                backgroundColor: Colors.principal.DEFAULT,
@@ -80,7 +96,7 @@ const TabOrders = (): JSX.Element => {
             },
             tabBarActiveTintColor: Colors.principal.DEFAULT,
             tabBarInactiveTintColor: Colors.secondary.DEFAULT,
-            animationEnabled: true,
+            animationEnabled: false,
          }}
       >
          <Tab.Screen

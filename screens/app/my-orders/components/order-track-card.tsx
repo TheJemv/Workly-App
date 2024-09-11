@@ -22,7 +22,7 @@ export function OrderTrackCard({
             <View className="w-20 h-20 rounded-xl bg-light/25" />
             <View>
                <Text className="text-base text-dark font-semibold">
-                  Order#: {order.numberOrder}
+                  Order#: {order.id}
                </Text>
                <Text className="text-sm text-text font-medium">
                   {order.dateCreated}

@@ -4,6 +4,7 @@ import { invoiceDataResolver, InvoiceData, defaultInvoiceData } from "./types";
 import { Header } from "./components/header";
 import { TextInput } from "./components/text-input";
 import { Button } from "./components/button";
+import { useLayoutEffect } from "react";
 
 type Props = {
    navigation: any;
@@ -23,9 +24,14 @@ export function CreateInvoiceScreen({ navigation }: Props): JSX.Element {
       handleBack();
    };
 
+   useLayoutEffect(() => {
+      navigation.setOptions({
+         headerTitle: "Crear datos de facturación",
+      });
+   }, []);
+
    return (
       <SafeAreaView className="flex-1">
-         <Header onBack={handleBack}>Crear datos de facturacion</Header>
          <ScrollView className="flex-1">
             <View className="flex flex-col space-y-5 px-3 py-5 mb-10">
                <View>

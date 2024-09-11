@@ -2,6 +2,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const InvoiceDataSchema = z.object({
+   id: z.string(),
    name: z.string().min(1, "El nombre es obligatorio"),
    rfc: z.string().min(1, "El RFC es obligatorio"),
    calle: z.string().min(1, "La calle es obligatorio"),
@@ -21,6 +22,7 @@ export const InvoiceDataSchema = z.object({
 export type InvoiceData = z.infer<typeof InvoiceDataSchema>;
 export const invoiceDataResolver = zodResolver(InvoiceDataSchema);
 export const defaultInvoiceData: InvoiceData = {
+   id: "",
    name: "",
    rfc: "",
    calle: "",

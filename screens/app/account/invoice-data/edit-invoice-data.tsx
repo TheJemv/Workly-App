@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { SafeAreaView, ScrollView, View } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { invoiceDataResolver, InvoiceData, defaultInvoiceData } from "./types";
@@ -18,6 +18,12 @@ export function EditInvoiceScreen({ navigation, route }: Props): JSX.Element {
       defaultValues: defaultInvoiceData,
    });
 
+   useLayoutEffect(() => {
+      navigation.setOptions({
+         headerTitle: "Editar datos de facturación",
+      });
+   }, []);
+
    useEffect(() => {
       if (data) {
          reset(data);
@@ -35,7 +41,6 @@ export function EditInvoiceScreen({ navigation, route }: Props): JSX.Element {
 
    return (
       <SafeAreaView className="flex-1">
-         <Header onBack={handleBack}>Editar datos de facturacion</Header>
          <ScrollView className="flex-1">
             <View className="flex flex-col space-y-5 px-3 py-5 mb-10">
                <View>

@@ -8,8 +8,18 @@ type Props = {
 export function DetailInfo({ title, children }: Props): JSX.Element {
    return (
       <View className="flex flex-row items-center space-x-1 py-0.5">
-         <Text className="text-base text-primary font-semibold">{title}</Text>
-         <Text className="text-base text-text font-medium">{children}</Text>
+         <Text
+            style={{ fontWeight: 600 }}
+            className="text-base text-primary font-semibold"
+         >
+            {title}
+         </Text>
+         <Text
+            style={{ fontWeight: 400 }}
+            className="text-base text-text font-medium"
+         >
+            {children}
+         </Text>
       </View>
    );
 }

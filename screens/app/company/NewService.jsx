@@ -10,9 +10,8 @@ import{ Picker } from "@react-native-picker/picker"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import ServiceCategoryEnum from "enum/ServiceCategoryEnum";
 import loadImageFile from "utils/loadImageFile";
+import { Dropdown } from "react-native-element-dropdown";
 
-
-const MAX_FILE_SIZE = 10485760; // 10 MB en bytes
 
 const Col = ({children, gap=0, className=""}) => (
    <View className={`flex flex-col ${className&&className}`} style={{gap:gap}}>
@@ -44,9 +43,9 @@ const NewService = () => {
       public: false,
       name: '',
       description: '',
-      unit_amount: 0,
+      unit_amount: null,
       category: 'none',
-      photo: ''
+      photo: '',
    })
 
 
@@ -164,48 +163,120 @@ const NewService = () => {
                      </Col>
 
                      <Col gap={8}>
-                        <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Precio del servicio</Text>
-                        <TextInput
-                           onChangeText={(e) => {
-                              const cleanedValue = e.replace(/[^0-9.]/g, '');
-                              const numericValue = parseFloat(cleanedValue) * 100;
+                        <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Precio Fijo</Text>
+                        <Dropdown
+                           className="border-dark/10 rounded-lg border py-2 px-2"
+                           style={{
+                              backgroundColor: Colors.transparent,
+                           }}
+                           selectedTextStyle={{
+                              color: "#050505",
+                              fontSize: 14,
+                           }}
+                           data={[
+                              {label: 'Indefinido', value: true},
+                              {label: 'Fijo', value: false}
+                           ]}
+                           labelField="label"
+                           valueField="value"
+                           placeholder="Escoje el tipo de Precio:"
+                           placeholderStyle={{
+                              color: "#92929D",
+                              fontSize: 14,
+                           }}
+                           itemContainerStyle={{
+                              backgroundColor: Colors.white,
+                              borderRadius: 8,
+                              fontSize: 14,
+                           }}
+                           containerStyle={{
+                              borderRadius: 8,
+                              borderWidth: 1,
+                           }}
+
+                           value={value?.indefinite}
+                           onChange={(e) => {
+                              console.log(e)
+                              if(e.value) {
+                                 setValue((prevData) => ({
+                                    ...prevData,
+                                    unit_amount: null
+                                 }))
+                              }
                               setValue((prevData) => ({
                                  ...prevData,
-                                 unit_amount: numericValue,
+                                 indefinite: e.value
                               }))
-
-                              handleChange(e)
                            }}
-                           className="py-2 px-2 rounded-lg border border-dark/10"
-                           keyboardType="numeric"
-                           placeholder="$0.00"
-                           value={valuePrice}
-                           placeholderTextColor={"#92929D"}
                         />
                      </Col>
+
+                     {(value?.indefinite === false) && (
+                        <Col gap={8}>
+                           <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Precio del servicio</Text>
+                           <TextInput
+                              onChangeText={(e) => {
+                                 const cleanedValue = e.replace(/[^0-9.]/g, '');
+                                 const numericValue = parseFloat(cleanedValue) * 100;
+                                 setValue((prevData) => ({
+                                    ...prevData,
+                                    unit_amount: numericValue,
+                                 }))
+
+                                 handleChange(e)
+                              }}
+                              className="py-2 px-2 rounded-lg border border-dark/10"
+                              keyboardType="numeric"
+                              placeholder="$0.00"
+                              value={valuePrice}
+                              placeholderTextColor={"#92929D"}
+                           />
+                           <Text className="text-[#A1A1AA]">Define un precio a tu servicio.</Text>
+                        </Col>
+                     )}
                   </Col>
 
                   <Col gap={8}>
                      <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Categorio del servicio</Text>
-                     <Picker
-                        onValueChange={(e) => {
+                     <Dropdown
+                        className="border-dark/10 rounded-lg border py-2 px-2"
+                        style={{
+                           backgroundColor: Colors.transparent,
+                        }}
+                        selectedTextStyle={{
+                           color: "#050505",
+                           fontSize: 14,
+                        }}
+                        data={Object.keys(ServiceCategoryEnum).map(key => ({
+                           label: ServiceCategoryEnum[key],
+                           value: ServiceCategoryEnum[key]
+                        }))}
+                        labelField="label"
+                        valueField="value"
+                        placeholder="Escoje tu Categoria:"
+                        placeholderStyle={{
+                           color: "#92929D",
+                           fontSize: 14,
+                        }}
+                        itemContainerStyle={{
+                           backgroundColor: Colors.white,
+                           borderRadius: 8,
+                           fontSize: 14,
+                        }}
+                        containerStyle={{
+                           borderRadius: 8,
+                           borderWidth: 1,
+                        }}
+                        dropdownPosition="top"
+
+                        value={value?.category}
+                        onChange={(e) => {
                            setValue((prevData) => ({
                               ...prevData,
-                              category: e,
+                              category: e.value
                            }))
                         }}
-                        selectedValue={value?.category}
-                     >
-                        <Picker.Item style={{ fontSize: 12 }} label="Escoje tu Categoria:" value={"none"} />
-                        {Object.keys(ServiceCategoryEnum).map(key => (
-                           <Picker.Item
-                              style={{ fontSize: 12 }}
-                              key={key}
-                              value={ServiceCategoryEnum[key]}
-                              label={ServiceCategoryEnum[key]}
-                           />
-                        ))}
-                     </Picker>
+                     />
                   </Col>
 
                   <TouchableOpacity disabled={loading} onPress={handleService} className="bg-[#364670] py-3 rounded-lg">

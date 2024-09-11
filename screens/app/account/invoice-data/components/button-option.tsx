@@ -11,7 +11,7 @@ type Props = {
 export function ButtonOption({ icon, children, onPress }: Props): JSX.Element {
    return (
       <Pressable
-         className="flex flex-row items-center justify-center space-x-2 flex-1 px-4 py-2 border border-light/25 active:bg-light/10"
+         className="flex flex-row items-center justify-center space-x-2 flex-1 px-4 py-2 active:bg-light/10"
          onPress={onPress}
       >
          <FontAwesome name={icon} size={20} color={Colors.principal.DEFAULT} />

@@ -1,6 +1,10 @@
-import { SafeAreaView, ScrollView } from "react-native";
-import { OrderTrackCard } from "./components/order-track-card";
+import { FlatList, SafeAreaView, ScrollView } from "react-native";
 import { Order } from "./types";
+import useGlobal from "core/globals";
+import { OrderCard } from "./components/order-card";
+import { useCallback, useEffect } from "react";
+import SpinLoading from "components/SpinLoading";
+import { Colors } from "lib";
 
 type Props = {
    navigation: any;
@@ -10,29 +14,61 @@ export function SalesScreen({ navigation }: Props): JSX.Element {
       (name: string, params?: { data: Order }) => (): void => {
          navigation.navigate(name, params);
       };
-   return (
+
+   // Variables globales
+   const companyData = useGlobal((state) => state.company);
+   const sales = useGlobal((state) => state.sales);
+
+   // Funciones globales
+   const getSales = useGlobal((state) => state.getSales);
+
+   const reloadSales = useCallback(() => {
+      if (companyData) {
+         getSales();
+      }
+   }, [companyData]);
+
+   useEffect(() => {
+      if (sales === null) {
+         setTimeout(() => {
+            reloadSales();
+         }, 1000);
+      }
+   }, [sales]);
+
+   return sales !== null ? (
+      sales.loaded ? (
+         <SafeAreaView className="flex-1">
+            <ScrollView>
+               <FlatList
+                  data={sales?.data?.sort(
+                     (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                  )}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                     <OrderCard
+                        order={item}
+                        onPress={handleScreen("TrackOrders", { data: item })}
+                     />
+                  )}
+                  contentContainerStyle={{
+                     paddingVertical: 8,
+                     paddingHorizontal: 12,
+                     gap: 12,
+                  }}
+               />
+            </ScrollView>
+         </SafeAreaView>
+      ) : (
+         <SafeAreaView className="flex-1">
+            <SpinLoading size={48} color={Colors.principal.DEFAULT} />
+         </SafeAreaView>
+      )
+   ) : (
       <SafeAreaView className="flex-1">
-         <ScrollView className="flex-1 px-3 my-3 space-y-2">
-            <OrderTrackCard
-               order={{
-                  numberOrder: 999012,
-                  dateCreated: "20-Dic-2019, 3:00 PM",
-                  deliveryDate: "22 Dic",
-                  rating: 0,
-                  name: "Pedido 1",
-                  percentComplete: 20,
-               }}
-               onPress={handleScreen("TrackOrders", {
-                  data: {
-                     numberOrder: 999012,
-                     dateCreated: "20-Dic-2019, 3:00 PM",
-                     deliveryDate: "22 Dic",
-                     rating: 0,
-                     name: "Pedido 1",
-                  },
-               })}
-            />
-         </ScrollView>
+         <SpinLoading size={48} color={Colors.principal.DEFAULT} />
       </SafeAreaView>
    );
 }
