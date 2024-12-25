@@ -65,39 +65,33 @@ const PaymentSubscription = () => {
 
 
    return (
-      loading || !product ? (
-         <View style={{flex:1}} className="items-center justify-center">
-            <SpinLoading size={64} color={Colors.principal.DEFAULT} />
+      <View className="py-0 flex px-6 flex-col items-center justify-center" style={{flex:1,gap:32,paddingBottom:bottomHeight}}>
+         <View className="w-full px-0">
+            <Image className="w-full" style={{
+               height: 220,
+            }} source={ImageSubscription} />
          </View>
-      ) : (
-         <View className="py-0 flex px-6 flex-col items-center justify-center" style={{flex:1,gap:32,paddingBottom:bottomHeight}}>
-            <View className="w-full px-0">
-               <Image className="w-full" style={{
-                  height: 220,
-               }} source={ImageSubscription} />
-            </View>
 
-            <Text className="text-[#3C4470]" style={{fontWeight:700, fontSize:28}}>Conviertete a Empresa</Text>
-            <View className="flex flex-col" style={{gap:12}}>
-               {DescriptionSubscription.data.map((content, index) => (
-                  <View key={index} className="flex flex-row items-center" style={{gap:8}}>
-                     <AntDesign name="checkcircle" size={22} color={"#58DCC7"} />
-                     <Text className="text-text">{content}</Text>
-                  </View>
-               ))}
-            </View>
-
-            <View className="flex flex-row items-end justify-center" style={{gap:0}}>
-               <Text style={{fontWeight:600,fontSize:14,paddingTop:8,alignSelf:'flex-start'}} className="text-[#979FCC]">$</Text>
-               <Text style={{fontWeight:700,fontSize:42}} className="text-[#3C4470]">100</Text>
-               <Text style={{fontWeight:600,fontSize:14,paddingBottom:8}} className="text-[#979FCC]">mensuales</Text>
-            </View>
-
-            <TouchableOpacity disabled={enableButton} onPress={handleCompanyRegister} className="bg-indigo-600 w-full items-center py-6 rounded-lg">
-               <Text style={{fontWeight:700,fontSize:18}} className="text-white">Suscribirse</Text>
-            </TouchableOpacity>
+         <Text className="text-[#3C4470]" style={{fontWeight:700, fontSize:28}}>Conviertete a Empresa</Text>
+         <View className="flex flex-col" style={{gap:12}}>
+            {DescriptionSubscription.data.map((content, index) => (
+               <View key={index} className="flex flex-row items-center" style={{gap:8}}>
+                  <AntDesign name="checkcircle" size={22} color={"#58DCC7"} />
+                  <Text className="text-text">{content}</Text>
+               </View>
+            ))}
          </View>
-      )
+
+         <View className="flex flex-row items-end justify-center" style={{gap:0}}>
+            <Text style={{fontWeight:600,fontSize:14,paddingTop:8,alignSelf:'flex-start'}} className="text-[#979FCC]">$</Text>
+            <Text style={{fontWeight:700,fontSize:42}} className="text-[#3C4470]">100</Text>
+            <Text style={{fontWeight:600,fontSize:14,paddingBottom:8}} className="text-[#979FCC]">mensuales</Text>
+         </View>
+
+         <TouchableOpacity disabled={enableButton} onPress={handleCompanyRegister} className="bg-indigo-600 w-full items-center py-6 rounded-lg">
+            <Text style={{fontWeight:700,fontSize:18}} className="text-white">Suscribirse</Text>
+         </TouchableOpacity>
+      </View>
    )
 }
 

@@ -1,20 +1,20 @@
 {
   "expo": {
-    "name": "WorkIt",
+    "name": "Workly",
     "slug": "workit",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "/assets/icon.png",
     "userInterfaceStyle": "light",
     "entryPoint": "./node_modules/expo/AppEntry.js",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "/assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.thejemv.workit",
+      "bundleIdentifier": "com.workly.services",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrar información relevante.",
         "NSLocationAlwaysUsageDescription": "Necesitamos tu ubicación para proporcionar funcionalidades avanzadas incluso cuando la aplicación no esté en uso."
@@ -30,7 +30,7 @@
         "ACCESS_COARSE_LOCATION"
       ],
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.thejemv.workit"
+      "package": "com.workly.services"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,7 +41,7 @@
       }
     },
     "owner": "thejemv",
-    "scheme": "workit",
+    "scheme": "workly",
     "plugins": [
       "expo-router",
       ["expo-image-picker", {

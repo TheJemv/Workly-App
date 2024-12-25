@@ -7,8 +7,8 @@ import {
    StackCompany,
    StackOrders,
 } from "screens/app";
-import { Colors } from "@/lib";
-import { Animated, StyleSheet } from "react-native";
+import { Colors } from "lib";
+import { Animated, StyleSheet, Platform } from "react-native";
 import { TabItem } from "@/components";
 import { BlurView } from "expo-blur";
 
@@ -85,21 +85,21 @@ const AppTabs = () => {
                   headerShown: false,
                   tabBarBackground: () => (
                      <BlurView
-                        intensity={40}
+                        intensity={Platform.OS === 'android' ? 80 : 40}
                         style={{
-                           overflow: "hidden",
-                           backgroundColor: "transparent",
+                           backgroundColor: Platform.OS === 'android' ? 'rgba(255, 255, 255, 0.5)' : 'transparent',
                            ...StyleSheet.absoluteFillObject,
+                           height: 80,
                         }}
+                        tint="light"
                      />
                   ),
                   tabBarStyle: [
                      {
                         position: "absolute",
-                        display:
-                           navigation?.getCurrentRoute()?.name === "UserChat"
-                              ? "none"
-                              : "flex",
+                        // display: navigation?.getCurrentRoute()?.name === "UserChat" ? "none": "flex",
+                        height: navigation?.getCurrentRoute()?.name === "UserChat" ? 0:80,
+                        opacity: navigation?.getCurrentRoute()?.name === "UserChat" ? 0:1,
                      },
                   ],
                };

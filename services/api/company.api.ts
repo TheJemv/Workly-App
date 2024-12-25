@@ -1,17 +1,12 @@
-import { API_HOST } from "@env";
-import axios from "axios";
+import apiClient from "services/api/apiClient";
 
 export const getCompany = async (token: string) => {
    try {
-      const response: any = await axios
-         .get(`${await API_HOST}/company/mycompany`, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         })
-         .then((response) => {
-            return response;
-         });
+      const response: any = await apiClient.get("/company/mycompany", {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
 
       return response.data;
    } catch (error) {
@@ -21,7 +16,7 @@ export const getCompany = async (token: string) => {
 
 export const updateCompany = async (token: string, data: object) => {
    try {
-      const response = await axios.patch(`${API_HOST}/company`, data, {
+      const response = await apiClient.patch("/company", data, {
          headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -44,7 +39,7 @@ export const updateCompany = async (token: string, data: object) => {
 
 export const fetchOnboardingCompany = async (token: string) => {
    try {
-      const response = await axios.get(`${API_HOST}/company/accountlink`, {
+      const response = await apiClient.get("/company/accountlink", {
          headers: {
             Authorization: `Bearer ${token}`,
          },

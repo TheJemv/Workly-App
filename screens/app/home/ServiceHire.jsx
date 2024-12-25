@@ -98,6 +98,12 @@ const ServiceHire = ({ route }) => {
       }
    }
 
+   const OpenCompany = () => {
+      router.navigate("company", {
+         id: dataService?.company_id
+      })
+   }
+
    return (
       loading ? (
          <View className="flex-1 flex-col items-center justify-center">
@@ -117,7 +123,7 @@ const ServiceHire = ({ route }) => {
                            width={110} height={110}
                            className="rounded-lg"
                         />
-                        <TouchableOpacity className="flex flex-row" style={{gap: 4}}>
+                        <TouchableOpacity onPress={OpenCompany} className="flex flex-row" style={{gap: 4}}>
                            <Text style={{fontSize: 14, fontWeight: 600, color: Colors.principal.DEFAULT}}>Empresa</Text>
                         </TouchableOpacity>
                         <Text className="text-text" style={{fontSize: 12}}>{dataService?.name?dataService?.name:'Servicio'}</Text>

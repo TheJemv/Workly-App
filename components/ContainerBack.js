@@ -1,12 +1,14 @@
 import React from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StatusBar, StyleSheet, TouchableOpacity } from 'react-native';
 
 const ContainerBack = ({ children, navigation }) => {
    const handleBack = () => navigation.goBack();
    return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, {
+         marginTop: StatusBar.currentHeight
+      }]}>
          <TouchableOpacity onPress={handleBack}>
             <Entypo name="chevron-left" color="#040048" size={24} />
          </TouchableOpacity>

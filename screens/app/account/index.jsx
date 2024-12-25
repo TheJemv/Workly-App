@@ -5,6 +5,7 @@ import {
    Text,
    TouchableOpacity,
    SafeAreaView,
+   StatusBar,
 } from "react-native";
 import React, { useContext } from "react";
 
@@ -31,7 +32,7 @@ const AccountScreen = ({ navigation }) => {
    };
 
    return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
          <ScrollView className="px-3 pt-3 w-full" style={{ flex: 1 }}>
             <View style={{ gap: 12 }} className="flex flex-col">
                <Text className="order-0 text-dark font-bold text-[22px]">

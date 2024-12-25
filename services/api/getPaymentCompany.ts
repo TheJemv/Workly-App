@@ -1,37 +1,39 @@
-import { API_HOST } from "@env"
+import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
 
-export const getPaymantCompany = async (token: string) => {
-   const response = await fetch(`${API_HOST}/company/subscription`, {
-      method: 'GET',
-      headers: {
-         Authorization: `Bearer ${token}`,
-      },
-   });
+export const getPaymentCompany = async (token: string) => {
+   try {
+      const response = await apiClient.get("/company/subscription", {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
 
-   if(!response.ok) {
-      throw new Error("Error para conseguir la key")
+      return response.data;
+   } catch (error) {
+      throw new Error("Error para conseguir la key");
    }
-   
-   const data = await response.json();
-   return data
-}
+};
 
-export const getPaymentCompanyVerify = async (token: string, paymentIntent: string) => {
-   const response = await fetch(`${API_HOST}//company/verify-payment`, {
-      method: 'POST',
-      headers: {
-         Authorization: `Bearer ${token}`,
-         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-         paymentIntentId: paymentIntent
-      })
-   })
+export const getPaymentCompanyVerify = async (
+   token: string,
+   paymentIntent: string
+) => {
+   try {
+      const response = await apiClient.post(
+         "/company/verify-payment",
+         {
+            paymentIntentId: paymentIntent,
+         },
+         {
+            headers: {
+               Authorization: `Bearer ${token}`,
+               "Content-Type": "application/json",
+            },
+         }
+      );
 
-   if (!response.ok) {
-      throw new Error("Error para verificar la suscripcion.")
+      return response.data;
+   } catch (error) {
+      throw new Error("Error para verificar la suscripción.");
    }
-
-   const data = await response.json()
-   return data
-}
+};

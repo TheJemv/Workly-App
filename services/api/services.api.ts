@@ -1,113 +1,79 @@
 import { API_HOST } from "@env";
-import axios from "axios";
+import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
+
 export const setService = async (token: string, data: object) => {
    try {
-      const response: any = await axios
-         .post(`${API_HOST}/service`, data, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-               "Content-Type": "application/json",
-            },
-         })
-         .then((response) => {
-            return response;
-         })
-         .catch((error) => {
-            throw new Error(error.response.data.errors.message);
-         });
+      const response = await apiClient.post("/service", data, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+         },
+      });
 
       if (response.data.errors) throw new Error(response.data.errors.message);
       return response.data;
    } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message || "Error al crear el servicio");
    }
 };
 
 export const delService = async (token: string, id: string) => {
    try {
-      const response: any = await axios
-         .delete(`${API_HOST}/service/${id}`, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-               "Content-Type": "application/json",
-            },
-         })
-         .then((response) => {
-            return response;
-         })
-         .catch((error) => {
-            throw new Error(error.response.data.errors.message);
-         });
+      const response = await apiClient.delete(`/service/${id}`, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+         },
+      });
 
       if (response.data.errors) throw new Error(response.data.errors.message);
       return response.data;
    } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message || "Error al eliminar el servicio");
    }
 };
 
 export const patchService = async (token: string, id: string, obj: object) => {
    try {
-      const response: any = await axios
-         .patch(`${API_HOST}/service/${id}`, obj, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-               "Content-Type": "application/json",
-            },
-         })
-         .then((response) => {
-            return response;
-         })
-         .catch((error) => {
-            throw new Error(error.response.data.errors.message);
-         });
+      const response = await apiClient.patch(`/service/${id}`, obj, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+         },
+      });
 
       if (response.data.errors) throw new Error(response.data.errors.message);
       return response.data;
    } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message || "Error al actualizar el servicio");
    }
 };
 
 export const getServices = async (token: string, category: string) => {
    try {
-      const response: any = await axios
-         .get(`${API_HOST}/service?category=${category}`, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         })
-         .then((response) => {
-            return response;
-         })
-         .catch((error) => {
-            throw new Error(error);
-         });
+      const response = await apiClient.get(`/service?category=${category}`, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
 
       return response.data;
    } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message || "Error al obtener los servicios");
    }
 };
 
 export const getService = async (token: string, id: string) => {
    try {
-      const response: any = await axios
-         .get(`${API_HOST}/service/${id}`, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         })
-         .then((response) => {
-            return response;
-         })
-         .catch((error) => {
-            throw new Error(error.response.data.message);
-         });
+      const response = await apiClient.get(`/service/${id}`, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
 
       return response.data;
    } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message || "Error al obtener el servicio");
    }
 };
 
@@ -117,21 +83,16 @@ export const getServicePayment = async (
    data: object
 ) => {
    try {
-      const response: any = await axios
-         .post(`${API_HOST}/service/pay/${id}`, data, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         })
-         .then((response) => {
-            return response;
-         })
-         .catch((error) => {
-            throw new Error(error.response.data.message);
-         });
+      const response = await apiClient.post(`/service/pay/${id}`, data, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
 
       return response.data;
    } catch (error) {
-      throw new Error(error.message);
+      throw new Error(
+         error.message || "Error al procesar el pago del servicio"
+      );
    }
 };

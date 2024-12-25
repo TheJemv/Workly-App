@@ -7,6 +7,7 @@ import ScreenEdit from "./company/Edit.jsx";
 import ScreenNewService from "./company/NewService"
 import ScreenEditService from "./company/EditService"
 import OptionScreen from "./company/Option";
+import PaymentSubscription from "components/PaymentSubscription";
 
 
 
@@ -35,9 +36,11 @@ const StackCompany = () => {
       key: "public"
    }]
 
+   const onSub = false
+
    return (
-      <Stack.Navigator screenOptions={NativeStackOptions}>
-         <Stack.Screen name="profile" component={ScreenCompany} />
+      <Stack.Navigator initialRouteName="profile" screenOptions={NativeStackOptions}>
+         <Stack.Screen name="profile" component={onSub ? ScreenCompany : PaymentSubscription} />
          <Stack.Screen initialParams={Options} name="edit" component={ScreenEdit} />
          <Stack.Screen name="newservice" component={ScreenNewService} />
          <Stack.Screen name="editservice" component={ScreenEditService} />

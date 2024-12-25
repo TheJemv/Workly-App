@@ -138,6 +138,7 @@ const useGlobal = create((set, get) => ({
 
    init: async () => {
       const credentials = getAuth().currentUser
+      console.log(credentials)
       if(credentials) {
          set({
             initialized: true,
@@ -150,7 +151,7 @@ const useGlobal = create((set, get) => ({
    socketConnect: async () => {
       const { token } = get()
       if(!token) return
-      const socket = new WebSocket(`${API_WEBHOOK}/?token=${token}`)
+      const socket = await new WebSocket(`${API_WEBHOOK}/?token=${token}`)
 
       socket.onopen = () => {
          utils.log("socket.onopen")

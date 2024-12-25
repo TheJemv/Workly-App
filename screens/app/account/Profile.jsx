@@ -1,4 +1,5 @@
-import { View, ScrollView, SafeAreaView, TouchableOpacity, Alert, Text } from 'react-native';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar'
+import { View, ScrollView, TouchableOpacity, Alert, Text, SafeAreaView, StatusBar  } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { SpinLoading, TextInputUser, ThumnailEdit } from 'components';
@@ -11,6 +12,8 @@ import useGlobal from 'core/globals';
 import isEqual from 'lodash/isEqual';
 import getChangedProperties from 'utils/CompareObjects';
 import { updatedCustomer } from 'services/api/customer.api';
+
+
 
 const Profile = () => {
    // Globals Variables
@@ -129,7 +132,7 @@ const Profile = () => {
             <SpinLoading color={Colors.principal.DEFAULT} size={46} />
          </View>
       ) : (
-         <SafeAreaView style={{ flex: 1 }}>
+         <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
             <ScrollView style={{ gap: 32 }}>
                <View style={{ gap: 32, paddingBottom: 70 }}>
                   <View style={{ alignItems: 'center' }}>
