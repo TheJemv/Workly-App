@@ -151,7 +151,7 @@ const useGlobal = create((set, get) => ({
    socketConnect: async () => {
       const { token } = get()
       if(!token) return
-      const socket = await new WebSocket(`${API_WEBHOOK}/?token=${token}`)
+      const socket = await new WebSocket(`ws://192.168.0.178:8080/?token=${token}`)
 
       socket.onopen = () => {
          utils.log("socket.onopen")
