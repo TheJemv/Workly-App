@@ -10,9 +10,13 @@ import AntDesign from "@expo/vector-icons/AntDesign"
 
 import ImageSubscription from "assets/Subscription.png"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import PaywallScreen from "screens/PaywallScreen/PaywallScreen";
+import Purchases from "react-native-purchases";
+import { ENTITLEMENT_ID } from "constants/index";
 
 
 const PaymentSubscription = () => {
+   const [ showPaywall, setShowPaywall ] = useState(false);
    const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
    const { token } = useContext(AuthContext)
 
@@ -23,6 +27,7 @@ const PaymentSubscription = () => {
 
    useEffect(() => {
       initializePaymentSheet()
+      checkSubscription()
    }, [])
 
 
@@ -47,8 +52,24 @@ const PaymentSubscription = () => {
       setLoading(false)
    }
 
+   const checkSubscription = async () => {
+      try {
+         const customerInfo = await Purchases.getCustomerInfo();
+         console.log("🚀 ~ checkSubscription ~ customerInfo:", customerInfo)
+   
+         if (typeof customerInfo.entitlements.active[ENTITLEMENT_ID] !== 'undefined') {
+             console.log('User is subscribed');
+         } else {
+         //   navigation.navigate('Paywall');
+         }
+       } catch (e) {
+         Alert.alert('Error fetching customer info', e.message);
+       }
+   }
+
 
    const handleCompanyRegister = async () => {
+      setShowPaywall(true)
       setEnableButton(true)
       try {
          await presentPaymentSheet()
@@ -65,6 +86,8 @@ const PaymentSubscription = () => {
 
 
    return (
+      <>
+         {showPaywall ? (<PaywallScreen />) : (
       <View className="py-0 flex px-6 flex-col items-center justify-center" style={{flex:1,gap:32,paddingBottom:bottomHeight}}>
          <View className="w-full px-0">
             <Image className="w-full" style={{
@@ -92,6 +115,8 @@ const PaymentSubscription = () => {
             <Text style={{fontWeight:700,fontSize:18}} className="text-white">Suscribirse</Text>
          </TouchableOpacity>
       </View>
+         )}
+      </>
    )
 }
 
