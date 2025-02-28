@@ -112,13 +112,14 @@ const Profile = () => {
 
    useEffect(() => {
       const updateAddress = async () => {
+         if (!markerCoordinate.latitude && !markerCoordinate.longitude) return
+
          handleValue('address.latitude', markerCoordinate.latitude);
          handleValue('address.longitude', markerCoordinate.longitude);
-
          await getStreetName(markerCoordinate.latitude, markerCoordinate.longitude).then((res) => {
             setMarkerDirection(res);
          }).catch((e) => {
-            Alert.alert('Error', e.message);
+            Alert.alert('Error', "Error al obtener la ubicacion...");
          });
       };
 
@@ -179,9 +180,10 @@ const Profile = () => {
                               borderColor: "rgba(4,4,4,0.1)",
                            }}
                            className="py-2 px-2"
-                        >{markerDirection || 'No disponible'}</Text>
+                        >{markerCoordinate && markerDirection || 'No disponible'}</Text>
                      </View>
 
+                     {/* Ubicacion */}
                      <View style={{ gap: 4 }}>
                         <Text style={{
                            color: Colors.principal.DEFAULT,
@@ -203,13 +205,18 @@ const Profile = () => {
                                  longitude: locationNow.longitude,
                               }}
                               showsUserLocation={true}
+                              mapType="satellite"
                               onRegionChangeComplete={(region) => {
                                  setLocationNow({
                                     latitude: region.latitude,
                                     longitude: region.longitude,
                                  });
                               }}
-                              mapType="satellite"
+
+                              onPress={e => {
+                                 const { latitude, longitude } = e.nativeEvent.coordinate
+                                 setMarkerCoordinate({ latitude, longitude })
+                              }}
                            >
                               <Marker
                                  coordinate={markerCoordinate}

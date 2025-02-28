@@ -56,7 +56,7 @@ const PaymentSubscription = () => {
       try {
          const customerInfo = await Purchases.getCustomerInfo();
          console.log("🚀 ~ checkSubscription ~ customerInfo:", customerInfo)
-   
+
          if (typeof customerInfo.entitlements.active[ENTITLEMENT_ID] !== 'undefined') {
              console.log('User is subscribed');
          } else {
@@ -69,16 +69,18 @@ const PaymentSubscription = () => {
 
 
    const handleCompanyRegister = async () => {
-      setShowPaywall(true)
-      setEnableButton(true)
-      try {
-         await presentPaymentSheet()
-      } catch(error) {
-         Alert.alert("Error", error.message)
-      } finally {
-         setLoading(false)
-         setEnableButton(false)
-      }
+      // setShowPaywall(true)
+      // setEnableButton(true)
+      // try {
+      //    await presentPaymentSheet()
+      // } catch(error) {
+      //    Alert.alert("Error", error.message)
+      // } finally {
+      //    setLoading(false)
+      //    setEnableButton(false)
+      // }
+
+      console.log("Suscribirse...")
    }
 
 

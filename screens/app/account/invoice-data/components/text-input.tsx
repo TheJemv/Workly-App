@@ -24,7 +24,7 @@ export function TextInput({
             setValue={onChange}
          />
          {error && (
-            <Text className="text-sm text-text font-medium">{error}</Text>
+            <Text className="text-sm text-red-500 font-medium">{error}</Text>
          )}
       </View>
    );

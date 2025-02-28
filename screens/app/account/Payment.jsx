@@ -5,7 +5,7 @@ import { AuthContext } from "context/AuthContext";
 import useGlobal from "core/globals";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { getPaymantParams } from "services/api/getPaymantParams"
+import { getPaymentParams } from "services/api/getPaymantParams"
 
 const PaymentScreen = () => {
    const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
@@ -29,7 +29,7 @@ const PaymentScreen = () => {
 
    const fetchPaymentSheetParams = async () => {
       try {
-         const { ephemeralKey, setupIntent } = await getPaymantParams(token).catch((error) => {
+         const { ephemeralKey, setupIntent } = await getPaymentParams(token).catch((error) => {
             throw new Error(error.message)
          });
          return { ephemeralKey, setupIntent };

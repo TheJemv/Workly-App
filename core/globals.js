@@ -1,8 +1,6 @@
-import { API_WEBHOOK } from "@env"
 import { getAuth } from "firebase/auth"
 import { create } from "zustand"
 import utils from "./utils"
-
 
 
 const responseMessageSend = (set, get, data) => {
@@ -151,7 +149,7 @@ const useGlobal = create((set, get) => ({
    socketConnect: async () => {
       const { token } = get()
       if(!token) return
-      const socket = await new WebSocket(`ws://192.168.0.178:8080/?token=${token}`)
+      const socket = await new WebSocket(`wss://api.workly.store/?token=${token}`)
 
       socket.onopen = () => {
          utils.log("socket.onopen")

@@ -7,19 +7,12 @@ type Props = {
    icon?: "address-book" | "save";
    children?: ReactNode;
    onPress?: () => void;
-   background?: string;
 };
-export function Button({
-   icon,
-   children,
-   onPress,
-   background,
-}: Props): JSX.Element {
+export function Button({ icon, children, onPress }: Props): JSX.Element {
    return (
       <Pressable
          className="flex flex-row items-center justify-center space-x-2 flex-1 px-4 py-3 rounded-xl bg-primary active:bg-primary/80"
          onPress={onPress}
-         style={{ backgroundColor: background }}
       >
          <FontAwesome name={icon} size={20} color={Colors.white} />
          <Text className="text-base text-white text-center font-medium">

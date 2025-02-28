@@ -4,8 +4,11 @@ import { Colors } from "lib";
 import { ButtonOption } from "./button-option";
 import { DetailInfo } from "./detail-info";
 import { useNavigation } from "@react-navigation/native";
+import { delBilling } from "services/api/billing.api";
+import useGlobal from "core/globals";
 
 const Invoice = ({ data }) => {
+   const { token } = useGlobal();
    const navigation = useNavigation<any>();
 
    const handleScreen = (name: string, params?: any) => (): void => {
@@ -20,7 +23,9 @@ const Invoice = ({ data }) => {
          },
          {
             text: "Eliminar",
-            onPress: () => console.log("Eliminado"),
+            onPress: () => {
+               delBilling(token, data.id);
+            },
          },
       ]);
    };
@@ -55,11 +60,20 @@ const Invoice = ({ data }) => {
                   color={Colors.principal.DEFAULT}
                />
                <View className="flex flex-col">
-                  <DetailInfo title="Calle:">{data.calle}</DetailInfo>
-                  <DetailInfo title="Colonia:">{data.colonia}</DetailInfo>
-                  <DetailInfo title="Del.">{data.del}</DetailInfo>
+                  <DetailInfo title="Calle:">{data.street}</DetailInfo>
+                  <DetailInfo title="Colonia o Fraccionamiento:">
+                     {data.division}
+                  </DetailInfo>
+                  <DetailInfo title="No. Exterior:">
+                     {data.number_ext}
+                  </DetailInfo>
+                  <DetailInfo title="No. Interior:">
+                     {data.number_int}
+                  </DetailInfo>
                   <DetailInfo title="C.P.">{data.cp}</DetailInfo>
+                  <DetailInfo title="Pais:">{data.country}</DetailInfo>
                   <DetailInfo title="Estado:">{data.state}</DetailInfo>
+                  <DetailInfo title="Ciudad:">{data.city}</DetailInfo>
                </View>
             </View>
             <View className="flex flex-row items-center space-x-3">
@@ -79,11 +93,9 @@ const Invoice = ({ data }) => {
                   color={Colors.principal.DEFAULT}
                />
                <View className="flex flex-col">
-                  <DetailInfo title="Correo:">{data.email}</DetailInfo>
                   <DetailInfo title="Regimen fiscal:">
                      {data.tax_regime}
                   </DetailInfo>
-                  <DetailInfo title="Uso CFDI:">{data.cfdi}</DetailInfo>
                </View>
             </View>
          </View>

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
    StyleSheet,
    Text,
    View,
    TouchableOpacity,
-   Image,
    Alert,
    KeyboardAvoidingView,
    Platform,
@@ -12,7 +11,6 @@ import {
 import { Colors } from '../../lib';
 
 // Icons
-import GoogleIcon from '../../assets/Icons/googleIcon.png';
 import {
    ContainerBack,
    SpinLoading,
@@ -22,8 +20,6 @@ import {
 } from '../../components';
 import { authRoutes as routes } from '../../constants/routes';
 import { Singin } from '../../services/firebase/Singin';
-
-import AntDesign from "@expo/vector-icons/AntDesign"
 
 
 const LoginScreen = ({ navigation }) => {
@@ -49,47 +45,53 @@ const LoginScreen = ({ navigation }) => {
 
    return (
       <ContainerBack navigation={navigation}>
-         <View style={styles.top}>
-            <AntDesign name="find" color="#F66" size={52} />
-            <Text style={styles.top.title}>Inicia sesion ahora</Text>
-            <Text style={styles.top.description}>
-               Entra o registrate ahora, para poder buscar los servicios que
-               nesecitas.
-            </Text>
-         </View>
-
          <KeyboardAvoidingView
             style={styles.fills}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={50}
+            keyboardVerticalOffset={60}
          >
-            <TextInputComponent
-               value={user.email}
-               onChangeText={e => handleInput("email", e)}
-               label="Email"
-               placeholder="email@hotmail.com"
-               autoComplete="email"
-               keyboardType="email-address"
-               autoCapitalize="none"
-            />
 
-            <TextInputComponent
-               hide
-               value={user.password}
-               onChangeText={e => handleInput("password", e)}
-               label="Password"
-               placeholder="password"
-               autoComplete="password"
-               autoCapitalize="none"
-            />
-            <TouchableOpacity style={{ marginLeft: 'auto' }}>
-               <Text style={{ color: '#040048', fontWeight: '600' }}>
-                  Olvidaste la contraseña?
-               </Text>
-            </TouchableOpacity>
-         </KeyboardAvoidingView>
+            {/* Titulo... */}
+            <View style={styles.top}>
+               <Text style={styles.top.title}>Bienvenido de nuevo!, Tus Servicios al instante...</Text>
+            </View>
 
-         <View style={styles.bottom}>
+
+            {/* Inputs... */}
+            <View style={{
+               display: "flex",
+               flexDirection: "column",
+               gap: 12
+            }}>
+               <TextInputComponent
+                  value={user.email}
+                  onChangeText={e => handleInput("email", e)}
+                  label="Email"
+                  placeholder="Ingresa tu email"
+                  autoComplete="email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+               />
+
+               <TextInputComponent
+                  hide
+                  value={user.password}
+                  onChangeText={e => handleInput("password", e)}
+                  label="Ingresa tu contraseña"
+                  placeholder="Ingresa tu contraseña"
+                  autoComplete="password"
+                  autoCapitalize="none"
+               />
+
+               <TouchableOpacity style={{ marginLeft: 'auto' }}>
+                  <Text style={{ color: '#040048', fontWeight: '600' }}>
+                     Olvidaste la contraseña?
+                  </Text>
+               </TouchableOpacity>
+            </View>
+
+
+            {/* Iniciar sesion... */}
             <TouchableOpacity
                onPress={handleLoginUser}
                style={styles.bottom.button}
@@ -100,22 +102,33 @@ const LoginScreen = ({ navigation }) => {
                   <SpinLoading />
                )}
             </TouchableOpacity>
+         </KeyboardAvoidingView>
 
-            <View style={styles.bottom.socialMedia}>
+
+         {/* Aplicacion */}
+         <View style={styles.bottom}>
+            <View style={styles.lines}>
+               <View style={styles.lines.line} />
+               <Text style={styles.lines.text}>O Inicia Sesion con</Text>
+               <View style={styles.lines.line} />
+            </View>
+
+            <View style={styles.socialMedia}>
                <LoginGoogle />
                <LoginFacebook />
             </View>
+         </View>
 
-            <View style={styles.bottom.register}>
-               <Text style={{ color: Colors.secondary.DEFAULT }}>
-                  No tienes cuenta?
+
+         <View style={styles.bottom.register}>
+            <Text style={{ color: Colors.secondary.DEFAULT }}>
+               No tienes cuenta?
+            </Text>
+            <TouchableOpacity onPress={handleRegister}>
+               <Text style={{ color: '#040048', fontWeight: '600' }}>
+                  Registrate
                </Text>
-               <TouchableOpacity onPress={handleRegister}>
-                  <Text style={{ color: '#040048', fontWeight: '600' }}>
-                     Registrate
-                  </Text>
-               </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
          </View>
       </ContainerBack>
    );
@@ -132,63 +145,42 @@ const styles = StyleSheet.create({
       marginHorizontal: 'auto',
    },
    top: {
-      marginTop: 24,
       display: 'flex',
       flexDirection: 'column',
-      gap: 18,
-      marginHorizontal: 'auto',
-      alignItems: 'center',
-      maxWidth: '75%',
+      alignItems: 'left',
       title: {
-         color: '#040048',
+         color: '#1E232C',
          fontWeight: '700',
-         fontSize: 26,
-      },
-      description: {
-         color: Colors.secondary.DEFAULT,
-         textAlign: 'center',
+         fontSize: 24,
       },
    },
    fills: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 24,
+      gap: 48,
       input: {
          paddingVertical: 8,
          flex: 1,
       },
+      marginBottom: "auto",
+      paddingVertical: 32,
+      flex: 1
    },
    bottom: {
       width: '100%',
       marginHorizontal: 'auto',
       gap: 24,
+      marginBottom: 48,
       button: {
          width: '100%',
          height: 52,
-         borderRadius: 50,
-         backgroundColor: '#040048',
+         borderRadius: 12,
+         backgroundColor: '#1E232C',
          text: {
             color: Colors.white,
             marginHorizontal: 'auto',
             fontSize: 16,
             marginVertical: 'auto',
-         },
-      },
-      socialMedia: {
-         width: '100%',
-         display: 'flex',
-         flexDirection: 'row',
-         justifyContent: 'center',
-         gap: 12,
-         buttons: {
-            borderWidth: 1,
-            borderRadius: 8,
-            padding: 6,
-            borderColor: '#040048',
-            Icon: {
-               width: 32,
-               height: 32,
-            },
          },
       },
       register: {
@@ -198,6 +190,25 @@ const styles = StyleSheet.create({
          marginHorizontal: 'auto',
       },
    },
+   lines: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-around",
+      line: {
+         flex: 1, // Para que las líneas sean del mismo tamaño
+         height: 1,
+         backgroundColor: "#ccc",
+      },
+      text: {
+         marginHorizontal: 10, // Espaciado entre el texto y las líneas
+      },
+   },
+   socialMedia: {
+      flexDirection: "row",
+      width: "100%",
+      gap: 12
+   }
 });
 
 export default LoginScreen;

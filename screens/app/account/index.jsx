@@ -7,19 +7,24 @@ import {
    SafeAreaView,
    StatusBar,
 } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import { Singout } from "@/services/firebase/Singout";
 import { UserConfigButton, Option } from "components";
 
-import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { AuthContext } from "context/AuthContext";
+import { usePaymentSheet } from "@stripe/stripe-react-native";
+import { getPaymentParams } from "services/api/getPaymantParams";
+import useGlobal from "core/globals";
 
 const AccountScreen = ({ navigation }) => {
+   const { token } = useGlobal()
+   const customerUser = useGlobal(state => state.customer)
+
+
    const { isCompany } = useContext(AuthContext);
    const handleSingout = async () => {
       await Singout().catch((e) => {
@@ -29,6 +34,61 @@ const AccountScreen = ({ navigation }) => {
 
    const handleScreen = (name) => {
       navigation.navigate(name);
+   };
+
+
+
+   // Datos Bancarios
+   const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
+   const [loadingPayments, setLoadingPayments] = useState(false);
+   const [isModalActivePayment, setIsModalActivePayment] = useState(false);
+
+
+   useEffect(() => {
+      initializePaymentSheet();
+   }, []);
+
+   const fetchPaymentSheetParams = async () => {
+      try {
+         const { ephemeralKey, setupIntent } = await getPaymentParams(token).catch((error) => {
+            throw new Error(error.message)
+         });
+         return { ephemeralKey, setupIntent };
+      } catch (error) {
+         console.error('Error fetching payment sheet parameters:', error);
+         Alert.alert('Error', error.message);
+      }
+   };
+
+   const initializePaymentSheet = async () => {
+      setLoadingPayments(false);
+      const { ephemeralKey, setupIntent } = await fetchPaymentSheetParams();
+
+      if (ephemeralKey && setupIntent) {
+         const { error } = await initPaymentSheet({
+            customerEphemeralKeySecret: ephemeralKey,
+            merchantDisplayName: "User",
+            allowsDelayedPaymentMethods: true,
+            returnURL: 'workit://stripe-return',
+            setupIntentClientSecret: setupIntent,
+            customerId: customerUser.customerId,
+         });
+
+         if (error) {
+            console.error('Error initializing payment sheet:', error);
+            Alert.alert('Error', error.message);
+         } else {
+            setLoadingPayments(true);
+         }
+      }
+   };
+
+   const handleNewCard = async () => {
+      if (!loadingPayments) return;
+      setIsModalActivePayment(true);
+      await initializePaymentSheet();
+      await presentPaymentSheet();
+      setIsModalActivePayment(false);
    };
 
    return (
@@ -68,11 +128,13 @@ const AccountScreen = ({ navigation }) => {
 
                <View className="rounded-lg overflow-hidden flex flex-col">
                   <Option
-                     onPress={() => handleScreen("Payment")}
+                     onPress={handleNewCard}
                      styles="bg-red-500"
                      icon={AntDesign}
                      iconName="creditcard"
                      label="Datos Bancarios"
+                     disabled={isModalActivePayment}
+                     loading={loadingPayments}
                   />
                </View>
 

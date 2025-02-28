@@ -3,35 +3,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 export const InvoiceDataSchema = z.object({
    id: z.string(),
-   name: z.string().min(1, "El nombre es obligatorio"),
+
+   name: z.string().min(1, "La razon social es obligatoria"),
+   street: z.string().min(1, "La calle es obligatoria"),
+   number_ext: z.string().nullable(),
+   number_int: z.string().nullable(),
    rfc: z.string().min(1, "El RFC es obligatorio"),
-   calle: z.string().min(1, "La calle es obligatorio"),
-   colonia: z.string().min(1, "La colonia es obligatorio"),
-   del: z.string().min(1, "El departamento es obligatorio"),
    cp: z.string().min(1, "El CP es obligatorio"),
+   country: z.string().min(1, "El Pais es obligatorio"),
    state: z.string().min(1, "El estado es obligatorio"),
+   city: z.string().min(1, "La ciudad es obligatorio"),
+   division: z.string().min(1, "La colonia es obligatorio"),
    phone: z.string().min(1, "El teléfono es obligatorio"),
-   email: z
-      .string()
-      .min(1, "El email es obligatorio")
-      .email("El email es incorrecto"),
-   tax_regime: z.string().min(1, "El tipo de regimen fiscal es obligatorio"),
-   cfdi: z.string().min(1, "El CFDI es obligatorio"),
+   tax_regime: z.string().min(1, "El regimen fiscal es requerido"),
 });
 
 export type InvoiceData = z.infer<typeof InvoiceDataSchema>;
 export const invoiceDataResolver = zodResolver(InvoiceDataSchema);
 export const defaultInvoiceData: InvoiceData = {
    id: "",
+
    name: "",
+   street: "",
+   number_ext: "",
+   number_int: "",
    rfc: "",
-   calle: "",
-   colonia: "",
-   del: "",
    cp: "",
+   country: "",
    state: "",
+   city: "",
+   division: "",
    phone: "",
-   email: "",
    tax_regime: "",
-   cfdi: "",
 };
