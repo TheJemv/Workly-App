@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Alert, View, Text, SafeAreaView, InputAccessoryView, FlatList, TextInput, TouchableOpacity, Image, Platform } from "react-native"
+import { Alert, View, Text, SafeAreaView, InputAccessoryView, FlatList, TextInput, TouchableOpacity, Image, Platform, Pressable } from "react-native"
 
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome"
 import useGlobal from "core/globals";
@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import IonIcons from "@expo/vector-icons/Ionicons"
 import Feather from "@expo/vector-icons/Feather"
 import { Colors } from "lib";
+import { useNavigation } from "@react-navigation/native";
 
 function MessageHeader({ friend={ photo: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpixnio.com%2Ffree-images%2F2017%2F09%2F26%2F2017-09-26-07-22-55.jpg&f=1&nofb=1&ipt=4923b00e5b975ad061af58fac6903a8ca00e37790e7b205af1da4a278231d6b8&ipo=images", name: "Kira" } }) {
 	return  (
@@ -185,141 +186,22 @@ function MessageBubble({ message, chats }) {
 }
 
 
-function ServiceBubble({ service }) {
-	console.log('ServiceBubble', service)
-	const statusOptions = [{
-		title: 'Solicitado',
-		value: 'payed',
-		icon: 'send',
-	},{
-		title: 'Aceptado',
-		value: 'accepted',
-		icon: 'clock',
-	}, {
-		title: 'En proceso',
-		value: 'in_process',
-		icon: 'truck',
-	}, {
-		title: 'Finalizado',
-		value: 'finished',
-		icon: 'check',
-	}]
+function ServiceBubble({ order }) {
+	const navigation = useNavigation()
 	return (
-		<View style={{
-			flexDirection: 'col',
-			paddingHorizontal: 8,
-			paddingVertical: 8,
-		}}>
-			<View
-				style={{
-					backgroundColor: '#eee',
-					borderRadius: 12,
-					padding: 12,
-					display: 'flex',
-					flexDirection: 'col',
-					gap: 16
-				}}
-			>
-				<View className="flex flex-row items-center" style={{gap: 6}}>
-					<Image
-						style={{
-							width: 80,
-							height: 80,
-							borderRadius: 12
-						}}
-						source={{ uri: 'https://img.freepik.com/free-photo/customer-satisfaction-service-care-problem-solving_53876-120094.jpg' }}
-					/>
-					<View className="flex flex-col h-full">
-						<Text
-							numberOfLines={1}
-							style={{
-								fontWeight: 700,
-								color: Colors.principal.DEFAULT,
-								fontSize: 16,
-							}}
-						>Nombre del serivico.</Text>
-						<Text
-							className="text-text"
-							numberOfLines={5}
-							style={{
-								flexShrink: 1
-							}}
-						>Descripcion</Text>
-					</View>
-				</View>
-
-				<View
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-					}}
-				>
-					<View
-						style={{
-							position: 'absolute',
-							left: '10%',
-							right: '10%',
-							top: '28%',
-							height: 6,
-							backgroundColor: Colors.principal.DEFAULT, // Cambia el color según lo necesites
-							zIndex: 0, // Asegura que la barra esté detrás de los iconos
-							width: `${ (80 / 6) * 1 }%`,
-							borderEndEndRadius: 6,
-							borderStartEndRadius: 6,
-						}}
-					/>
-
-					<View
-						style={{
-							position: 'absolute',
-							left: '10%',
-							right: '10%',
-							top: '28%',
-							height: 6,
-							backgroundColor: Colors.principal.DEFAULT, // Cambia el color según lo necesites
-							zIndex: -1, // Asegura que la barra esté detrás de los iconos
-							opacity: 0.5,
-						}}
-					/>
-
-					{statusOptions.map((option, index) => (
-						<View
-							key={index}
-							style={{
-								display: 'flex',
-								flexDirection: 'col',
-								alignItems: 'center',
-								gap: 4
-							}}
-						>
-							<View
-								style={{
-									width: 32,
-									height: 32,
-									backgroundColor: Colors.principal.DEFAULT,
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-								}}
-								className="rounded-full shadow-sm"
-							>
-								<Feather size={18} name={option.icon} color={'white'} />
-							</View>
-							<Text style={{fontSize: 14}} className="text-text">{option.title}</Text>
-						</View>
-					))}
-				</View>
-
-				<TouchableOpacity className="bg-red-700/90 py-2" style={{
-					borderRadius: 8
-				}} >
-					<Text className="text-white w-full text-center" style={{
-						fontWeight: 700,
-						fontSize: 16,
-					}}>Cancelar</Text>
-				</TouchableOpacity>
-			</View>
+		<View className="flex flex-row items-center justify-center space-x-1 py-1">
+			<Text className="text-text/80">Se ha solicitado una nueva orden</Text>
+			<Pressable onPress={() => {
+				navigation.navigate('StackOrders', {
+					screen: 'TrackOrders',
+					params: {
+						data: order
+					},
+					initial: false
+				})
+			}}>
+				<Text className="text-text/80 underline">Ver.</Text>
+			</Pressable>
 		</View>
 	)
 }
@@ -453,7 +335,6 @@ const UserChatScreen = ({ route, navigation }) => {
 		title: 'Datos de Facturacion',
 		icon: 'albums',
 	}]
-
    return (
 		<>
 			<View style={{flex: 1, opacity: modalIsOpen ? 0.3:1, backgroundColor: modalIsOpen ? "#00000080" : "white"}}>
@@ -485,11 +366,13 @@ const UserChatScreen = ({ route, navigation }) => {
 										chats={messagesList}
 										key={item.id}
 									/>
-								) : item.type === "SERVICE" && (
+								) : item.type === "SERVICE" ? (
 									<ServiceBubble
-										service={item}
+										order={item?.order}
 										key={item.id}
 									/>
+								) : (
+									<Text>Error...</Text>
 								)
 							) : (
 								<MessageLoadingBubble item={item} />

@@ -25,8 +25,9 @@ const ServiceItem = ({ data }) => {
                <Text style={styles.description} className="text-text" numberOfLines={5}>{data?.description}</Text>
             </View>
          </View>
-
-         <Text className="" style={{fontSize:16,fontWeight:800,color:'#364670',paddingTop:6}}>Desde ${data?.unit_amount/100} {data?.currency}</Text>
+         {!data?.indefinite && (
+            <Text className="" style={{fontSize:16,fontWeight:800,color:'#364670',paddingTop:6}}>Desde ${data?.unit_amount/100} {data?.currency}</Text>
+         )}
          <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={() => navigation.navigate("service", {
                id: data?.id

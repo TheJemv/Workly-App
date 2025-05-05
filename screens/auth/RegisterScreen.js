@@ -6,10 +6,10 @@ import {
    KeyboardAvoidingView,
    Platform,
    Alert,
+   Keyboard,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Colors } from '../../lib';
-import Feather from '@expo/vector-icons/Feather';
 import {
    TextInputComponent,
    ContainerBack,
@@ -45,78 +45,87 @@ const RegisterScreen = ({ navigation }) => {
 
    return (
       <ContainerBack navigation={navigation}>
-         <View style={styles.top}>
-            <Feather name="user" color="#F66" size={52} />
-            <Text style={styles.top.title}>Registrate ahora</Text>
-            <Text style={styles.top.description}>
-               Registrate ahora, y tendras todos tus servicios a un solo click.
-            </Text>
-         </View>
-         <KeyboardAvoidingView
-            style={styles.fills}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={50}
-         >
-            <TextInputComponent
-               value={user.email}
-               onChangeText={e => handleInput('email', e)}
-               label="Email"
-               placeholder="email@hotmail.com"
-               autoComplete="email"
-               keyboardType="email-address"
-               autoCapitalize="none"
-            />
+         <View style={styles.container}>
+            {/* Titulo... */}
+            <View style={styles.top}>
+               <Text style={styles.top.title}>Bienvenido de nuevo!, Tus Servicios al instante...</Text>
+            </View>
 
-            <TextInputComponent
-               hide
-               value={user.password}
-               onChangeText={e => handleInput('password', e)}
-               label="Password"
-               placeholder="password"
-               autoComplete="password"
-               autoCapitalize="none"
-            />
-
-            <TextInputComponent
-               hide
-               value={user.confirmPassword}
-               onChangeText={e => handleInput('confirmPassword', e)}
-               label="Confirm Password"
-               placeholder="password"
-               autoComplete="password"
-               autoCapitalize="none"
-            />
-         </KeyboardAvoidingView>
-         <View
-            style={{
-               display: 'flex',
-               flexDirection: 'column',
-               gap: 8,
-            }}
-         >
-            <View style={styles.bottom}>
-               <TouchableOpacity
-                  onPress={handleRegisterUser}
-                  style={styles.bottom.button}
+            <KeyboardAvoidingView
+               style={styles.fills}
+               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+               keyboardVerticalOffset={100}
+            >
+               <View
+                  style={{
+                     display: "flex",
+                     flexDirection: "column",
+                     gap: 12
+                  }}
                >
-                  {!loading ? (
-                     <Text style={styles.bottom.button.text}>Sign Up</Text>
-                  ) : (
-                     <SpinLoading />
-                  )}
-               </TouchableOpacity>
-            </View>
+                  <TextInputComponent
+                     value={user.email}
+                     onChangeText={e => handleInput('email', e)}
+                     label="Email"
+                     placeholder="email@hotmail.com"
+                     autoComplete="email"
+                     keyboardType="email-address"
+                     autoCapitalize="none"
+                  />
 
-            <View style={styles.bottom.login}>
-               <Text style={{ color: Colors.secondary.DEFAULT }}>
-                  Ya tienes cuenta?
-               </Text>
-               <TouchableOpacity onPress={handleLogin}>
-                  <Text style={{ color: '#040048', fontWeight: '600' }}>
-                     Inicia Sesion
-                  </Text>
-               </TouchableOpacity>
-            </View>
+                  <TextInputComponent
+                     hide
+                     value={user.password}
+                     onChangeText={e => handleInput('password', e)}
+                     label="Password"
+                     placeholder="password"
+                     autoComplete="password"
+                     autoCapitalize="none"
+                  />
+
+                  <TextInputComponent
+                     hide
+                     value={user.confirmPassword}
+                     onChangeText={e => handleInput('confirmPassword', e)}
+                     label="Confirm Password"
+                     placeholder="password"
+                     autoComplete="password"
+                     autoCapitalize="none"
+                  />
+               </View>
+
+               <View
+                  style={{
+                     display: 'flex',
+                     flexDirection: 'column',
+                     gap: 8,
+                  }}
+               >
+                  <View style={styles.bottom}>
+                     <TouchableOpacity
+                        onPress={handleRegisterUser}
+                        style={styles.bottom.button}
+                     >
+                        {!loading ? (
+                           <Text style={styles.bottom.button.text}>Sign Up</Text>
+                        ) : (
+                           <SpinLoading />
+                        )}
+                     </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.bottom.login}>
+                     <Text style={{ color: Colors.secondary.DEFAULT }}>
+                        Ya tienes cuenta?
+                     </Text>
+                     <TouchableOpacity onPress={handleLogin}>
+                        <Text style={{ color: '#040048', fontWeight: '600' }}>
+                           Inicia Sesion
+                        </Text>
+                     </TouchableOpacity>
+                  </View>
+               </View>
+            </KeyboardAvoidingView>
          </View>
       </ContainerBack>
    );
@@ -129,27 +138,20 @@ const styles = StyleSheet.create({
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
-      width: '85%',
+      width: '100%',
       marginHorizontal: 'auto',
       height: '100%',
+      marginVertical: 32,
    },
 
    top: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 8,
-      marginHorizontal: 'auto',
-      alignItems: 'center',
-      maxWidth: '75%',
+      alignItems: 'left',
       title: {
-         marginTop: 8,
-         color: '#040048',
+         color: '#1E232C',
          fontWeight: '700',
-         fontSize: 26,
-      },
-      description: {
-         color: Colors.secondary.DEFAULT,
-         textAlign: 'center',
+         fontSize: 24,
       },
    },
 
@@ -170,9 +172,9 @@ const styles = StyleSheet.create({
       button: {
          width: '100%',
          height: 52,
-         borderRadius: 50,
-         backgroundColor: '#040048',
-         borderColor: '#040048',
+         borderRadius: 12,
+         backgroundColor: '#1E232C',
+         borderColor: '#1E232C',
          borderWidth: 2,
          text: {
             color: Colors.white,

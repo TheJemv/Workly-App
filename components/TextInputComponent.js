@@ -20,13 +20,11 @@ const TextInputComponent = ({
 }) => {
    const [viewPassword, setViewPassword] = useState(true);
    return (
-      <View>
-         <Text>{label}</Text>
+      <View style={styles.container}>
          <View
             style={{
                display: 'flex',
                flexDirection: 'row',
-               borderBottomWidth: 0.7,
             }}
          >
             <TextInput
@@ -66,6 +64,14 @@ const styles = StyleSheet.create({
       paddingVertical: 8,
       flex: 1,
    },
+   container: {
+      backgroundColor: "#F7F8F9",
+      borderColor: "#DADADA",
+      borderWidth: 1,
+      borderRadius: 12,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+   }
 });
 
 export default TextInputComponent;

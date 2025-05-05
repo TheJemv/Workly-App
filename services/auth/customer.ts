@@ -1,10 +1,9 @@
-import { API_HOST } from "@env";
-import axios from "axios";
+import apiClient from "services/api/apiClient";
 
 export const customer = async (token: string) => {
    try {
-      const response: any = await axios
-         .get(`${await API_HOST}/customer`, {
+      const response: any = await apiClient
+         .get("/customer", {
             headers: {
                Authorization: `Bearer ${token}`,
             },

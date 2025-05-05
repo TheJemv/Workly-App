@@ -48,7 +48,7 @@ const ServiceItem = ({ data }) => {
                <SpinLoading color={"#364670"} size={48} />
             </View>
          ):(
-            <>
+            <View className="flex flex-col space-y-1">
                <View style={styles.innerContainer}>
                   <Image
                      style={styles.imageService}
@@ -63,7 +63,10 @@ const ServiceItem = ({ data }) => {
                   </View>
                </View>
 
-               <Text className="" style={{fontSize:16,fontWeight:800,color:'#364670',paddingTop:6}}>Desde ${data?.unit_amount/100} {data?.currency}</Text>
+               {!data?.indefinite && (
+                  <Text className="" style={{fontSize:16,fontWeight:800,color:'#364670',paddingTop:6}}>Desde ${data?.unit_amount/100} {data?.currency}</Text>
+               )}
+
                <View style={styles.buttonContainer}>
                   <TouchableOpacity onPress={() => navigation.navigate("editservice", {
                      service: data
@@ -75,7 +78,7 @@ const ServiceItem = ({ data }) => {
                      <Text className="text-center text-white" style={{ fontWeight:700, fontSize:16 }}>Eliminar</Text>
                   </TouchableOpacity>
                </View>
-            </>
+            </View>
          )}
       </View>
    )
@@ -91,11 +94,9 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       overflow: 'hidden',
       paddingHorizontal: 8,
-      paddingVertical: 8,
+      paddingVertical: 12,
       gap: 8,
-      height: 195,
       maxHeight: 195,
-      minHeight: 195,
       display: "flex",
       justifyContent: "center"
    },

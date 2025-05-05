@@ -1,20 +1,19 @@
-import { API_HOST } from "@env";
-import axios from "axios";
+// import { API_HOST } from "@env";
+import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
 
 export const updatedCustomer = async (token: string, data: object) => {
    try {
-      const response: any = await axios.patch(
-         `${await API_HOST}/customer`,
-         data,
-         {
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         }
-      );
+      console.log(data, token);
+      const response: any = await apiClient.patch("/customer", data, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
+
+      console.log(response);
 
       return response?.data;
    } catch (error) {
-      return error.message;
+      return error.message || "Algo salió mal al actualizar el cliente";
    }
 };

@@ -1,32 +1,36 @@
-import { API_HOST } from "@env"
-import axios from "axios";
+import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
 
-export const getPaymantParams = async(token: string) => {
+export const getPaymentParams = async (token: string) => {
    try {
-      const response = await axios.get(`${API_HOST}/customer/payment`, {
+      const response = await apiClient.get("/customer/payment", {
          headers: {
             Authorization: `Bearer ${token}`,
-         }
-      })
+         },
+      });
 
-      return await response.data
-   } catch {
-      throw new Error("Error al obtener los datos bancarios")
+      return response.data;
+   } catch (error) {
+      throw new Error("Error al obtener los datos bancarios");
    }
-}
+};
 
-export const setPayment = async(token: string, setupIntent: string) => {
-   const response = await fetch(`${API_HOST}/customer/setPayment`, {
-      method: 'POST',
-      headers: {
-         Authorization: `Bearer ${token}`,
-         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-         setupIntent: setupIntent
-      })
-   })
+export const setPayment = async (token: string, setupIntent: string) => {
+   try {
+      const response = await apiClient.post(
+         "/customer/setPayment",
+         {
+            setupIntent: setupIntent,
+         },
+         {
+            headers: {
+               Authorization: `Bearer ${token}`,
+               "Content-Type": "application/json",
+            },
+         }
+      );
 
-   if(!response.ok) throw new Error("Error para dar de alta la tarjeta.")
-   return await response.json();
-}
+      return response.data;
+   } catch (error) {
+      throw new Error(error.message || "Error al dar de alta la tarjeta");
+   }
+};

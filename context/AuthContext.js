@@ -46,12 +46,14 @@ export const AuthProvider = ({ children }) => {
       try {
          const token = await user.getIdToken(true).then((token) => {
             setToken(token);
-            return token;
+            return token
          }).catch(() => {
             throw new Error("Error para obtener el token.");
          });
 
-         const { accountType, statusSubscription } = (await user.getIdTokenResult()).claims;
+
+         // const { accountType, statusSubscription } = await user.getIdTokenResult().claims;
+         // console.log(accountType, statusSubscription)
 
          setUser(user);
          await getCustomer(token).then((user) => {

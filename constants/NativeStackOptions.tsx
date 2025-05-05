@@ -11,6 +11,7 @@ const NativeStackOptions: NativeStackNavigationOptions = {
    contentStyle: {
       backgroundColor: "#eee",
    },
+   headerTitle: "",
 };
 
 export default NativeStackOptions;

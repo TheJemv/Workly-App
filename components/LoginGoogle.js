@@ -12,7 +12,7 @@ const LoginGoogle = () => {
       } catch (e) {
          Alert.alert("Error", e.message)
       }
-   }, [response]) 
+   }, [response])
 
    return (
       <TouchableOpacity onPress={() => promptAsync()} style={styles.buttons}>
@@ -34,7 +34,11 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderRadius: 8,
       padding: 6,
-      borderColor: '#040048',
+      borderColor: '#DADADA',
+      flex: 1,
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center"
    },
 });
 

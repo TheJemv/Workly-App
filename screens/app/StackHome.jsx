@@ -7,6 +7,7 @@ import HomeScreen from "./home"
 import ServicesScreenCategory from "./home/ServicesCategory"
 import ServiceHire from "./home/ServiceHire"
 import SearchScreen from "./home/SearchScreen"
+import CompanyProfile from "./home/company-profile"
 
 const Stack = createNativeStackNavigator()
 const StackHome = () => {
@@ -17,6 +18,11 @@ const StackHome = () => {
       >
          <Stack.Screen name="home" component={HomeScreen} />
          <Stack.Screen name="search" component={SearchScreen} />
+         <Stack.Screen name="company" component={CompanyProfile}
+            options={{
+               headerShown: false
+            }}
+         />
 
          <Stack.Screen
             name="service"

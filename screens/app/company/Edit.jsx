@@ -47,28 +47,29 @@ const ScreenEdit = () => {
    const handleImage = async () => {
       setLoadingImage(true)
       try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-         allowsEditing: true,
-         aspect: [1, 1],
-         quality: 1
-      });
-      if (!result.canceled) {
-         const fileSize = await getFileSize(result.assets[0].uri);
-         if (fileSize >= MAX_FILE_SIZE) {
-            Alert.alert("Error", "La foto no puede ser mayor de 10MB")
-            return
+         let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1
+         });
+
+         if (!result.canceled) {
+            const fileSize = await getFileSize(result.assets[0].uri);
+            if (fileSize >= MAX_FILE_SIZE) {
+               Alert.alert("Error", "La foto no puede ser mayor de 10MB")
+               return
+            }
+
+            const base64 = await RNFS.readFile(result.assets[0].uri, "base64")
+            const data = await updateCompany(token, {
+               photo: base64
+            })
+
+
+            setCurrentImage(data?.profile?.photo);
+            await reloadCompany()
          }
-
-         const base64 = await RNFS.readFile(result.assets[0].uri, "base64")
-         const data = await updateCompany(token, {
-            photo: base64
-         })
-
-
-         setCurrentImage(data?.profile?.photo);
-         await reloadCompany()
-      }
       } catch(error) {
          Alert.alert(error.message)
       } finally {
@@ -91,6 +92,7 @@ const ScreenEdit = () => {
       if (key === "public") {
          return getValue(companyData, key) ? 'Publica' : 'Privada'
       }
+
       return getValue(companyData, key) ? getValue(companyData, key) : title
    }
 

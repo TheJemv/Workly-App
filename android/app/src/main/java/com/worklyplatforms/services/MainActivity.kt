@@ -1,4 +1,4 @@
-package com.thejemv.workit
+package com.worklyplatforms.services
 
 import android.os.Build
 import android.os.Bundle

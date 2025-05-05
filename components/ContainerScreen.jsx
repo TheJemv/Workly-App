@@ -1,10 +1,8 @@
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
-import { SafeAreaView, View } from "react-native"
+import { SafeAreaView, StatusBar } from "react-native"
 
 const ContainerScreen = ({ children }) => {
-   const bottomTab = useBottomTabBarHeight()
    return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
          {children}
       </SafeAreaView>
    )

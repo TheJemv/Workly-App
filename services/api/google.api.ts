@@ -2,11 +2,13 @@ import { GOOGLE_API_MAP } from "@env";
 
 export const getStreetName = async (latitude: number, longitude: number) => {
    try {
-      const URL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_API_MAP}`;
+      const URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${GOOGLE_API_MAP}&latlng=${latitude},${longitude}`;
+      console.log(URL);
       const response = await fetch(URL);
       const data = await response.json();
-
-      if (!(data.results.length > 0)) throw new Error("No results found");
+      if (!data || !data.results || data.results.length === 0) {
+         throw new Error("No se encontraron resultados");
+      }
 
       const result = data.results[0];
       const addressComponents = result.address_components;
