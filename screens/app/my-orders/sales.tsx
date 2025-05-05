@@ -1,4 +1,4 @@
-import { FlatList, SafeAreaView, ScrollView } from "react-native";
+import { FlatList, SafeAreaView, ScrollView, View } from "react-native";
 import { Order } from "./types";
 import useGlobal from "core/globals";
 import { OrderCard } from "./components/order-card";
@@ -38,8 +38,8 @@ export function SalesScreen({ navigation }: Props): JSX.Element {
 
    return sales !== null ? (
       sales.loaded ? (
-         <SafeAreaView className="flex-1">
-            <ScrollView>
+         <SafeAreaView className="flex-1 ">
+            <ScrollView className="flex-1">
                <FlatList
                   data={sales?.data?.sort(
                      (a, b) =>
@@ -53,11 +53,13 @@ export function SalesScreen({ navigation }: Props): JSX.Element {
                         onPress={handleScreen("TrackOrders", { data: item })}
                      />
                   )}
+                  scrollEnabled={false}
                   contentContainerStyle={{
                      paddingVertical: 8,
                      paddingHorizontal: 12,
                      gap: 12,
                   }}
+                  ListFooterComponent={() => <View className="my-4" />}
                />
             </ScrollView>
          </SafeAreaView>

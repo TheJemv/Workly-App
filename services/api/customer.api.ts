@@ -10,6 +10,8 @@ export const updatedCustomer = async (token: string, data: object) => {
          },
       });
 
+      console.log(response);
+
       return response?.data;
    } catch (error) {
       return error.message || "Algo salió mal al actualizar el cliente";

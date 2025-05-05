@@ -3,7 +3,7 @@ import { Colors } from '../lib';
 import AntDesing from 'react-native-vector-icons/AntDesign';
 import { Animated, Easing } from 'react-native';
 
-export default function ({ color, size }) {
+export default function ({ color = Colors.principal.DEFAULT, size = 24 }) {
    const spinValue = new Animated.Value(0);
 
    Animated.loop(
@@ -26,12 +26,12 @@ export default function ({ color, size }) {
       >
          <AntDesing
             name="loading1"
-            color={color ? color : Colors.white}
+            color={color}
             style={{
                marginVertical: 'auto',
                marginHorizontal: 'auto',
             }}
-            size={size ? size : 24}
+            size={size}
          />
       </Animated.View>
    );

@@ -2,6 +2,7 @@ import { FlatList, SafeAreaView, ScrollView } from "react-native";
 import { Order } from "./types";
 import useGlobal from "core/globals";
 import { OrderCard } from "./components/order-card";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 type Props = {
    navigation: any;
@@ -32,6 +33,7 @@ export function OrdersScreen({ navigation }: Props): JSX.Element {
                paddingVertical: 8,
                paddingHorizontal: 12,
                gap: 12,
+               paddingBottom: useBottomTabBarHeight(),
             }}
          />
       </SafeAreaView>

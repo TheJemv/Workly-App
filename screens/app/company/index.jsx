@@ -1,14 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "context/AuthContext";
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import {
    View, Text,
    SafeAreaView, Image,
    StyleSheet, TouchableOpacity,
    Linking, Platform,
-   Alert, ScrollView,
-   Animated,
-   Easing,
    FlatList
 } from "react-native";
 import { ServiceItem } from "components"
@@ -17,7 +13,6 @@ import { Colors } from "lib";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign"
-import PaymentSubscription from "components/PaymentSubscription";
 
 import useGlobal from "core/globals";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -67,21 +62,16 @@ const handleCall = async (phoneNumber) => {
 
 const ProfileScreen = () => {
    const navigation = useNavigation();
+
    const companyData = useGlobal((state) => state.company);
    const servicesData = useGlobal((state) => state.services);
 
    const getServices = useGlobal((state) => state.getServices);
-
    useLayoutEffect(() => {
       navigation.setOptions({
          headerShown: false,
       });
    }, [])
-
-   const handleScroll = async () => {
-      console.log("Scrolling");
-   }
-
 
    useEffect(() => {
       getServices();
@@ -96,7 +86,7 @@ const ProfileScreen = () => {
             style={{ marginBottom: useBottomTabBarHeight() }}
          >
             <View className="flex flex-col space-y-3">
-               <View className="flex flex-row items-center space-x-3">
+               <View className="flex flex-row items-center space-x-3 w-full">
                   <View className="w-12 h-12 rounded-full bg-light/25">
                      <Image
                         className="w-full h-full rounded-full"
@@ -106,9 +96,11 @@ const ProfileScreen = () => {
                      />
                   </View>
                   <View className="flex flex-col space-y-1">
-                     <Text className="text-base text-dark font-semibold">
-                        Google Inc.
-                     </Text>
+                     <View className="flex flex-row justify-between">
+                        <Text className="text-base text-dark font-semibold">
+                           { companyData?.profile?.name }
+                        </Text>
+                     </View>
                      {companyData?.profile?.address && (
                         <View className="flex flex-row items-center space-x-1">
                            <FontAwesome
@@ -122,6 +114,12 @@ const ProfileScreen = () => {
                         </View>
                      )}
                   </View>
+
+                  <TouchableOpacity style={{
+                     marginStart: "auto"
+                  }} onPress={() => navigation.navigate("edit")} className="bg-primary p-1.5 rounded-full justify-self-end">
+                     <AntDesign color={"white"} size={14} name="edit" />
+                  </TouchableOpacity>
                </View>
 
                <Text
@@ -135,7 +133,7 @@ const ProfileScreen = () => {
                   </View>
 
                   <View className="flex flex-row items-center justify-evenly space-x-2">
-                     {socialMedia.map((socialMedia, index) => {
+                     {/* {socialMedia.map((socialMedia, index) => {
                         return (
                            <View key={index}>
                               {socialMedia.isCall ? (
@@ -153,6 +151,21 @@ const ProfileScreen = () => {
                               )}
                            </View>
                         )
+                     })} */}
+
+                     {Object.entries(companyData.profile.contact).map(([key, value]) => {
+                        const dataMedia = ["instagram", "facebook", "phone", "linkedin"]
+                        if(key in dataMedia && value) {
+                           return (
+                              <View key={key}>
+                                 <ButtonIconLink
+                                    icon={socialMedia.icon}
+                                    color={socialMedia.color}
+                                    onPress={key === "phone" ? handleCall(socialMedia.phone) : handleOpenLink(socialMedia.url)}
+                                 />
+                              </View>
+                           )
+                        }
                      })}
                   </View>
                </View>
@@ -165,11 +178,13 @@ const ProfileScreen = () => {
                renderItem={({ item }) => (
                   <CardService
                      key={item.id}
+                     id={item.id}
                      title={item.name}
                      description={item.description}
                      price={item.unit_amount}
                      currency={item.currency}
                      photo={item.photo}
+                     data={item}
                   />
                )}
                contentContainerStyle={{

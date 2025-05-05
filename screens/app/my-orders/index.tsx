@@ -1,12 +1,10 @@
-import { SafeAreaView, FlatList, Text } from "react-native";
+import { SafeAreaView, FlatList, Text, View } from "react-native";
 import { OrderCard } from "./components/order-card";
 import { Order } from "./types";
-import { useCallback, useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import useGlobal from "core/globals";
 import SpinLoading from "components/SpinLoading";
 import { Colors } from "lib";
-import { useFocusEffect } from "@react-navigation/native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 type Props = {
    navigation: any;
@@ -57,8 +55,15 @@ export function MyOrdersScreen({ navigation }: Props): JSX.Element {
                   paddingVertical: 8,
                   paddingHorizontal: 12,
                   gap: 12,
-                  paddingBottom: useBottomTabBarHeight(),
                }}
+               ListHeaderComponent={() => (
+                  <View className="flex flex-row border-b-[0.3px] border-gray-400 pb-1 w-full">
+                     <Text className="text-primary font-semibold text-xl">
+                        Mis Ordenes
+                     </Text>
+                  </View>
+               )}
+               ListFooterComponent={() => <View className="my-4" />}
             />
          </SafeAreaView>
       ) : (

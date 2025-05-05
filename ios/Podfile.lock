@@ -13,7 +13,7 @@ PODS:
     - ExpoModulesCore
   - EXManifests (0.14.3):
     - ExpoModulesCore
-  - Expo (51.0.39):
+  - Expo (51.0.38):
     - ExpoModulesCore
   - expo-dev-client (4.0.29):
     - EXManifests
@@ -224,7 +224,7 @@ PODS:
     - Yoga
   - ExpoAsset (10.0.10):
     - ExpoModulesCore
-  - ExpoBlur (13.0.3):
+  - ExpoBlur (13.0.2):
     - ExpoModulesCore
   - ExpoCrypto (13.0.2):
     - ExpoModulesCore
@@ -293,8 +293,11 @@ PODS:
   - hermes-engine (0.74.5):
     - hermes-engine/Pre-built (= 0.74.5)
   - hermes-engine/Pre-built (0.74.5)
-  - PurchasesHybridCommon (13.13.0):
-    - RevenueCat (= 5.14.0)
+  - PurchasesHybridCommon (13.28.1):
+    - RevenueCat (= 5.21.2)
+  - PurchasesHybridCommonUI (13.28.1):
+    - PurchasesHybridCommon (= 13.28.1)
+    - RevenueCatUI (= 5.21.2)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1479,7 +1482,9 @@ PODS:
     - React-logger (= 0.74.5)
     - React-perflogger (= 0.74.5)
     - React-utils (= 0.74.5)
-  - RevenueCat (5.14.0)
+  - RevenueCat (5.21.2)
+  - RevenueCatUI (5.21.2):
+    - RevenueCat (= 5.21.2)
   - RNCAsyncStorage (1.23.1):
     - React-Core
   - RNCPicker (2.7.5):
@@ -1507,8 +1512,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNPurchases (8.4.2):
-    - PurchasesHybridCommon (= 13.13.0)
+  - RNPaywalls (8.9.5):
+    - PurchasesHybridCommonUI (= 13.28.1)
+    - React-Core
+  - RNPurchases (8.9.5):
+    - PurchasesHybridCommon (= 13.28.1)
     - React-Core
   - RNReanimated (3.10.1):
     - DoubleConversion
@@ -1679,6 +1687,7 @@ DEPENDENCIES:
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPaywalls (from `../node_modules/react-native-purchases-ui`)
   - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -1688,7 +1697,9 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
     - RevenueCat
+    - RevenueCatUI
     - SocketRocket
     - Stripe
     - StripeApplePay
@@ -1869,6 +1880,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPaywalls:
+    :path: "../node_modules/react-native-purchases-ui"
   RNPurchases:
     :path: "../node_modules/react-native-purchases"
   RNReanimated:
@@ -1889,13 +1902,13 @@ SPEC CHECKSUMS:
   EXJSONUtils: 30c17fd9cc364d722c0946a550dfbf1be92ef6a4
   EXLocation: c52e800875ce2a5974b3b796ff2f3a8b978e0b28
   EXManifests: ebb7f551c340c0d06f3ecd9ae662e418bf68417c
-  Expo: ed0a748eb6be0efd2c3df7f6de3f3158a14464c9
+  Expo: 723b25eaad8c356d626c579e3d78d5b969e1d3ea
   expo-dev-client: 67bfa449de8ee3e3cd88a6945a8058819fffb0f0
   expo-dev-launcher: 5db274c8fdf72ca2f98b189d62924b014f7b90b5
   expo-dev-menu: 8b0ea59392e2dd975390ea6f0472ce350d94866a
   expo-dev-menu-interface: 5c6b79875bf0ab1251ea9962f60968fe39ed2637
   ExpoAsset: 286fee7ba711ce66bf20b315e68106b13b8629fc
-  ExpoBlur: 99901a4531f5d3ac4a19b362907b8f75da4ed9c8
+  ExpoBlur: d6023b4ccd20035624b60ae0bda541e65b9ece5c
   ExpoCrypto: c5c052d5f9f668c21975cb4caf072cec23c823fa
   ExpoFileSystem: 2988caaf68b7cb706e36d382829d99811d9d76a5
   ExpoFont: 38dddf823e32740c2a9f37c926a33aeca736b5c4
@@ -1910,7 +1923,8 @@ SPEC CHECKSUMS:
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: fdfdfe5479092de0c4bdbebedd9056951f092c4f
   hermes-engine: 8c1577f3fdb849cbe7729c2e7b5abc4b845e88f8
-  PurchasesHybridCommon: a712dcce0d81fa39dada521292408816146ca58c
+  PurchasesHybridCommon: bb4c1ddc8683a18859da35f45a0717379f889d94
+  PurchasesHybridCommonUI: a866b3e1016fd3126be48be834c66ce84de70229
   RCT-Folly: 5dc73daec3476616d19e8a53f0156176f7b55461
   RCTDeprecation: 3afceddffa65aee666dafd6f0116f1d975db1584
   RCTRequired: ec1239bc9d8bf63e10fb92bd8b26171a9258e0c1
@@ -1962,12 +1976,14 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 2cbd0f3625b30bba08e8768776107f6f0203159b
   React-utils: 9fa4e5d0b5e6c6c85c958f19d6ef854337886417
   ReactCommon: 9f285823dbe955099978d9bff65a7653ca029256
-  RevenueCat: 34f4147c8d26d2f3c691be4e3c9f033698e557f2
+  RevenueCat: d8174cfd72fab33f3b877d38c9f033142dc87c60
+  RevenueCatUI: ff31134b4e4c6f89396005676261cc50860ef0ac
   RNCAsyncStorage: aa75595c1aefa18f868452091fa0c411a516ce11
   RNCPicker: 15ad063c72ecba748be9edea62a5bdce53090aa6
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   RNGestureHandler: 326e35460fb6c8c64a435d5d739bea90d7ed4e49
-  RNPurchases: 8a05489f4f828f1f41d29925a5f5310a94bd96a3
+  RNPaywalls: cabdebe61f92fafd1b047e114bd5522127b7275c
+  RNPurchases: 5f964623075a95f48fc76f65a6669bbaf2a0fc12
   RNReanimated: def444e044c354f38bb0a5926a8583ba19d944c1
   RNScreens: a2d8a2555b4653d7a19706eb172f855657ac30d7
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d

@@ -53,7 +53,6 @@ export const AuthProvider = ({ children }) => {
 
 
          // const { accountType, statusSubscription } = await user.getIdTokenResult().claims;
-
          // console.log(accountType, statusSubscription)
 
          setUser(user);

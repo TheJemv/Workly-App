@@ -46,14 +46,14 @@ function StackOrders({}: Props): JSX.Element {
                </Stack.Navigator>
             ) : (
                <Stack.Navigator
-                  initialRouteName="Orders"
+                  initialRouteName="MyOrders"
                   screenOptions={NativeStackOptions}
                >
                   <Stack.Screen
                      name="MyOrders"
                      component={MyOrdersScreen}
                      options={{
-                        headerShown: true,
+                        headerShown: false,
                      }}
                   />
                   <Stack.Screen

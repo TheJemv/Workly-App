@@ -1,8 +1,9 @@
 import axios from "axios";
+import { API_HOST } from "@env";
 
 const apiClient = axios.create({
-   baseURL: "https://api.workly.store/",
-   timeout: 5000,
+   baseURL: API_HOST,
+   timeout: 20000,
 });
 
 apiClient.interceptors.request.use(

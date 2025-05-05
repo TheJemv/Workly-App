@@ -22,6 +22,7 @@ import formatDateService from "functions/formatDateService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import DatePicker from "react-native-date-picker";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { cancelOrder, nextOrder } from "services/api/orders.api";
 
 type Props = {
    navigation: any;
@@ -55,13 +56,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
 
    const handleCancel = async () => {
       setLoadingCancel(true);
-      await fetch(`${API_HOST}/orders/cancel/${order.id}`, {
-         method: "GET",
-         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-         },
-      })
+      await cancelOrder(token, order.id)
          .catch((error) => {
             console.error("Error:", error);
             Alert.alert("Error", "No se pudo realizar la acción");
@@ -73,13 +68,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
 
    const handleNext = async () => {
       setLoading(true);
-      await fetch(`${API_HOST}/orders/next/${order.id}`, {
-         method: "GET",
-         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-         },
-      })
+      await nextOrder(token, order.id)
          .catch((error) => {
             console.error("Error:", error);
             Alert.alert("Error", "No se pudo realizar la acción");

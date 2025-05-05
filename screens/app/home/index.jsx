@@ -42,9 +42,12 @@ const HomeScreen = ({ navigation }) => {
             intensity={100}
             style={{ flex: 1 }}
          >
-            <ScrollView scrollEnabled={true} style={{
-               flex: 1,
-            }}>
+            <ScrollView
+               scrollEnabled={true}
+               style={{
+                  flex: 1,
+               }}
+            >
                   <View
                      style={{
                         flex: 1,
@@ -90,6 +93,7 @@ const HomeScreen = ({ navigation }) => {
                               paddingVertical: 12,
                            }}
                         />
+
                         <View
                            style={{
                               display: "flex",

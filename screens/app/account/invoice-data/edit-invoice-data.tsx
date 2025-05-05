@@ -76,7 +76,7 @@ export function EditInvoiceScreen({ navigation, route }: Props): JSX.Element {
                <View>
                   <Controller
                      control={control}
-                     name="calle"
+                     name="street"
                      render={({ field, fieldState }) => (
                         <TextInput
                            label="Calle"
@@ -91,7 +91,7 @@ export function EditInvoiceScreen({ navigation, route }: Props): JSX.Element {
                <View>
                   <Controller
                      control={control}
-                     name="colonia"
+                     name="division"
                      render={({ field, fieldState }) => (
                         <TextInput
                            label="Colonia"
