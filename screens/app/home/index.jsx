@@ -8,9 +8,12 @@ import CategoryItem from "./components/CategoryItem"
 import PopularItem from "./components/PopularItem"
 import SearchBar from "./components/SearchBar"
 import Companies from "./components/Companies"
+import useGlobal from "core/globals";
 
 
 const HomeScreen = ({ navigation }) => {
+   const { customer } = useGlobal()
+
    useLayoutEffect(() => {
       navigation.setOptions({
          headerShown: false,
@@ -39,9 +42,12 @@ const HomeScreen = ({ navigation }) => {
             intensity={100}
             style={{ flex: 1 }}
          >
-            <ScrollView style={{
-               flex: 1,
-            }}>
+            <ScrollView
+               scrollEnabled={true}
+               style={{
+                  flex: 1,
+               }}
+            >
                   <View
                      style={{
                         flex: 1,
@@ -58,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
                            paddingHorizontal: 12,
                            fontWeight: 600,
                         }}
-                     >¡Hola, Oscar!</Text>
+                     >¡Hola, {customer?.profile?.name}!</Text>
                      <View
                         style={{
                            flex: 1,
@@ -77,7 +83,7 @@ const HomeScreen = ({ navigation }) => {
                      >
                         <FlatList
                            data={HomeServicesData}
-                           renderItem={({ item, index }) => <CategoryItem navigation={navigation} item={item} key={index} />}
+                           renderItem={({ item }) => <CategoryItem navigation={navigation} item={item} key={item.id} />}
                            keyExtractor={(item) => item.id}
                            horizontal
                            showsHorizontalScrollIndicator={false}
@@ -87,6 +93,7 @@ const HomeScreen = ({ navigation }) => {
                               paddingVertical: 12,
                            }}
                         />
+
                         <View
                            style={{
                               display: "flex",

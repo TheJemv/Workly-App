@@ -19,7 +19,7 @@ const OrderScreen = () => {
             }}
          >
             <StackOrder.Screen name="Orders" component={TabOrders} />
-            <StackOrder.Screen name="OrderDetails" component={OrderDetails} 
+            <StackOrder.Screen name="OrderDetails" component={OrderDetails}
                options={{
                   headerShown: false,
                   tabBarVisible: false,

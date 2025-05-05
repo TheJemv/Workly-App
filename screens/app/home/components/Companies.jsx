@@ -47,6 +47,7 @@ const Companies = () => {
             renderItem={({ item, index }) => <CompanyItem item={item} key={index} />}
             keyExtractor={(item) => item.id}
             data={data}
+            scrollEnabled={false}
             contentContainerStyle={{
                gap: 12,
                paddingHorizontal: 12,

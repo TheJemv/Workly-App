@@ -7,6 +7,9 @@ import ScreenEdit from "./company/Edit.jsx";
 import ScreenNewService from "./company/NewService"
 import ScreenEditService from "./company/EditService"
 import OptionScreen from "./company/Option";
+import PaymentSubscription from "components/PaymentSubscription";
+import PaywallPresent from "components/PaywallPresent";
+import useGlobal from "core/globals";
 
 
 
@@ -35,10 +38,12 @@ const StackCompany = () => {
       key: "public"
    }]
 
+   const companyData = useGlobal((state) => state.company)
+   console.log('#Data', companyData)
    return (
-      <Stack.Navigator screenOptions={NativeStackOptions}>
-         <Stack.Screen name="profile" component={ScreenCompany} />
+      <Stack.Navigator initialRouteName="profile" screenOptions={NativeStackOptions}>
          <Stack.Screen initialParams={Options} name="edit" component={ScreenEdit} />
+         <Stack.Screen name="profile" component={!companyData?.status ? PaywallPresent : ScreenCompany} />
          <Stack.Screen name="newservice" component={ScreenNewService} />
          <Stack.Screen name="editservice" component={ScreenEditService} />
 

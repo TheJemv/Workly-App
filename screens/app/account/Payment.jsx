@@ -1,17 +1,21 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStripe } from "@stripe/stripe-react-native";
+import { useStripe, usePaymentSheet } from "@stripe/stripe-react-native";
 import SpinLoading from "components/SpinLoading";
 import { AuthContext } from "context/AuthContext";
+import useGlobal from "core/globals";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { getPaymantParams } from "services/api/getPaymantParams"
+import { getPaymentParams } from "services/api/getPaymantParams"
 
 const PaymentScreen = () => {
-  const { initPaymentSheet, presentPaymentSheet } = useStripe();
-  const [loading, setLoading] = useState(false);
-  const [isModalActive, setIsModalActive] = useState(false);
-  const { customer, token } = useContext(AuthContext);
-  const router = useNavigation();
+   const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
+   const [loading, setLoading] = useState(false);
+   const [isModalActive, setIsModalActive] = useState(false);
+   const { customer, token } = useContext(AuthContext);
+
+   const router = useNavigation();
+   const customerUser = useGlobal(state => state.customer);
+   console.log("Customer: ", customerUser.customerId)
 
    useLayoutEffect(() => {
       router.setOptions({
@@ -25,7 +29,7 @@ const PaymentScreen = () => {
 
    const fetchPaymentSheetParams = async () => {
       try {
-         const { ephemeralKey, setupIntent } = await getPaymantParams(token).catch((error) => {
+         const { ephemeralKey, setupIntent } = await getPaymentParams(token).catch((error) => {
             throw new Error(error.message)
          });
          return { ephemeralKey, setupIntent };
@@ -36,17 +40,18 @@ const PaymentScreen = () => {
    };
 
    const initializePaymentSheet = async () => {
+      setLoading(false);
       const { ephemeralKey, setupIntent } = await fetchPaymentSheetParams();
       if (ephemeralKey && setupIntent) {
          const { error } = await initPaymentSheet({
-            customerId: customer.customerId,
             customerEphemeralKeySecret: ephemeralKey,
-            setupIntentClientSecret: setupIntent,
             merchantDisplayName: "User",
             allowsDelayedPaymentMethods: true,
             returnURL: 'workit://stripe-return',
+            setupIntentClientSecret: setupIntent,
+            customerId: customerUser.customerId,
          });
-         
+
          if (error) {
             console.error('Error initializing payment sheet:', error);
             Alert.alert('Error', error.message);

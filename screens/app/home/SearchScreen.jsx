@@ -132,7 +132,7 @@ const SearchScreen = () => {
             return
          }
          setLoading(true)
-         await axios.get(`${await API_HOST}/service/search`, {
+         await axios.get(`${await API_HOST}service/search`, {
             params: {
                q: search
             },
@@ -183,16 +183,19 @@ const SearchScreen = () => {
                <FlatList
                   data={services}
                   keyExtractor={(item) => item.id}
+                  scrollEnabled={false}
                   renderItem={({ item }) => (
                      <TouchableOpacity
+                        key={item.id}
                         onPress={() => navigation.navigate('service', { id: item.objectID })}
                         style={{
                            display: "flex",
-                           flexDirection: "row",
+                        flexDirection: "row",
                            gap: 12,
                            alignItems: "center",
                            paddingVertical: 12,
                            paddingHorizontal: 12,
+                           marginEnd: 12
                         }}
                      >
                         <FontAwesome
@@ -200,7 +203,10 @@ const SearchScreen = () => {
                            size={16}
                            color={"#00000060"}
                         />
-                        <Text>{item.name}</Text>
+                        <View className='flex flex-col'>
+                           <Text className='font-bold'>{item.name}</Text>
+                           <Text className='text-[12px] font-light' numberOfLines={2}>{item.description}</Text>
+                        </View>
                      </TouchableOpacity>
                   )}
                   contentContainerStyle={{
