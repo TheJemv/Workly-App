@@ -17,4 +17,25 @@ export type Order = {
 
    notes: string;
    dateRequest: string;
+
+   billing: Billing;
+};
+
+export type Billing = {
+   id: string;
+
+   name: string;
+   street: string;
+   number_ext: string;
+   number_int: string;
+   rfc: string;
+   cp: string;
+   country: string;
+   state: string;
+   city: string;
+   division: string;
+   phone: string;
+
+   createdAt: Date;
+   updatedAt: Date;
 };

@@ -24,8 +24,6 @@ const AccountScreen = ({ navigation }) => {
    const { token } = useGlobal()
    const customerUser = useGlobal(state => state.customer)
 
-
-   const { isCompany } = useContext(AuthContext);
    const handleSingout = async () => {
       await Singout().catch((e) => {
          Alert.alert("Error", e.message);

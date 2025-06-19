@@ -19,7 +19,7 @@ const CustomCompany = () => {
    const { companyData, token, reloadCompany } = useContext(AuthContext);
    const [currentImage, setCurrentImage] = useState("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn1.vectorstock.com%2Fi%2F1000x1000%2F00%2F65%2Fuser-profile-grey-icon-web-avatar-employee-vector-32550065.jpg");
    const [editinData, setEditingData] = useState(companyData)
-   
+
 
    const dataPrivacy = ["publica", "privada"]
    const dataContact = ["facebook", "instagram", "linkedin", "phone"]
