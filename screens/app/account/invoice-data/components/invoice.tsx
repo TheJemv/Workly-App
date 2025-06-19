@@ -43,6 +43,7 @@ const Invoice = ({ data }) => {
                   {data.name}
                </Text>
             </View>
+
             <View className="flex flex-row items-center space-x-3">
                <FontAwesome
                   name="money"
@@ -53,6 +54,7 @@ const Invoice = ({ data }) => {
                   <DetailInfo title="RFC:">{data.rfc}</DetailInfo>
                </View>
             </View>
+
             <View className="flex flex-row items-baseline space-x-3">
                <FontAwesome
                   name="home"

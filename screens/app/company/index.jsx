@@ -153,7 +153,7 @@ const ProfileScreen = () => {
                         )
                      })} */}
 
-                     {Object.entries(companyData.profile.contact).map(([key, value]) => {
+                     {Object.entries(companyData?.profile?.contact).map(([key, value]) => {
                         const dataMedia = ["instagram", "facebook", "phone", "linkedin"]
                         if(key in dataMedia && value) {
                            return (

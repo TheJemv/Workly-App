@@ -23,6 +23,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import DatePicker from "react-native-date-picker";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { cancelOrder, nextOrder } from "services/api/orders.api";
+import InvoiceOrder from "components/InvoiceOrder";
 
 type Props = {
    navigation: any;
@@ -36,8 +37,6 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    }, []);
 
    // Variables globales
-   const customer = useGlobal((state) => state.customer);
-   const company = useGlobal((state) => state.company);
    const sales = useGlobal((state) => state.sales);
    const orders = useGlobal((state) => state.orders);
 
@@ -96,6 +95,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                         Order#: {order.id}
                      </Text>
                   </View>
+
                   <View className="flex flex-col space-y-5 p-4 border-b-2 border-b-light/25">
                      <View className="flex flex-row items-start justify-between space-x-4">
                         <View className="flex flex-1 flex-col space-y-1">
@@ -154,6 +154,17 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                      </Text>
                   </View>
 
+                  {/* Billing Information */}
+                  {order?.billing && (
+                     <View className="flex flex-col space-y-1 p-4 border-b-2 border-b-light/25">
+                        <Text className="text-sm text-dark pb-2 font-semibold">
+                           Información de Facturación
+                        </Text>
+                        <InvoiceOrder data={order.billing} />
+                     </View>
+                  )}
+
+                  {/* Customer Information */}
                   <View className="flex flex-col space-y-6 p-4">
                      <View className="flex flex-row items-center justify-between space-x-3">
                         <Text className="text-sm text-dark font-semibold">
