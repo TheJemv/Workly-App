@@ -1,4 +1,11 @@
-import { SafeAreaView, FlatList, Text, View } from "react-native";
+import {
+   SafeAreaView,
+   FlatList,
+   Text,
+   View,
+   TouchableOpacity,
+   Image,
+} from "react-native";
 import { OrderCard } from "./components/order-card";
 import { Order } from "./types";
 import { useEffect, useLayoutEffect } from "react";
@@ -64,6 +71,26 @@ export function MyOrdersScreen({ navigation }: Props): JSX.Element {
                   </View>
                )}
                ListFooterComponent={() => <View className="my-4" />}
+               ListEmptyComponent={() => (
+                  <View className="items-center mt-10">
+                     <Image
+                        source={require("assets/empty-orders.png")}
+                        className="w-[180px] h-[180px] mb-6"
+                        resizeMode="contain"
+                     />
+                     <Text className="text-base text-gray-500 mb-4">
+                        No hay pedidos guardados
+                     </Text>
+                     <TouchableOpacity
+                        className="bg-slate-800 py-3 px-8 rounded-lg"
+                        onPress={() => navigation.navigate("home")}
+                     >
+                        <Text className="text-white font-bold">
+                           Ir al inicio
+                        </Text>
+                     </TouchableOpacity>
+                  </View>
+               )}
             />
          </SafeAreaView>
       ) : (
