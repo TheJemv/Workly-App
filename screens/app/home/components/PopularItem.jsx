@@ -1,9 +1,4 @@
-import {
-   View,
-   Text,
-   Image,
-   TouchableOpacity,
-} from "react-native"
+import { View, Text, Image, TouchableOpacity } from "react-native";
 
 const PopularItem = ({ item }) => (
    <TouchableOpacity
@@ -29,7 +24,7 @@ const PopularItem = ({ item }) => (
       <View className="flex-1 overflow-hidden rounded-t-lg">
          <Image
             source={{
-               uri: item.Image
+               uri: item.photo,
             }}
             style={{
                width: "100%",
@@ -56,7 +51,7 @@ const PopularItem = ({ item }) => (
          >
             <Image
                source={{
-                  uri: item.company.Image
+                  uri: item.company.profile.photo,
                }}
                style={{
                   width: 28,
@@ -65,11 +60,15 @@ const PopularItem = ({ item }) => (
             />
          </View>
       </View>
-      <View className="flex flex-col px-2 py-3" style={{gap: 2}}>
-         <Text className="text-dark text-xs font-semibold" numberOfLines={1}>{item.name}</Text>
-         <Text className="text-text/70 text-xs font-semibold" numberOfLines={1}>MXN $69.00</Text>
+      <View className="flex flex-col px-2 py-3" style={{ gap: 2 }}>
+         <Text className="text-dark text-xs font-semibold" numberOfLines={1}>
+            {item.name}
+         </Text>
+         <Text className="text-text/70 text-xs font-semibold" numberOfLines={1}>
+            {item.currency} ${item.unit_amount}.00
+         </Text>
       </View>
    </TouchableOpacity>
-)
+);
 
-export default PopularItem
+export default PopularItem;
