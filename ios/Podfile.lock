@@ -13,7 +13,7 @@ PODS:
     - ExpoModulesCore
   - EXManifests (0.14.3):
     - ExpoModulesCore
-  - Expo (51.0.38):
+  - Expo (51.0.0):
     - ExpoModulesCore
   - expo-dev-client (4.0.29):
     - EXManifests
@@ -232,13 +232,13 @@ PODS:
     - ExpoModulesCore
   - ExpoFont (12.0.10):
     - ExpoModulesCore
-  - ExpoHead (3.5.24):
+  - ExpoHead (3.5.23):
     - ExpoModulesCore
   - ExpoImagePicker (15.0.7):
     - ExpoModulesCore
   - ExpoKeepAwake (13.0.2):
     - ExpoModulesCore
-  - ExpoModulesCore (1.12.26):
+  - ExpoModulesCore (1.12.9):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -263,7 +263,7 @@ PODS:
     - Yoga
   - ExpoWebBrowser (13.0.3):
     - ExpoModulesCore
-  - EXSplashScreen (0.27.7):
+  - EXSplashScreen (0.27.5):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -1491,7 +1491,7 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.16.2):
+  - RNGestureHandler (2.16.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1902,7 +1902,7 @@ SPEC CHECKSUMS:
   EXJSONUtils: 30c17fd9cc364d722c0946a550dfbf1be92ef6a4
   EXLocation: c52e800875ce2a5974b3b796ff2f3a8b978e0b28
   EXManifests: ebb7f551c340c0d06f3ecd9ae662e418bf68417c
-  Expo: 723b25eaad8c356d626c579e3d78d5b969e1d3ea
+  Expo: 38af9b266d1a47e0ceb75098669b043a3ea1a2bf
   expo-dev-client: 67bfa449de8ee3e3cd88a6945a8058819fffb0f0
   expo-dev-launcher: 5db274c8fdf72ca2f98b189d62924b014f7b90b5
   expo-dev-menu: 8b0ea59392e2dd975390ea6f0472ce350d94866a
@@ -1912,12 +1912,12 @@ SPEC CHECKSUMS:
   ExpoCrypto: c5c052d5f9f668c21975cb4caf072cec23c823fa
   ExpoFileSystem: 2988caaf68b7cb706e36d382829d99811d9d76a5
   ExpoFont: 38dddf823e32740c2a9f37c926a33aeca736b5c4
-  ExpoHead: 1a1b30c6c1d125e9b8a199ca305c16a1dc041624
+  ExpoHead: 37970100b038694465cc39044cf23f3d1f56fade
   ExpoImagePicker: 517a47896adf5d55d0a1c159e5d1e312af12e57c
   ExpoKeepAwake: dd02e65d49f1cfd9194640028ae2857e536eb1c9
-  ExpoModulesCore: 9ac73e2f60e0ea1d30137ca96cfc8c2aa34ef2b2
+  ExpoModulesCore: 1c5681c17c4022751d48920267a8f73e12a36b90
   ExpoWebBrowser: cf10afe886891ab495877dada977fe6c269614a4
-  EXSplashScreen: a4ce3dd5d28d48e8b9132bcd9b58ee8e340db78c
+  EXSplashScreen: a3c60ed8e3d145d7bf795c9907d6f011e3e8438b
   EXUpdatesInterface: c3a9494c2173db6442c7d5ad4e5b984972760fd3
   FBLazyVector: ac12dc084d1c8ec4cc4d7b3cf1b0ebda6dab85af
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
@@ -1981,7 +1981,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: aa75595c1aefa18f868452091fa0c411a516ce11
   RNCPicker: 15ad063c72ecba748be9edea62a5bdce53090aa6
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNGestureHandler: 326e35460fb6c8c64a435d5d739bea90d7ed4e49
+  RNGestureHandler: d08fd9149ee9610bbc7e0a34c20b3ffe6a5801b3
   RNPaywalls: cabdebe61f92fafd1b047e114bd5522127b7275c
   RNPurchases: 5f964623075a95f48fc76f65a6669bbaf2a0fc12
   RNReanimated: def444e044c354f38bb0a5926a8583ba19d944c1
@@ -1998,6 +1998,6 @@ SPEC CHECKSUMS:
   StripeUICore: d6803286f1e2b80c62c320b304503c87bf65de3c
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
-PODFILE CHECKSUM: e768dc047dbc7fff280c66a587f986cad86e52f9
+PODFILE CHECKSUM: 07d1a0343c7eebe87c589827131fc6351875715f
 
 COCOAPODS: 1.16.2

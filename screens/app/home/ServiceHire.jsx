@@ -10,6 +10,9 @@ import formatDateService from 'functions/formatDateService'
 
 
 import { getService, getServicePayment } from "services/api/services.api"
+import DataOptions from "components/DataOptions"
+import { Picker } from "@react-native-picker/picker"
+import { getBillings } from "services/api/billing.api"
 
 
 const Stats = ({name = 'Ordenes', value = 50}) => (
@@ -36,9 +39,16 @@ const ServiceHire = ({ route }) => {
    const { token, customer } = useContext(AuthContext)
    const bottomHeight = useBottomTabBarHeight()
 
+   const [selectedBilling, setSelectedBilling] = useState("")
+
    const [infoUserNote, setInfoUserNote] = useState("")
+
    const [dataService, setDataService] = useState(null)
+   const [dataBilling, setDataBilling] = useState(null)
+
    const [loading, setLoading] = useState(true)
+   const [loadingBilling, setLoadingBilling] = useState(true)
+
    const [enableButton, setEnableButton] = useState(false)
    const [dateRequest, setDateRequest] = useState(new Date(new Date().setMinutes(new Date().getMinutes() + 30))) // Plus 30 minutes
    const [showPickerDate, setShowPickerDate] = useState(false)
@@ -53,6 +63,13 @@ const ServiceHire = ({ route }) => {
       getService(token, route?.params?.id).then(async data => {
          setDataService(data?.service)
          setLoading(false)
+      }).catch((error) => {
+         Alert.alert("Error", error.message)
+      })
+
+      getBillings(token).then(data => {
+         setDataBilling(data?.data)
+         setLoadingBilling(false)
       }).catch((error) => {
          Alert.alert("Error", error.message)
       })
@@ -72,6 +89,7 @@ const ServiceHire = ({ route }) => {
             notes: infoUserNote,
             dateRequest: dateRequest.toString(),
             amount: dataService?.unit_amount,
+            billing: selectedBilling,
          })
 
          await initializePaymentSheet(paymentintent, ephemeralKey)
@@ -146,12 +164,31 @@ const ServiceHire = ({ route }) => {
                         <Text className="pl-2 text-text" style={{fontWeight:500}}>Lunes, Marts y Miercoles</Text>
                      </View>
 
+                     {/* Billing */}
                      <View className="flex flex-col" style={{gap:6}}>
                         <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Fecha de Entrega</Text>
                         <TouchableOpacity onPress={() => setShowPickerDate(true)} className="flex flex-row items-center justify-between py-2 px-3 bg-transparent rounded-lg bg-white">
                            <Text className="text-text" style={{fontWeight:500}}>{formatDateService(dateRequest)}</Text>
                         </TouchableOpacity>
                      </View>
+
+                     {!loadingBilling && (
+                        <View className="flex flex-col" style={{gap:6}}>
+                           <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Datos de Facturacion</Text>
+                           <Picker
+                              style={{backgroundColor: Colors.white, color: Colors.text, borderRadius: 8}}
+                              selectedValue={selectedBilling}
+                              onValueChange={(itemValue) => {
+                                 setSelectedBilling(itemValue)
+                              }}
+                           >
+                              <Picker.Item label="Ninguno" value="" />
+                              {dataBilling?.map((billing, index) => (
+                                 <Picker.Item key={index} label={`${billing?.name}`} value={billing?.id} />
+                              ))}
+                           </Picker>
+                        </View>
+                     )}
 
                      <View className="flex flex-col" style={{gap: 6}}>
                         <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Agregar Notas</Text>

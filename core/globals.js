@@ -4,107 +4,65 @@ import utils from "./utils"
 import { API_WEBHOOK } from "@env"
 
 
-const responseMessageSend = (set, get, data) => {
-   const index = get().chats.findIndex((chat) => chat.id === data.room.id);
+// Variables
+let reconnectAttempts = 0
+const MAX_RETRIES = 5
 
-   // Verificar si el mensaje ya existe en el chat
-   const checkIfExistMessage = get().chats[index]?.messages.find((message) => message.id === data.id);
-   if (checkIfExistMessage) return;
 
-   if (index !== -1) {
-      const selectedRoom = get().chats[index];
-      const updatedRoom = {
-         ...selectedRoom,
-         messages: [
-            data,
-            ...selectedRoom.messages,
-         ],
-      };
-
-      set((state) => ({
-         chats: [
-            updatedRoom,
-            ...state.chats.filter((chat) => chat.id !== data.room.id),
-         ],
-      }));
+// SafeSend
+const safeSend = (get, payload) => {
+   const socket = get().socket
+   if(socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(payload))
    } else {
-      const selectedRoom = get().chats.find((chat) => chat.id === data.room.id);
-
-      const updatedRoom = {
-         ...selectedRoom,
-         messages: [
-            ...selectedRoom.messages,
-            data,
-         ],
-      };
-
-      set((state) => ({
-         chats: [
-            ...state.chats.filter((chat) => chat.id !== data.room.id),
-            updatedRoom,
-         ],
-      }));
+      utils.log("WebSocket not open, cannot send:", payload)
    }
-
-   if (get().messagesRoom === data.room.id) {
-      set((state) => ({
-         messagesList: [data, ...get().messagesList],
-      }));
-   }
-};
-
-const responseMessageChats = (set, get, data) => {
-   set((state) => ({
-      chats: data
-   }))
 }
 
-const responseMessageNew = (set, get, data) => {
-   utils.log('responseMessageNew', data)
-}
 
-const responseMessageList = (set, get, data) => {
-   set((state) => ({
+// Responses
+const responses = {
+   'message.send':      (set, get, data) => {
+      const { chats, messagesRoom, messagesList } = get()
+      const index = chats.findIndex(chat => chat.id === data.room.id)
+      const chat = chats[index]
+      const exists = chat?.messages?.some(msg => msg.id === data.id)
+
+      if(exists) return
+
+      const updatedChat = {
+         ...chat,
+         messages: index !== -1
+            ? [data, ...chat.messages]
+            : [data]
+      }
+
+      set({
+         chats: index !== -1
+            ? [updatedChat, ...chats.filter(c => c.id !== data.room.id)]
+            : [...chats.filter(c => c.id !== data.room.id), updatedChat],
+         messagesList: messagesRoom === data.room.id
+            ? [data, ...messagesList]
+            : messagesList
+      })
+   },
+   'message.chats': (set, _, data) => set({ chats: data }),
+   'message.new': (_, __, data) => utils.log('New message:', data),
+   'message.list': (set, _, data) => set({
       messagesList: [...get().messagesList, ...data.messages],
       messagesNext: data.next,
       messagesUser: data.room.customers[0],
       messagesRoom: data.room.id
-   }))
+   }),
+
+   'customer.get': (set, _, data) => set({ customer: data }),
+
+   'company.get': (set, _, data) => set({ company: data }),
+   'services.list': (set, _, data) => set({ services: data }),
+
+   'sales.list': (set, _, data) => set({ sales: data }),
+   'orders.list': (set, _, data) => set({ orders: data }),
 }
-
-const responseCustomerGet = (set, get, data) => {
-   set((state) => ({
-      customer: data
-   }))
-}
-
-const responseCompanyGet = (set, get, data) => {
-   set((state) => ({
-      company: data
-   }))
-}
-
-const responseServicesGet = (set, get, data) => {
-   set((state) => ({
-      services: data
-   }))
-}
-
-const responseSalesGet = (set, get, data) => {
-   console.log(data)
-   set((state) => ({
-      sales: data
-   }))
-}
-
-const responseOrdersGet = (set, get, data) => {
-   console.log(data)
-
-   set((state) => ({
-      orders: data
-   }))
-}
-
 
 
 const useGlobal = create((set, get) => ({
@@ -137,143 +95,102 @@ const useGlobal = create((set, get) => ({
 
    init: async () => {
       const credentials = getAuth().currentUser
-      console.log(credentials)
       if(credentials) {
-         set({
-            initialized: true,
-            user: credentials.user,
-            token: await credentials.getIdToken(true),
-         })
+         const token = await credentials.getIdToken(true);
+         set({ initialized: true, user: credentials.user, token})
       }
    },
 
    socketConnect: async () => {
       const { token } = get()
       if(!token) return
+
+      console.log(token)
+
       const socket = await new WebSocket(`${API_WEBHOOK}?token=${token}`)
 
       socket.onopen = () => {
-         utils.log("socket.onopen")
+         utils.log("WebSocket connected")
+         reconnectAttempts = 0
+         set({ socket })
       }
 
       socket.onmessage = (e) => {
-         const parsed = JSON.parse(e.data)
-         const responses = {
-            'message.send':      responseMessageSend,
-            'message.chats':     responseMessageChats,
-            'message.new':       responseMessageNew,
-            'message.list':      responseMessageList,
+         try {
+            const parsed = JSON.parse(e.data)
+            const handler = responses[parsed.type]
 
-            'customer.get':      responseCustomerGet,
-
-            'company.get':       responseCompanyGet,
-            'sales.list':        responseSalesGet,
-
-            'services.list':     responseServicesGet,
-            'orders.list':       responseOrdersGet,
+            if(handler) {
+               handler(set, get, parsed.data)
+            } else {
+               utils.log("Unhandled message type:", parsed.type)
+            }
+         } catch (err) {
+            utils.log("Failed to parse message:", e.data)
          }
-
-
-         const resp = responses[parsed.type]
-         console.log({
-            type: parsed.type,
-            data: parsed.data
-         })
-         resp(set, get, parsed.data)
       }
 
-      socket.onerror = (e) => {
-		   utils.log('socket.onerror', e.message)
-		}
+      socket.onerror = (e) => utils.log('socket.onerror', e.message)
 		socket.onclose = () => {
-		   utils.log('socket.onclose')
+		   utils.log('WebSocket closed')
+         if(reconnectAttempts < MAX_RETRIES) {
+            const delay = Math.min(1000 * 2 ** reconnectAttempts, 3000)
+            reconnectAttempts++
+
+            utils.log(`Reconnecting in ${delay / 1000}s...`)
+            setTimeout(() => get().socketConnect(), delay)
+         }
 		}
-		set((state) => ({
-		   socket: socket
-		}))
    },
 
    sendMessage: (room, message) => {
-      const { socket } = get()
-
-      socket.send(JSON.stringify({
+      safeSend(get, {
          source: 'message.send',
-         room: room,
-         message: message
-      }))
+         room,
+         message
+      })
    },
 
-
-   messageList: (room, page=0) => {
-      if(page === 0) {
-         set((state) => ({
+   messageList: (room, page = 0) => {
+      if (page === 0) {
+         set({
             messagesList: [],
             messagesNext: null,
             messagesUser: null,
             messagesRoom: null
-         }))
+         })
       } else {
-         set((state) => ({
-				messagesNext: null
-			}))
+         set({ messagesNext: null })
       }
 
-      const { socket } = get()
-      socket.send(JSON.stringify({
-			source: 'message.list',
-			room: room,
-			page: page
-		}))
+      safeSend(get, {
+         source: 'message.list',
+         room,
+         page
+      })
    },
 
    companyReload: () => {
-      const { socket } = get()
-      socket.send(JSON.stringify({
-         source: 'company.reload'
-      }))
+      safeSend(get, { source: 'company.reload' })
    },
 
    getServices: () => {
-      set((state) => ({
-         services: {
-            loaded: false,
-            data: state.services?.data || []
-         }
-      }))
-      const { socket } = get()
-      socket.send(JSON.stringify({
-         source: 'services.list'
-      }))
+      const prev = get().services?.data || []
+      set({ services: { loaded: false, data: prev } })
+      safeSend(get, { source: 'services.list' })
    },
 
    getOrders: () => {
-      console.log('getOrders')
-
-      set((state) => ({
-         orders: {
-            loaded: false,
-            data: state.orders?.data || []
-         }
-      }))
-      const { socket } = get()
-      socket.send(JSON.stringify({
-         source: 'orders.list'
-      }))
+      const prev = get().orders?.data || []
+      set({ orders: { loaded: false, data: prev } })
+      safeSend(get, { source: 'orders.list' })
    },
 
    getSales: () => {
-      console.log('getSales')
-      set((state) => ({
-         sales: {
-            loaded: false,
-            data: state.sales?.data || []
-         }
-      }))
-      const { socket } = get()
-      socket.send(JSON.stringify({
-         source: 'sales.list'
-      }))
-   },
+      const prev = get().sales?.data || []
+      set({ sales: { loaded: false, data: prev } })
+      safeSend(get, { source: 'sales.list' })
+   }
 }))
 
 
