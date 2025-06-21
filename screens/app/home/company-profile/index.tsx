@@ -1,3 +1,4 @@
+import { useLayoutEffect, useState, useContext } from "react";
 import {
    SafeAreaView,
    ScrollView,
@@ -5,18 +6,57 @@ import {
    Text,
    Linking,
    Alert,
+   Image,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 import { CardService } from "./components/card-service";
 import { ButtonIconLink } from "./components/button-link";
 import { TimesOpen } from "./components/times-open";
-import type { SocialMedia, Service } from "./types";
-import { socialMedia, services } from "./data";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { getCompanyById } from "services/api/company.api";
+import { AuthContext } from "context/AuthContext";
 
-type Props = {};
-const ProfileCompanyScreen = ({}: Props): JSX.Element => {
+type Props = {
+   route: {
+      params: {
+         id: string;
+      };
+   };
+   navigation: any;
+};
+const ProfileCompanyScreen = ({ route }: Props): JSX.Element => {
+   const { token } = useContext(AuthContext);
+   const [loading, setLoading] = useState(true);
+   const [company, setCompany] = useState<any>(null);
+
+   useLayoutEffect(() => {
+      setLoading(true);
+      getCompanyById(token, route.params.id)
+         .then((data) => {
+            if (data?.company) {
+               setCompany(data.company);
+            }
+         })
+         .finally(() => {
+            setLoading(false);
+         });
+   }, [route.params.id]);
+
+   const handleRefresh = () => {
+      setLoading(true);
+      getCompanyById(token, route.params.id)
+         .then((data) => {
+            console.log("Company data:", data);
+            if (data?.company) {
+               setCompany(data.company);
+            }
+         })
+         .finally(() => {
+            setLoading(false);
+         });
+   };
+
    const handleOpenLink = (url: string) => async (): Promise<void> => {
       try {
          const supported: boolean = await Linking.canOpenURL(url);
@@ -48,6 +88,15 @@ const ProfileCompanyScreen = ({}: Props): JSX.Element => {
          console.error("Error al intentar hacer la llamada:", error);
       }
    };
+
+   if (loading) {
+      return (
+         <SafeAreaView className="flex-1 items-center justify-center">
+            <Text className="text-lg text-dark font-semibold">Cargando...</Text>
+         </SafeAreaView>
+      );
+   }
+
    return (
       <SafeAreaView className="flex-1">
          <ScrollView
@@ -56,10 +105,17 @@ const ProfileCompanyScreen = ({}: Props): JSX.Element => {
          >
             <View className="flex flex-col space-y-3">
                <View className="flex flex-row items-center space-x-3">
-                  <View className="w-12 h-12 rounded-full bg-light/25" />
+                  <View className="w-12 h-12 rounded-full bg-light/25">
+                     <Image
+                        className="w-full h-full rounded-full"
+                        source={{
+                           uri: company.profile.photo,
+                        }}
+                     />
+                  </View>
                   <View className="flex flex-col space-y-1">
                      <Text className="text-base text-dark font-semibold">
-                        Google Inc.
+                        {company.profile.name}
                      </Text>
                      <View className="flex flex-row items-center space-x-1">
                         <FontAwesome
@@ -77,38 +133,40 @@ const ProfileCompanyScreen = ({}: Props): JSX.Element => {
                   className="text-base text-text font-medium"
                   numberOfLines={3}
                >
-                  Google, LLC es una empresa de tecnología de Google que se
-                  dedica a proporcionar servicios de internet y servicios de
-                  aplicaciones a los usuarios.
+                  {company.profile.description}
                </Text>
                <View className="flex flex-col space-y-3">
                   <View>
                      <TimesOpen />
                   </View>
                   <View className="flex flex-row items-center justify-between space-x-2">
-                     {socialMedia.map(
-                        (
-                           socialMedia: SocialMedia,
-                           index: number
-                        ): JSX.Element => {
-                           return (
-                              <View key={index}>
-                                 {socialMedia.isCall ? (
-                                    <ButtonIconLink
-                                       icon={socialMedia.icon}
-                                       color={socialMedia.color}
-                                       onPress={handleCall(socialMedia.phone)}
-                                    />
-                                 ) : (
-                                    <ButtonIconLink
-                                       icon={socialMedia.icon}
-                                       color={socialMedia.color}
-                                       onPress={handleOpenLink(socialMedia.url)}
-                                    />
-                                 )}
-                              </View>
-                           );
-                        }
+                     {company.profile.contact.facebook && (
+                        <ButtonIconLink
+                           icon="facebook-square"
+                           color="#1775f9"
+                           onPress={handleOpenLink(company.profile.facebook)}
+                        />
+                     )}
+                     {company.profile.contact.linkedin && (
+                        <ButtonIconLink
+                           icon="linkedin-square"
+                           color="#0679b1"
+                           onPress={handleOpenLink(company.profile.linkedin)}
+                        />
+                     )}
+                     {company.profile.contact.phone && (
+                        <ButtonIconLink
+                           icon="phone-square"
+                           color="#48c462"
+                           onPress={handleCall(company.profile.contact.phone)}
+                        />
+                     )}
+                     {company.profile.contact.instagram && (
+                        <ButtonIconLink
+                           icon="instagram"
+                           color="#e25168"
+                           onPress={handleOpenLink(company.profile.instagram)}
+                        />
                      )}
                   </View>
                </View>
@@ -118,14 +176,13 @@ const ProfileCompanyScreen = ({}: Props): JSX.Element => {
                   Servicios que ofrezco
                </Text>
                <View className="flex flex-col space-y-2">
-                  {services.map(
-                     (service: Service, index: number): JSX.Element => {
+                  {company.services.map(
+                     (service, index: number): JSX.Element => {
                         return (
                            <View key={index}>
                               <CardService
-                                 title={service.title}
-                                 description={service.description}
-                                 price={service.price}
+                                 service={service}
+                                 refresh={handleRefresh}
                               />
                            </View>
                         );

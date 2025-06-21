@@ -1,5 +1,33 @@
 import apiClient from "services/api/apiClient";
 
+export const getCompaniesRecommended = async (token: string) => {
+   try {
+      const response: any = await apiClient.get("/company/recommended", {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
+
+      return response.data;
+   } catch (error) {
+      throw new Error("Ocurrió un error al obtener las empresas");
+   }
+};
+
+export const getCompanyById = async (token: string, id: string) => {
+   try {
+      const response: any = await apiClient.get(`/company/${id}`, {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
+
+      return response.data;
+   } catch (error) {
+      throw new Error("Paso algo malo..., al obtener la empresa");
+   }
+};
+
 export const getCompany = async (token: string) => {
    try {
       const response: any = await apiClient.get("/company/mycompany", {
