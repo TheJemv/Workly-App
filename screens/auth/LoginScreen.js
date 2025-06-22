@@ -5,10 +5,9 @@ import {
    View,
    TouchableOpacity,
    Alert,
-   KeyboardAvoidingView,
-   Platform,
    Image,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Colors } from "../../lib";
 
 // Icons
@@ -47,97 +46,100 @@ const LoginScreen = ({ navigation }) => {
 
    return (
       <ContainerBack navigation={navigation}>
-         <KeyboardAvoidingView
-            style={styles.fills}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={60}
+         <KeyboardAwareScrollView
+            style={{ flex: 1 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
          >
-            {/* Titulo... */}
-            <View style={styles.top}>
-               <Text style={styles.top.title}>
-                  Bienvenido de nuevo!, Tus Servicios al instante...
-               </Text>
-            </View>
-
-            {/* Inputs... */}
-            <View
-               style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-               }}
-            >
-               <TextInputComponent
-                  value={user.email}
-                  onChangeText={(e) => handleInput("email", e)}
-                  label="Email"
-                  placeholder="Ingresa tu email"
-                  autoComplete="email"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-               />
-
-               <TextInputComponent
-                  hide
-                  value={user.password}
-                  onChangeText={(e) => handleInput("password", e)}
-                  label="Ingresa tu contraseña"
-                  placeholder="Ingresa tu contraseña"
-                  autoComplete="password"
-                  autoCapitalize="none"
-               />
-
-               <TouchableOpacity style={{ marginLeft: "auto" }}>
-                  <Text style={{ color: "#040048", fontWeight: "600" }}>
-                     Olvidaste la contraseña?
+            <View style={styles.fills}>
+               {/* Titulo... */}
+               <View style={styles.top}>
+                  <Text style={styles.top.title}>
+                     Bienvenido de nuevo!, Tus Servicios al instante...
                   </Text>
+               </View>
+
+               {/* Inputs... */}
+               <View
+                  style={{
+                     display: "flex",
+                     flexDirection: "column",
+                     gap: 12,
+                  }}
+               >
+                  <TextInputComponent
+                     value={user.email}
+                     onChangeText={(e) => handleInput("email", e)}
+                     label="Email"
+                     placeholder="Ingresa tu email"
+                     autoComplete="email"
+                     keyboardType="email-address"
+                     autoCapitalize="none"
+                  />
+
+                  <TextInputComponent
+                     hide
+                     value={user.password}
+                     onChangeText={(e) => handleInput("password", e)}
+                     label="Ingresa tu contraseña"
+                     placeholder="Ingresa tu contraseña"
+                     autoComplete="password"
+                     autoCapitalize="none"
+                  />
+
+                  <TouchableOpacity style={{ marginLeft: "auto" }}>
+                     <Text style={{ color: "#040048", fontWeight: "600" }}>
+                        Olvidaste la contraseña?
+                     </Text>
+                  </TouchableOpacity>
+               </View>
+
+               {/* Iniciar sesion... */}
+               <TouchableOpacity
+                  onPress={handleLoginUser}
+                  style={styles.bottom.button}
+               >
+                  {!loading ? (
+                     <Text style={styles.bottom.button.text}>Sign In</Text>
+                  ) : (
+                     <SpinLoading />
+                  )}
                </TouchableOpacity>
-            </View>
 
-            {/* Iniciar sesion... */}
-            <TouchableOpacity
-               onPress={handleLoginUser}
-               style={styles.bottom.button}
-            >
-               {!loading ? (
-                  <Text style={styles.bottom.button.text}>Sign In</Text>
-               ) : (
-                  <SpinLoading />
-               )}
-            </TouchableOpacity>
-            <View className="flex-1 mb-6 ">
-               <Image
-                  source={require("assets/photo-signin.jpg")}
-                  className="w-full h-full"
-                  resizeMode="cover"
-               />
-            </View>
-         </KeyboardAvoidingView>
+               <View className="flex-1 mb-6">
+                  <Image
+                     source={require("assets/photo-signin.jpg")}
+                     className="w-full h-[200px]"
+                     resizeMode="cover"
+                  />
+               </View>
 
-         {/* Aplicacion */}
-         <View style={styles.bottom}>
-            <View style={styles.lines}>
-               <View style={styles.lines.line} />
-               <Text style={styles.lines.text}>O Inicia Sesion con</Text>
-               <View style={styles.lines.line} />
-            </View>
+               {/* Aplicacion */}
+               <View style={styles.bottom}>
+                  <View style={styles.lines}>
+                     <View style={styles.lines.line} />
+                     <Text style={styles.lines.text}>O Inicia Sesion con</Text>
+                     <View style={styles.lines.line} />
+                  </View>
 
-            <View style={styles.socialMedia}>
-               <LoginGoogle />
-               <LoginFacebook />
-            </View>
-         </View>
+                  <View style={styles.socialMedia}>
+                     <LoginGoogle />
+                     <LoginFacebook />
+                  </View>
+               </View>
 
-         <View style={styles.bottom.register}>
-            <Text style={{ color: Colors.secondary.DEFAULT }}>
-               No tienes cuenta?
-            </Text>
-            <TouchableOpacity onPress={handleRegister}>
-               <Text style={{ color: "#040048", fontWeight: "600" }}>
-                  Registrate
-               </Text>
-            </TouchableOpacity>
-         </View>
+               <View style={styles.bottom.register}>
+                  <Text style={{ color: Colors.secondary.DEFAULT }}>
+                     No tienes cuenta?
+                  </Text>
+                  <TouchableOpacity onPress={handleRegister}>
+                     <Text style={{ color: "#040048", fontWeight: "600" }}>
+                        Registrate
+                     </Text>
+                  </TouchableOpacity>
+               </View>
+            </View>
+         </KeyboardAwareScrollView>
       </ContainerBack>
    );
 };

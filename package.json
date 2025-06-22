@@ -44,6 +44,7 @@
     "react-native-element-dropdown": "2.12.1",
     "react-native-fs": "2.20.0",
     "react-native-gesture-handler": "2.16.1",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-maps": "1.14.0",
     "react-native-multiple-switch": "1.1.2",
     "react-native-pager-view": "6.3.0",

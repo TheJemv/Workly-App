@@ -1,12 +1,5 @@
-import {
-   View,
-   Text,
-   Image,
-   FlatList,
-   KeyboardAvoidingView,
-   Platform,
-   TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { ChatItem } from "components";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { getMessages } from "@/services/api/getMessage";
@@ -88,10 +81,12 @@ const ChatScreen = ({ navigation }) => {
    }, [searchValue]);
 
    return (
-      <KeyboardAvoidingView
-         behavior={Platform.OS === "ios" ? "padding" : undefined}
-         style={{ flex: 1 }}
-         keyboardVerticalOffset={50}
+      <KeyboardAwareScrollView
+         style={{
+            flex: 1,
+         }}
+         keyboardShouldPersistTaps="handled"
+         showsVerticalScrollIndicator={false}
       >
          {chats.length > 0 ? (
             <FlatList
@@ -122,7 +117,7 @@ const ChatScreen = ({ navigation }) => {
                </TouchableOpacity>
             </View>
          )}
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
    );
 };
 
