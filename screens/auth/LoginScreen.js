@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
    StyleSheet,
    Text,
@@ -7,8 +7,9 @@ import {
    Alert,
    KeyboardAvoidingView,
    Platform,
-} from 'react-native';
-import { Colors } from '../../lib';
+   Image,
+} from "react-native";
+import { Colors } from "../../lib";
 
 // Icons
 import {
@@ -16,28 +17,29 @@ import {
    SpinLoading,
    TextInputComponent,
    LoginFacebook,
-   LoginGoogle
-} from '../../components';
-import { authRoutes as routes } from '../../constants/routes';
-import { Singin } from '../../services/firebase/Singin';
-
+   LoginGoogle,
+} from "../../components";
+import { authRoutes as routes } from "../../constants/routes";
+import { Singin } from "../../services/firebase/Singin";
 
 const LoginScreen = ({ navigation }) => {
-   const [ loading, setLoading ] = useState(false);
-   const [user, setUser] = useState({email: '', password: ''});
+   const [loading, setLoading] = useState(false);
+   const [user, setUser] = useState({ email: "", password: "" });
 
    const handleRegister = () => navigation.push(routes.SIGNUP);
    const handleLoginUser = async () => {
-      setLoading(true)
-      await Singin(user).catch(e => {
-         Alert.alert("Error", e.message)
-      }).finally(() => {
-         setLoading(false)
-      })
+      setLoading(true);
+      await Singin(user)
+         .catch((e) => {
+            Alert.alert("Error", e.message);
+         })
+         .finally(() => {
+            setLoading(false);
+         });
    };
 
    const handleInput = (key, value) => {
-      setUser(prevUser => ({
+      setUser((prevUser) => ({
          ...prevUser,
          [key]: value,
       }));
@@ -47,25 +49,27 @@ const LoginScreen = ({ navigation }) => {
       <ContainerBack navigation={navigation}>
          <KeyboardAvoidingView
             style={styles.fills}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
             keyboardVerticalOffset={60}
          >
-
             {/* Titulo... */}
             <View style={styles.top}>
-               <Text style={styles.top.title}>Bienvenido de nuevo!, Tus Servicios al instante...</Text>
+               <Text style={styles.top.title}>
+                  Bienvenido de nuevo!, Tus Servicios al instante...
+               </Text>
             </View>
 
-
             {/* Inputs... */}
-            <View style={{
-               display: "flex",
-               flexDirection: "column",
-               gap: 12
-            }}>
+            <View
+               style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+               }}
+            >
                <TextInputComponent
                   value={user.email}
-                  onChangeText={e => handleInput("email", e)}
+                  onChangeText={(e) => handleInput("email", e)}
                   label="Email"
                   placeholder="Ingresa tu email"
                   autoComplete="email"
@@ -76,20 +80,19 @@ const LoginScreen = ({ navigation }) => {
                <TextInputComponent
                   hide
                   value={user.password}
-                  onChangeText={e => handleInput("password", e)}
+                  onChangeText={(e) => handleInput("password", e)}
                   label="Ingresa tu contraseña"
                   placeholder="Ingresa tu contraseña"
                   autoComplete="password"
                   autoCapitalize="none"
                />
 
-               <TouchableOpacity style={{ marginLeft: 'auto' }}>
-                  <Text style={{ color: '#040048', fontWeight: '600' }}>
+               <TouchableOpacity style={{ marginLeft: "auto" }}>
+                  <Text style={{ color: "#040048", fontWeight: "600" }}>
                      Olvidaste la contraseña?
                   </Text>
                </TouchableOpacity>
             </View>
-
 
             {/* Iniciar sesion... */}
             <TouchableOpacity
@@ -102,8 +105,14 @@ const LoginScreen = ({ navigation }) => {
                   <SpinLoading />
                )}
             </TouchableOpacity>
+            <View className="flex-1 mb-6 ">
+               <Image
+                  source={require("assets/photo-signin.jpg")}
+                  className="w-full h-full"
+                  resizeMode="cover"
+               />
+            </View>
          </KeyboardAvoidingView>
-
 
          {/* Aplicacion */}
          <View style={styles.bottom}>
@@ -119,13 +128,12 @@ const LoginScreen = ({ navigation }) => {
             </View>
          </View>
 
-
          <View style={styles.bottom.register}>
             <Text style={{ color: Colors.secondary.DEFAULT }}>
                No tienes cuenta?
             </Text>
             <TouchableOpacity onPress={handleRegister}>
-               <Text style={{ color: '#040048', fontWeight: '600' }}>
+               <Text style={{ color: "#040048", fontWeight: "600" }}>
                   Registrate
                </Text>
             </TouchableOpacity>
@@ -136,27 +144,27 @@ const LoginScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
    container: {
-      backgroundColor: 'white',
+      backgroundColor: "white",
       flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      width: '85%',
-      marginHorizontal: 'auto',
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      width: "85%",
+      marginHorizontal: "auto",
    },
    top: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'left',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "left",
       title: {
-         color: '#1E232C',
-         fontWeight: '700',
+         color: "#1E232C",
+         fontWeight: "700",
          fontSize: 24,
       },
    },
    fills: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: 48,
       input: {
          paddingVertical: 8,
@@ -164,30 +172,30 @@ const styles = StyleSheet.create({
       },
       marginBottom: "auto",
       paddingVertical: 32,
-      flex: 1
+      flex: 1,
    },
    bottom: {
-      width: '100%',
-      marginHorizontal: 'auto',
+      width: "100%",
+      marginHorizontal: "auto",
       gap: 24,
       marginBottom: 48,
       button: {
-         width: '100%',
+         width: "100%",
          height: 52,
          borderRadius: 12,
-         backgroundColor: '#1E232C',
+         backgroundColor: "#1E232C",
          text: {
             color: Colors.white,
-            marginHorizontal: 'auto',
+            marginHorizontal: "auto",
             fontSize: 16,
-            marginVertical: 'auto',
+            marginVertical: "auto",
          },
       },
       register: {
-         display: 'flex',
-         flexDirection: 'row',
+         display: "flex",
+         flexDirection: "row",
          gap: 4,
-         marginHorizontal: 'auto',
+         marginHorizontal: "auto",
       },
    },
    lines: {
@@ -207,8 +215,8 @@ const styles = StyleSheet.create({
    socialMedia: {
       flexDirection: "row",
       width: "100%",
-      gap: 12
-   }
+      gap: 12,
+   },
 });
 
 export default LoginScreen;
