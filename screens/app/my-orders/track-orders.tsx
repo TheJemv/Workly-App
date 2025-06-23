@@ -22,7 +22,11 @@ import formatDateService from "functions/formatDateService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import DatePicker from "react-native-date-picker";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { cancelOrder, nextOrder } from "services/api/orders.api";
+import {
+   cancelOrder,
+   nextOrder,
+   updateRequestedDate,
+} from "services/api/orders.api";
 import InvoiceOrder from "components/InvoiceOrder";
 
 type Props = {
@@ -43,6 +47,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    const { token } = useContext(AuthContext);
 
    const [loading, setLoading] = useState<boolean>(false);
+   const [loadingRequestDate, setLoadingRequestDate] = useState<boolean>(false);
    const [loadingCancel, setLoadingCancel] = useState<boolean>(false);
    const [showEditDate, setShowEditDate] = useState<boolean>(false);
 
@@ -80,9 +85,29 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
          });
    };
 
+   const handleUpdateRequestDate = async (date: Date) => {
+      setLoadingRequestDate(true);
+      await updateRequestedDate(token, order.id, date)
+         .catch((error) => {
+            console.error("Error:", error);
+            Alert.alert("Error", "No se pudo realizar la acción");
+         })
+         .finally(() => {
+            setLoadingRequestDate(false);
+            navigation.navigate("StackHome", {
+               screen: "Home",
+            });
+         });
+   };
+
    return (
       <>
          <SafeAreaView className="flex-1">
+            {loadingRequestDate && (
+               <View className="absolute top-0 left-0 right-0 bottom-0 z-50 bg-white/80 flex items-center justify-center">
+                  <SpinLoading color={Colors.principal.DEFAULT} size={40} />
+               </View>
+            )}
             <ScrollView className="flex-1 px-3 space-y-2">
                <View
                   className="flex flex-col rounded-xl bg-white shadow-md shadow-dark/25"
@@ -304,7 +329,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
          <DatePicker
             modal
             mode="datetime"
-            date={new Date()}
+            date={new Date(order?.dateRequest)}
             onConfirm={(date) => {
                if (date === new Date(order.dateRequest)) return;
                setShowEditDate(false);
@@ -320,9 +345,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                      },
                      {
                         text: "Actualizar",
-                        onPress: () => {
-                           console.log("Actualizar Fecha");
-                        },
+                        onPress: () => handleUpdateRequestDate(date),
                      },
                   ]
                );
@@ -330,10 +353,11 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
             onCancel={() => {
                setShowEditDate(false);
             }}
+            locale="es"
             open={showEditDate}
-            minimumDate={
-               new Date(new Date().setMinutes(new Date().getMinutes() + 30))
-            }
+            // minimumDate={
+            //    new Date(new Date().setMinutes(new Date().getMinutes() + 30))
+            // }
          />
       </>
    );
