@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState, useRef } from "react";
-import { auth } from "../config/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { customer as getCustomer } from "services/auth/customer";
 import { getCompany } from "services/api/company.api";
 import useGlobal from "core/globals";
@@ -24,8 +23,6 @@ export const AuthProvider = ({ children }) => {
    const isRetryingRef = useRef(false);
    const retryTimeoutRef = useRef(null);
 
-
-
    const resetState = () => {
       setUser(null);
       setToken(null);
@@ -34,9 +31,8 @@ export const AuthProvider = ({ children }) => {
       setStatusSubscription(false);
    };
 
-
    const fetchData = async (user) => {
-      setLoading(false)
+      setLoading(false);
       if (!user || isFetchingDataRef.current) {
          resetState();
          return;
@@ -44,23 +40,27 @@ export const AuthProvider = ({ children }) => {
 
       isFetchingDataRef.current = true;
       try {
-         const token = await user.getIdToken(true).then((token) => {
-            setToken(token);
-            return token
-         }).catch(() => {
-            throw new Error("Error para obtener el token.");
-         });
-
+         const token = await user
+            .getIdToken(true)
+            .then((token) => {
+               setToken(token);
+               return token;
+            })
+            .catch(() => {
+               throw new Error("Error para obtener el token.");
+            });
 
          // const { accountType, statusSubscription } = await user.getIdTokenResult().claims;
          // console.log(accountType, statusSubscription)
 
          setUser(user);
-         await getCustomer(token).then((user) => {
-            setCustomer(user);
-         }).catch(() => {
-            throw new Error("Error al cargar el customer");
-         });
+         await getCustomer(token)
+            .then((user) => {
+               setCustomer(user);
+            })
+            .catch(() => {
+               throw new Error("Error al cargar el customer");
+            });
 
          // if (accountType === "account") {
          //    await getCompany(token).then((data) => {
@@ -98,11 +98,8 @@ export const AuthProvider = ({ children }) => {
       }
    };
 
-
-
-
    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      const unsubscribe = onAuthStateChanged(getAuth(), async (user) => {
          setLoading(false);
          if (user) {
             await fetchData(user);
@@ -118,15 +115,12 @@ export const AuthProvider = ({ children }) => {
       };
    }, []);
 
-
    const reloadCompany = async () => {
       if (isCompany) {
          const companyData = await getCompany(token);
          setCompanyData(companyData);
       }
    };
-
-
 
    return (
       <AuthContext.Provider

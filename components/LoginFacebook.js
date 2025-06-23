@@ -1,35 +1,30 @@
-import { StyleSheet, TouchableOpacity, Image } from 'react-native'
-import React, { useEffect } from 'react'
-import * as Facebook from "expo-auth-session/providers/facebook"
-import { ResponseType } from 'expo-auth-session';
-import FacebookeIcon from '../assets/Icons/facebookIcon.png';
-import { FacebookAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useEffect } from "react";
+import * as Facebook from "expo-auth-session/providers/facebook";
+import { ResponseType } from "expo-auth-session";
+import FacebookeIcon from "../assets/Icons/facebookIcon.png";
+import auth, { FacebookAuthProvider } from "@react-native-firebase/auth";
 
 const LoginFacebook = () => {
    const [_request, response, promptAsync] = Facebook.useAuthRequest({
       responseType: ResponseType.Token,
-      clientId: "1543934623185040"
-   })
+      clientId: "1543934623185040",
+   });
 
    useEffect(() => {
-      if(response?.type === "success") {
-         const { access_token } = response.params
-         const credential = FacebookAuthProvider.credential(access_token)
-         signInWithCredential(auth, credential)
+      if (response?.type === "success") {
+         const { access_token } = response.params;
+         const credential = FacebookAuthProvider.credential(access_token);
+         auth().signInWithCredential(credential);
       }
-   }, [response])
+   }, [response]);
 
    return (
       <TouchableOpacity onPress={() => promptAsync()} style={styles.buttons}>
-         <Image
-            style={styles.Icon}
-            source={FacebookeIcon}
-         />
+         <Image style={styles.Icon} source={FacebookeIcon} />
       </TouchableOpacity>
-   )
-}
-
+   );
+};
 
 const styles = StyleSheet.create({
    Icon: {
@@ -40,12 +35,12 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderRadius: 8,
       padding: 6,
-      borderColor: '#DADADA',
+      borderColor: "#DADADA",
       flex: 1,
       display: "flex",
       flexDirection: "row",
-      justifyContent: "center"
+      justifyContent: "center",
    },
 });
 
-export default LoginFacebook
+export default LoginFacebook;

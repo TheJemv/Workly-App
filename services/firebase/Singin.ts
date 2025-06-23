@@ -1,10 +1,10 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../config/firebase";
+import auth from "@react-native-firebase/auth";
 import { loginModel } from "./model/login";
 
 export const Singin = async (user: loginModel) => {
    try {
-      await signInWithEmailAndPassword(auth, user.email, user.password)
+      await auth()
+         .signInWithEmailAndPassword(user.email, user.password)
          .then(() => {})
          .catch((e) => {
             console.log(e);
