@@ -74,6 +74,9 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
          })
          .finally(() => {
             setLoading(false);
+            navigation.navigate("StackHome", {
+               screen: "Home",
+            });
          });
    };
 
