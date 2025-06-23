@@ -45,7 +45,7 @@ const responses = {
    },
    "message.chats": (set, _, data) => set({ chats: data }),
    "message.new": (_, __, data) => utils.log("New message:", data),
-   "message.list": (set, _, data) =>
+   "message.list": (set, get, data) =>
       set({
          messagesList: [...get().messagesList, ...data.messages],
          messagesNext: data.next,
