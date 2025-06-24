@@ -37,6 +37,16 @@ export const TimesOpen = ({ openingHours }: Props): JSX.Element => {
       return `${hour12}:${m.toString().padStart(2, "0")} ${period}`;
    };
 
+   const getScheduleDescription = (
+      opensAt: string,
+      closesAt: string
+   ): string => {
+      if (opensAt === "00:00" && closesAt === "00:00") {
+         return "Cerrado";
+      }
+      return `${formatHour(opensAt)} - ${formatHour(closesAt)}`;
+   };
+
    return (
       <View className="flex flex-col space-y-3">
          <View className="flex flex-row items-center space-x-2">
@@ -64,45 +74,52 @@ export const TimesOpen = ({ openingHours }: Props): JSX.Element => {
             <View className="flex flex-col space-y-2 mb-3">
                <TimeOpen
                   title="Lunes"
-                  description={`${formatHour(
-                     openingHours.monday.opensAt
-                  )} - ${formatHour(openingHours.monday.closesAt)}`}
+                  description={getScheduleDescription(
+                     openingHours.monday.opensAt,
+                     openingHours.monday.closesAt
+                  )}
                />
                <TimeOpen
                   title="Martes"
-                  description={`${formatHour(
-                     openingHours.tuesday.opensAt
-                  )} - ${formatHour(openingHours.tuesday.closesAt)}`}
+                  description={getScheduleDescription(
+                     openingHours.tuesday.opensAt,
+                     openingHours.tuesday.closesAt
+                  )}
                />
                <TimeOpen
                   title="Miércoles"
-                  description={`${formatHour(
-                     openingHours.wednesday.opensAt
-                  )} - ${formatHour(openingHours.wednesday.closesAt)}`}
+                  description={getScheduleDescription(
+                     openingHours.wednesday.opensAt,
+                     openingHours.wednesday.closesAt
+                  )}
                />
                <TimeOpen
                   title="Jueves"
-                  description={`${formatHour(
-                     openingHours.thursday.opensAt
-                  )} - ${formatHour(openingHours.thursday.closesAt)}`}
+                  description={getScheduleDescription(
+                     openingHours.thursday.opensAt,
+                     openingHours.thursday.closesAt
+                  )}
                />
                <TimeOpen
                   title="Viernes"
-                  description={`${formatHour(
-                     openingHours.friday.opensAt
-                  )} - ${formatHour(openingHours.friday.closesAt)}`}
+                  description={getScheduleDescription(
+                     openingHours.friday.opensAt,
+                     openingHours.friday.closesAt
+                  )}
                />
                <TimeOpen
                   title="Sábado"
-                  description={`${formatHour(
-                     openingHours.saturday.opensAt
-                  )} - ${formatHour(openingHours.saturday.closesAt)}`}
+                  description={getScheduleDescription(
+                     openingHours.saturday.opensAt,
+                     openingHours.saturday.closesAt
+                  )}
                />
                <TimeOpen
                   title="Domingo"
-                  description={`${formatHour(
-                     openingHours.sunday.opensAt
-                  )} - ${formatHour(openingHours.sunday.closesAt)}`}
+                  description={getScheduleDescription(
+                     openingHours.sunday.opensAt,
+                     openingHours.sunday.closesAt
+                  )}
                />
             </View>
          )}

@@ -28,7 +28,7 @@ const HomeScreen = ({ navigation }) => {
 
    useEffect(() => {
       setLoading(true);
-      getServices(token, "servicios")
+      getServices(token, "popular")
          .then((data) => {
             if (data?.services) {
                setData(data.services);
