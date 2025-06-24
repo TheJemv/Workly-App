@@ -40,7 +40,7 @@ function StackOrders({}: Props): JSX.Element {
                      name="TrackOrders"
                      component={TrackOrdersScreen}
                      options={{
-                        headerShown: true,
+                        headerShown: false,
                      }}
                   />
                </Stack.Navigator>
@@ -60,7 +60,7 @@ function StackOrders({}: Props): JSX.Element {
                      name="TrackOrders"
                      component={TrackOrdersScreen}
                      options={{
-                        headerShown: true,
+                        headerShown: false,
                      }}
                   />
                </Stack.Navigator>

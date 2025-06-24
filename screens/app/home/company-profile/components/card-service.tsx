@@ -82,13 +82,13 @@ export const CardService = ({ service, refresh }: Props): JSX.Element => {
                      </Text>
                   </View>
                </View>
-               <Text className="text-sm text-dark font-bold">
+               <Text className="text-base text-dark font-bold">
                   Desde ${service.unit_amount / 100}.00 {service.currency}
                </Text>
                <View className="flex flex-row items-center justify-end space-x-3">
                   <Pressable
                      onPress={handleEdit}
-                     className="bg-yellow border-2 border-yellow rounded-lg px-4 py-1"
+                     className="bg-yellow-400 border-2 border-yellow-400 rounded-lg px-4 py-1"
                   >
                      <Text className="text-sm text-dark font-medium">
                         Editar

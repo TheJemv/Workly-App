@@ -98,14 +98,14 @@ const ProfileCompanyScreen = ({ route }: Props): JSX.Element => {
    }
 
    return (
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1 bg-white">
          <ScrollView
             className="flex-1 px-3 my-3 space-y-5"
             style={{ marginBottom: useBottomTabBarHeight() }}
          >
-            <View className="flex flex-col space-y-3">
+            <View className="flex flex-col space-y-3 bg-light/10 p-4 rounded-2xl">
                <View className="flex flex-row items-center space-x-3">
-                  <View className="w-12 h-12 rounded-full bg-light/25">
+                  <View className="w-16 h-16 rounded-full bg-light/25">
                      <Image
                         className="w-full h-full rounded-full"
                         source={{
@@ -114,7 +114,7 @@ const ProfileCompanyScreen = ({ route }: Props): JSX.Element => {
                      />
                   </View>
                   <View className="flex flex-col space-y-1">
-                     <Text className="text-base text-dark font-semibold">
+                     <Text className="text-xl text-dark font-semibold">
                         {company.profile.name}
                      </Text>
                      <View className="flex flex-row items-center space-x-1">
@@ -123,7 +123,7 @@ const ProfileCompanyScreen = ({ route }: Props): JSX.Element => {
                            size={20}
                            color={Colors.buttonColor}
                         />
-                        <Text className="text-sm text-text font-medium">
+                        <Text className="text-base text-text font-medium">
                            Valle de Mexico #18
                         </Text>
                      </View>
@@ -171,11 +171,11 @@ const ProfileCompanyScreen = ({ route }: Props): JSX.Element => {
                   </View>
                </View>
             </View>
-            <View className="flex flex-col space-y-3">
-               <Text className="text-lg text-dark font-bold">
+            <View className="flex flex-col space-y-6">
+               <Text className="text-xl text-dark font-bold">
                   Servicios que ofrezco
                </Text>
-               <View className="flex flex-col space-y-2">
+               <View className="flex flex-col space-y-5">
                   {company.services.map(
                      (service, index: number): JSX.Element => {
                         return (

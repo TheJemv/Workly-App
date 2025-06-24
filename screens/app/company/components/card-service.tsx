@@ -79,7 +79,7 @@ export const CardService = ({
          {!loading ? (
             <>
                <View className="flex flex-row space-x-3">
-                  <View className="flex items-center justify-center w-10 h-10 overflow-hidden rounded-lg bg-light/10">
+                  <View className="flex items-center justify-center w-14 h-14 overflow-hidden rounded-lg bg-light/10">
                      <Image source={{ uri: photo }} className="w-full h-full" />
                   </View>
                   <View className="flex flex-1 flex-col space-y-1">
@@ -98,23 +98,23 @@ export const CardService = ({
                   </View>
                </View>
                {!data?.indefinite && (
-                  <Text className="text-sm text-dark font-bold">
+                  <Text className="text-base text-dark font-bold">
                      Desde ${(price / 100).toFixed(2)} {currency.toUpperCase()}
                   </Text>
                )}
                <View className="flex flex-row items-center justify-end space-x-3">
                   <TouchableOpacity
                      onPress={handleService.Edit}
-                     className="rounded-lg bg-light px-5 py-1"
+                     className="bg-yellow-400 border-2 border-yellow-400 rounded-lg px-4 py-1"
                   >
-                     <Text className="text-sm text-white font-medium">
+                     <Text className="text-sm text-dark font-medium">
                         Editar
                      </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                      onPress={handleService.Delete}
-                     className="rounded-lg bg-light px-5 py-1"
+                     className="bg-red-500 border-2 border-red-500 rounded-lg px-4 py-1"
                   >
                      <Text className="text-sm text-white font-medium">
                         Eliminar

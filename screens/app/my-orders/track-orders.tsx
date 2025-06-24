@@ -122,12 +122,23 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    return (
       <>
          <SafeAreaView className="flex-1">
+            <View className="px-4 py-2">
+               <View className="mr-auto">
+                  <TouchableOpacity onPress={() => navigation.goBack()}>
+                     <FontAwesome
+                        name="arrow-left"
+                        size={22}
+                        color={Colors.principal.DEFAULT}
+                     />
+                  </TouchableOpacity>
+               </View>
+            </View>
             {loadingRequestDate && (
                <View className="absolute top-0 left-0 right-0 bottom-0 z-50 bg-white/80 flex items-center justify-center">
                   <SpinLoading color={Colors.principal.DEFAULT} size={40} />
                </View>
             )}
-            <ScrollView className="flex-1 px-3 space-y-2">
+            <ScrollView className="flex-1 px-3 space-y-2 py-4">
                <View
                   className="flex flex-col rounded-xl bg-white shadow-md shadow-dark/25"
                   style={{

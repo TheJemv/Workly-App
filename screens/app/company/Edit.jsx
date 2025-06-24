@@ -215,7 +215,7 @@ const ScreenEdit = () => {
                      <TouchableOpacity
                         key={index}
                         onPress={() => navigation.navigate(title)}
-                        className="w-full py-3 px-2 flex flex-row items-center border-black/20 border-b"
+                        className="w-full py-3 px-2 flex flex-row items-start border-black/20 border-b"
                         style={{ gap: 12 }}
                      >
                         <Text
@@ -230,7 +230,7 @@ const ScreenEdit = () => {
                                  ? "text-dark/90"
                                  : "text-text/60"
                            }
-                           numberOfLines={1}
+                           style={{ flex: 1 }}
                         >
                            {getValueOnOption(key, title)}
                         </Text>

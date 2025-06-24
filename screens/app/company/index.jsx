@@ -66,7 +66,7 @@ const ProfileScreen = () => {
 
    return (
       <SafeAreaView
-         className="flex-1"
+         className="flex-1 bg-white"
          style={{
             marginTop: StatusBar.currentHeight,
          }}
@@ -75,9 +75,9 @@ const ProfileScreen = () => {
             className="flex-1 px-3 my-3 space-y-5"
             style={{ marginBottom: useBottomTabBarHeight() }}
          >
-            <View className="flex flex-col space-y-3">
+            <View className="flex flex-col space-y-3 bg-light/10 p-4 rounded-2xl">
                <View className="flex flex-row items-center space-x-3 w-full">
-                  <View className="w-12 h-12 rounded-full bg-light/25">
+                  <View className="w-16 h-16 rounded-full bg-light/25">
                      <Image
                         className="w-full h-full rounded-full"
                         source={{
@@ -87,7 +87,7 @@ const ProfileScreen = () => {
                   </View>
                   <View className="flex flex-col space-y-1">
                      <View className="flex flex-row justify-between">
-                        <Text className="text-base text-dark font-semibold">
+                        <Text className="text-xl text-dark font-semibold">
                            {companyData?.profile?.name}
                         </Text>
                      </View>
@@ -98,7 +98,7 @@ const ProfileScreen = () => {
                               size={20}
                               color={Colors.buttonColor}
                            />
-                           <Text className="text-sm text-text font-medium">
+                           <Text className="text-base text-text font-medium">
                               Valle de Mexico #18
                            </Text>
                         </View>
@@ -207,7 +207,7 @@ const ProfileScreen = () => {
                   />
                )}
                contentContainerStyle={{
-                  gap: 8,
+                  gap: 20,
                }}
                ListHeaderComponent={() => (
                   <TouchableOpacity
