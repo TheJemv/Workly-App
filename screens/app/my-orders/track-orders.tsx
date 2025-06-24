@@ -45,6 +45,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    const sales = useGlobal((state) => state.sales);
    const orders = useGlobal((state) => state.orders);
    const customerCompany = useGlobal((state) => state.customer);
+   const company = useGlobal((state) => state.company);
 
    const { token, customer } = useContext(AuthContext);
 
@@ -372,6 +373,69 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
             date={new Date(order?.dateRequest)}
             onConfirm={(date) => {
                if (date === new Date(order.dateRequest)) return;
+               const dayNames = {
+                  monday: "Lunes",
+                  tuesday: "Martes",
+                  wednesday: "Miércoles",
+                  thursday: "Jueves",
+                  friday: "Viernes",
+                  saturday: "Sábado",
+                  sunday: "Domingo",
+               };
+               const daysOfWeek = [
+                  "monday",
+                  "tuesday",
+                  "wednesday",
+                  "thursday",
+                  "friday",
+                  "saturday",
+                  "sunday",
+               ];
+
+               const dayOfWeek = daysOfWeek[date.getDay()];
+
+               const openingHours = company?.profile?.openingHours?.[dayOfWeek];
+
+               if (
+                  !openingHours ||
+                  !openingHours.opensAt ||
+                  !openingHours.closesAt
+               ) {
+                  setShowEditDate(false);
+                  Alert.alert(
+                     "Horario no disponible",
+                     "No hay horario de apertura configurado para este día."
+                  );
+                  return;
+               }
+
+               const openTime = openingHours.opensAt.split(":");
+               const closeTime = openingHours.closesAt.split(":");
+
+               const openDate = new Date(date);
+               openDate.setHours(
+                  Number(openTime[0]),
+                  Number(openTime[1]),
+                  0,
+                  0
+               );
+
+               const closeDate = new Date(date);
+               closeDate.setHours(
+                  Number(closeTime[0]),
+                  Number(closeTime[1]),
+                  0,
+                  0
+               );
+
+               if (date < openDate || date > closeDate) {
+                  setShowEditDate(false);
+                  Alert.alert(
+                     `Hora fuera de rango para ${dayNames[dayOfWeek]}`,
+                     `Selecciona una hora entre ${openingHours.opensAt} y ${openingHours.closesAt}`
+                  );
+                  return;
+               }
                setShowEditDate(false);
                Alert.alert(
                   "Actualizar Fecha",
