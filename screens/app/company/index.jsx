@@ -5,23 +5,17 @@ import {
    Text,
    SafeAreaView,
    Image,
-   StyleSheet,
    TouchableOpacity,
    Linking,
-   Platform,
    FlatList,
 } from "react-native";
-import { ServiceItem } from "components";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
-
-import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 import useGlobal from "core/globals";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { TimesOpen } from "./components/times-open";
-import { socialMedia } from "./data";
 import { ButtonIconLink } from "./components/button-link";
 import { CardService } from "./components/card-service";
 import { StatusBar } from "react-native";
@@ -30,10 +24,7 @@ const handleOpenLink = (url) => async () => {
    try {
       const supported = await Linking.canOpenURL(url);
       if (!supported) {
-         // Alert.alert(
-         //    "Error",
-         //    "No se puede abrir la aplicación."
-         // );
+         // Alert.alert("Error", "No se puede abrir la aplicación.");
       } else {
          return Linking.openURL(url);
       }
@@ -47,10 +38,7 @@ const handleCall = async (phoneNumber) => {
       const url = `tel:${phoneNumber}`;
       const supported = await Linking.canOpenURL(url);
       if (!supported) {
-         // Alert.alert(
-         //    "Error",
-         //    "No se puede abrir la aplicación de llamadas."
-         // );
+         // Alert.alert("Error", "No se puede abrir la aplicación de llamadas.");
       } else {
          return Linking.openURL(url);
       }
@@ -137,7 +125,9 @@ const ProfileScreen = () => {
 
                <View className="flex flex-col space-y-3">
                   <View>
-                     <TimesOpen />
+                     <TimesOpen
+                        openingHours={companyData?.profile?.openingHours}
+                     />
                   </View>
 
                   <View className="flex flex-row items-center justify-evenly space-x-2">

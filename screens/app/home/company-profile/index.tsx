@@ -137,7 +137,7 @@ const ProfileCompanyScreen = ({ route }: Props): JSX.Element => {
                </Text>
                <View className="flex flex-col space-y-3">
                   <View>
-                     <TimesOpen />
+                     <TimesOpen openingHours={company.profile.openingHours} />
                   </View>
                   <View className="flex flex-row items-center justify-between space-x-2">
                      {company.profile.contact.facebook && (

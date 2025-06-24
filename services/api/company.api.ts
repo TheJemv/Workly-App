@@ -82,3 +82,32 @@ export const fetchOnboardingCompany = async (token: string) => {
       }
    }
 };
+
+export const updateOpeningHours = async (
+   token: string,
+   id: string,
+   openingHours: object
+) => {
+   try {
+      const response = await apiClient.put(
+         `/company/opening-hours/${id}`,
+         {
+            openingHours,
+         },
+         {
+            headers: {
+               Authorization: `Bearer ${token}`,
+               "Content-Type": "application/json",
+            },
+         }
+      );
+
+      return response.data;
+   } catch (error) {
+      if (error.response && error.response.data) {
+         throw new Error(error.response.data.message || "Something went wrong");
+      } else {
+         throw new Error(error.message);
+      }
+   }
+};
