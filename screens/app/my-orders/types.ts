@@ -6,6 +6,7 @@ export type Order = {
    name: string;
    delivered?: boolean;
    percentComplete?: number;
+   agreement: boolean;
 
    id: string;
    createdAt: Date;

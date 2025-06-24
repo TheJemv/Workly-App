@@ -48,3 +48,19 @@ export const updateRequestedDate = async (
       throw new Error((error as Error).message);
    }
 };
+
+export const approbateAgreement = async (token: string, id: string) => {
+   try {
+      const response = await apiClient.put(
+         `/orders/approbate-agreement/${id}`,
+         {
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         }
+      );
+      return response.data;
+   } catch (error) {
+      throw new Error((error as Error).message);
+   }
+};

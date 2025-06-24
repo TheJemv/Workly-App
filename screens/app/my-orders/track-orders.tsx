@@ -26,6 +26,7 @@ import {
    cancelOrder,
    nextOrder,
    updateRequestedDate,
+   approbateAgreement,
 } from "services/api/orders.api";
 import InvoiceOrder from "components/InvoiceOrder";
 
@@ -43,10 +44,12 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    // Variables globales
    const sales = useGlobal((state) => state.sales);
    const orders = useGlobal((state) => state.orders);
+   const customerCompany = useGlobal((state) => state.customer);
 
-   const { token } = useContext(AuthContext);
+   const { token, customer } = useContext(AuthContext);
 
    const [loading, setLoading] = useState<boolean>(false);
+   const [loadingAgreement, setLoadingAgreement] = useState<boolean>(false);
    const [loadingRequestDate, setLoadingRequestDate] = useState<boolean>(false);
    const [loadingCancel, setLoadingCancel] = useState<boolean>(false);
    const [showEditDate, setShowEditDate] = useState<boolean>(false);
@@ -94,6 +97,21 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
          })
          .finally(() => {
             setLoadingRequestDate(false);
+            navigation.navigate("StackHome", {
+               screen: "Home",
+            });
+         });
+   };
+
+   const handleApprobateAgreement = async () => {
+      setLoadingAgreement(true);
+      await approbateAgreement(token, order.id)
+         .catch((error) => {
+            console.error("Error:", error);
+            Alert.alert("Error", "No se pudo realizar la acción");
+         })
+         .finally(() => {
+            setLoadingAgreement(false);
             navigation.navigate("StackHome", {
                screen: "Home",
             });
@@ -257,26 +275,48 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                            className="flex flex-row p-2 w-full"
                            style={{ gap: 8 }}
                         >
-                           <TouchableWithoutFeedback
-                              onPress={handleNext}
-                              disabled={loading}
-                           >
-                              <View className="bg-green-500 py-2 rounded-md flex flex-row items-center justify-center flex-1">
-                                 {loading ? (
-                                    <SpinLoading color={"white"} size={22} />
-                                 ) : (
-                                    <Text className="text-white text-base">
-                                       {order.status ===
-                                          OrderStatusEnum.Pending &&
-                                          "Aceptar Pedido"}
-                                       {order.status ===
-                                          OrderStatusEnum.Processing &&
-                                          "Completar Pedido"}
-                                    </Text>
-                                 )}
-                              </View>
-                           </TouchableWithoutFeedback>
-
+                           {order.agreement && (
+                              <TouchableWithoutFeedback
+                                 onPress={handleNext}
+                                 disabled={loading}
+                              >
+                                 <View className="bg-green-500 py-2 rounded-md flex flex-row items-center justify-center flex-1">
+                                    {loading ? (
+                                       <SpinLoading color={"white"} size={22} />
+                                    ) : (
+                                       <Text className="text-white text-base">
+                                          {order.status ===
+                                             OrderStatusEnum.Pending &&
+                                             "Aceptar Pedido"}
+                                          {order.status ===
+                                             OrderStatusEnum.Processing &&
+                                             "Completar Pedido"}
+                                       </Text>
+                                    )}
+                                 </View>
+                              </TouchableWithoutFeedback>
+                           )}
+                           {!order.agreement &&
+                              customerCompany.customerId !==
+                                 customer.customer.customerId && (
+                                 <TouchableWithoutFeedback
+                                    onPress={handleApprobateAgreement}
+                                    disabled={loadingAgreement}
+                                 >
+                                    <View className="bg-green-500 py-2 rounded-md flex flex-row items-center justify-center flex-1">
+                                       {loadingAgreement ? (
+                                          <SpinLoading
+                                             color={"white"}
+                                             size={22}
+                                          />
+                                       ) : (
+                                          <Text className="text-white text-base">
+                                             Aprobar cambio
+                                          </Text>
+                                       )}
+                                    </View>
+                                 </TouchableWithoutFeedback>
+                              )}
                            <TouchableWithoutFeedback
                               onPress={handleCancel}
                               disabled={loadingCancel}
