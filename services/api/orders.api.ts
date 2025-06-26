@@ -54,6 +54,9 @@ export const approbateAgreement = async (token: string, id: string) => {
       const response = await apiClient.put(
          `/orders/approbate-agreement/${id}`,
          {
+            agreement: true,
+         },
+         {
             headers: {
                Authorization: `Bearer ${token}`,
             },

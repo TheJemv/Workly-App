@@ -1,261 +1,574 @@
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
-import { usePaymentSheet } from "@stripe/stripe-react-native"
-import SpinLoading from "components/SpinLoading"
-import { AuthContext } from "context/AuthContext"
-import { Colors } from "lib"
-import { useContext, useEffect, useState } from "react"
-import { Text, SafeAreaView, ScrollView, View, Image, TouchableOpacity, TextInput, Alert } from "react-native"
-import DatePicker from 'react-native-date-picker'
-import formatDateService from 'functions/formatDateService'
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { usePaymentSheet } from "@stripe/stripe-react-native";
+import SpinLoading from "components/SpinLoading";
+import { AuthContext } from "context/AuthContext";
+import { Colors } from "lib";
+import { useContext, useEffect, useState } from "react";
+import {
+   Text,
+   SafeAreaView,
+   ScrollView,
+   View,
+   Image,
+   TouchableOpacity,
+   TextInput,
+   Alert,
+} from "react-native";
+import DatePicker from "react-native-date-picker";
+import formatDateService from "functions/formatDateService";
 
+import { getService, getServicePayment } from "services/api/services.api";
+import DataOptions from "components/DataOptions";
+import { Picker } from "@react-native-picker/picker";
+import { getBillings } from "services/api/billing.api";
+import { useNavigation } from "@react-navigation/native";
 
-import { getService, getServicePayment } from "services/api/services.api"
-import DataOptions from "components/DataOptions"
-import { Picker } from "@react-native-picker/picker"
-import { getBillings } from "services/api/billing.api"
-
-
-const Stats = ({name = 'Ordenes', value = 50}) => (
-   <View style={{gap: 6}} className="flex-1 rounded-lg shadow-lg py-3 bg-zinc-300 flex flex-col items-center">
-      <Text numberOfLines={1} className="text-gray-500" style={{fontWeight: 700, fontSize: 18}}>{value}</Text>
-      <Text numberOfLines={1} className="text-text">{name}</Text>
+const Stats = ({ name = "Ordenes", value = 50 }) => (
+   <View
+      style={{ gap: 6 }}
+      className="flex-1 rounded-lg shadow-lg py-3 bg-zinc-300 flex flex-col items-center"
+   >
+      <Text
+         numberOfLines={1}
+         className="text-gray-500"
+         style={{ fontWeight: 700, fontSize: 18 }}
+      >
+         {value}
+      </Text>
+      <Text numberOfLines={1} className="text-text">
+         {name}
+      </Text>
    </View>
-)
+);
 
 const formatPrice = (text) => {
-   const numericText = text.replace(/[^0-9]/g, '');
-   const formattedText = numericText.replace(/(\d)(\d{2})$/, '$1.$2');
+   const numericText = text.replace(/[^0-9]/g, "");
+   const formattedText = numericText.replace(/(\d)(\d{2})$/, "$1.$2");
 
-   if(text > 0) {
+   if (text > 0) {
       return `$${formattedText}`;
    }
-   return text
+   return text;
 };
 
-
 const ServiceHire = ({ route }) => {
-   const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet()
+   const navigation = useNavigation();
 
-   const { token, customer } = useContext(AuthContext)
-   const bottomHeight = useBottomTabBarHeight()
+   const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
 
-   const [selectedBilling, setSelectedBilling] = useState("")
+   const { token, customer } = useContext(AuthContext);
+   const bottomHeight = useBottomTabBarHeight();
 
-   const [infoUserNote, setInfoUserNote] = useState("")
+   const [selectedBilling, setSelectedBilling] = useState("");
 
-   const [dataService, setDataService] = useState(null)
-   const [dataBilling, setDataBilling] = useState(null)
+   const [infoUserNote, setInfoUserNote] = useState("");
 
-   const [loading, setLoading] = useState(true)
-   const [loadingBilling, setLoadingBilling] = useState(true)
+   const [dataService, setDataService] = useState(null);
+   const [dataBilling, setDataBilling] = useState(null);
 
-   const [enableButton, setEnableButton] = useState(false)
-   const [dateRequest, setDateRequest] = useState(new Date(new Date().setMinutes(new Date().getMinutes() + 30))) // Plus 30 minutes
-   const [showPickerDate, setShowPickerDate] = useState(false)
-   const [valuePrice, setValuePrice] = useState(formatPrice(String(dataService?.unit_amount)))
+   const [loading, setLoading] = useState(true);
+   const [loadingBilling, setLoadingBilling] = useState(true);
 
+   const [enableButton, setEnableButton] = useState(false);
+   const [dateRequest, setDateRequest] = useState(
+      new Date(new Date().setMinutes(new Date().getMinutes() + 30))
+   ); // Plus 30 minutes
+   const [showPickerDate, setShowPickerDate] = useState(false);
+   const [valuePrice, setValuePrice] = useState(
+      formatPrice(String(dataService?.unit_amount))
+   );
 
    const handleChange = (text) => {
       setValuePrice(formatPrice(text));
    };
 
    useEffect(() => {
-      getService(token, route?.params?.id).then(async data => {
-         setDataService(data?.service)
-         setLoading(false)
-      }).catch((error) => {
-         Alert.alert("Error", error.message)
-      })
+      getService(token, route?.params?.id)
+         .then(async (data) => {
+            setDataService(data?.service);
+            setLoading(false);
+         })
+         .catch((error) => {
+            Alert.alert("Error", error.message);
+         });
 
-      getBillings(token).then(data => {
-         setDataBilling(data?.data)
-         setLoadingBilling(false)
-      }).catch((error) => {
-         Alert.alert("Error", error.message)
-      })
-   }, [])
+      getBillings(token)
+         .then((data) => {
+            setDataBilling(data?.data);
+            setLoadingBilling(false);
+         })
+         .catch((error) => {
+            Alert.alert("Error", error.message);
+         });
+   }, []);
 
    // Stripe Payment
    const handlePayService = async () => {
-      setEnableButton(true)
-      if(!dataService?.unit_amount || dataService?.unit_amount <= 4999) {
-         Alert.alert("Error", "El precio del servicio no puede ser menor a $50.00")
-         setEnableButton(false)
-         return
+      setEnableButton(true);
+      if (!dataService?.unit_amount || dataService?.unit_amount <= 4999) {
+         Alert.alert(
+            "Error",
+            "El precio del servicio no puede ser menor a $50.00"
+         );
+         setEnableButton(false);
+         return;
       }
 
       try {
-         const { paymentintent, ephemeralKey } = await getServicePayment(token, dataService?.id, {
-            notes: infoUserNote,
-            dateRequest: dateRequest.toString(),
-            amount: dataService?.unit_amount,
-            billing: selectedBilling,
-         })
+         const { paymentintent, ephemeralKey } = await getServicePayment(
+            token,
+            dataService?.id,
+            {
+               notes: infoUserNote,
+               dateRequest: dateRequest.toString(),
+               amount: dataService?.unit_amount,
+               billing: selectedBilling,
+            }
+         );
 
-         await initializePaymentSheet(paymentintent, ephemeralKey)
-         await presentPaymentSheet()
+         await initializePaymentSheet(paymentintent, ephemeralKey);
+         await presentPaymentSheet();
+         navigation.navigate("home");
       } catch (error) {
-         Alert.alert(error?.message)
+         Alert.alert(error?.message);
       } finally {
-         setEnableButton(false)
+         setEnableButton(false);
       }
-   }
+   };
 
    const initializePaymentSheet = async (payment, key) => {
       const { error } = await initPaymentSheet({
          customerEphemeralKeySecret: key,
          merchantDisplayName: dataService?.name,
          allowsDelayedPaymentMethods: true,
-         returnURL: 'workit://stripe-return',
+         returnURL: "workit://stripe-return",
          paymentIntentClientSecret: payment,
          customerId: customer?.customer?.customerId,
-      })
+      });
 
-      if(error) {
-         throw new Error(error.message)
+      if (error) {
+         throw new Error(error.message);
       }
-   }
+   };
 
    const OpenCompany = () => {
       router.navigate("company", {
-         id: dataService?.company_id
-      })
-   }
+         id: dataService?.company_id,
+      });
+   };
 
-   return (
-      loading ? (
-         <View className="flex-1 flex-col items-center justify-center">
-            <SpinLoading color={Colors.principal.DEFAULT} size={48}/>
-         </View>
-      ) : (
-         <>
-            <SafeAreaView style={{flex:1}}>
-               <ScrollView className="py-2 px-2 flex flex-col">
-                  <View className="flex flex-col" style={{gap: 32, paddingBottom: bottomHeight}}>
-                     <Text className="text-dark" style={{fontWeight:700, fontSize: 24}}>Ordenar Servicio</Text>
+   const formatHour = (hour) => {
+      const [h, m] = hour.split(":").map(Number);
+      const period = h >= 12 ? "p.m." : "a.m.";
+      const hour12 = h % 12 === 0 ? 12 : h % 12;
+      return `${hour12}:${m.toString().padStart(2, "0")} ${period}`;
+   };
 
-                     <View className="flex flex-col items-center justify-center overflow-hidden" style={{gap: 8}}>
-                        <Image
-                           resizeMode="cover"
-                           source={{uri: dataService?.photo?dataService?.photo:"https://1.bp.blogspot.com/-CLJH1C9LCj8/U_qBzC3WCII/AAAAAAACR9g/_QV42D7tkO8/s1600/imagenes%2Bbonitas%2By%2Bfotos%2Bde%2Bpaisajes%2Bnaturales%2B-%2Bamazing%2Bfree%2Bwallpapers%2B(1).jpg"}}
-                           width={110} height={110}
-                           className="rounded-lg"
-                        />
-                        <TouchableOpacity onPress={OpenCompany} className="flex flex-row" style={{gap: 4}}>
-                           <Text style={{fontSize: 14, fontWeight: 600, color: Colors.principal.DEFAULT}}>Empresa</Text>
-                        </TouchableOpacity>
-                        <Text className="text-text" style={{fontSize: 12}}>{dataService?.name?dataService?.name:'Servicio'}</Text>
-                     </View>
+   const getScheduleDescription = (opensAt, closesAt) => {
+      if (opensAt === "00:00" && closesAt === "00:00") {
+         return "Cerrado";
+      }
+      return `${formatHour(opensAt)} - ${formatHour(closesAt)}`;
+   };
 
-                     <View style={{gap: 12}} className="w-full flex flex-row">
-                        <Stats name="Ordenes" value={"1.2k"} />
-                        <Stats name="Vistas" value={"4.2k"} />
-                        <Stats name="Creado" value={"52d"} />
-                     </View>
+   return loading ? (
+      <View className="flex-1 flex-col items-center justify-center">
+         <SpinLoading color={Colors.principal.DEFAULT} size={48} />
+      </View>
+   ) : (
+      <>
+         <SafeAreaView style={{ flex: 1 }}>
+            <ScrollView className="py-2 px-2 flex flex-col">
+               <View
+                  className="flex flex-col"
+                  style={{ gap: 32, paddingBottom: bottomHeight }}
+               >
+                  <Text
+                     className="text-dark"
+                     style={{ fontWeight: 700, fontSize: 24 }}
+                  >
+                     Ordenar Servicio
+                  </Text>
 
-                     <View className="py-2 px-3 shadow-lg bg-white rounded-lg flex flex-col" style={{gap: 6}}>
-                        <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Descripcion del servicio</Text>
-                        <Text className="text-text" style={{fontWeight:500}}>{dataService?.description}</Text>
-                     </View>
-
-                     <View className="flex flex-col" style={{gap: 6}}>
-                        <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Horarios de la empresa</Text>
-                        <Text className="pl-2 text-text" style={{fontWeight:500}}>10AM - 7PM</Text>
-                        <Text className="pl-2 text-text" style={{fontWeight:500}}>Lunes, Marts y Miercoles</Text>
-                     </View>
-
-                     {/* Billing */}
-                     <View className="flex flex-col" style={{gap:6}}>
-                        <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Fecha de Entrega</Text>
-                        <TouchableOpacity onPress={() => setShowPickerDate(true)} className="flex flex-row items-center justify-between py-2 px-3 bg-transparent rounded-lg bg-white">
-                           <Text className="text-text" style={{fontWeight:500}}>{formatDateService(dateRequest)}</Text>
-                        </TouchableOpacity>
-                     </View>
-
-                     {!loadingBilling && (
-                        <View className="flex flex-col" style={{gap:6}}>
-                           <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Datos de Facturacion</Text>
-                           <Picker
-                              style={{backgroundColor: Colors.white, color: Colors.text, borderRadius: 8}}
-                              selectedValue={selectedBilling}
-                              onValueChange={(itemValue) => {
-                                 setSelectedBilling(itemValue)
-                              }}
-                           >
-                              <Picker.Item label="Ninguno" value="" />
-                              {dataBilling?.map((billing, index) => (
-                                 <Picker.Item key={index} label={`${billing?.name}`} value={billing?.id} />
-                              ))}
-                           </Picker>
-                        </View>
-                     )}
-
-                     <View className="flex flex-col" style={{gap: 6}}>
-                        <Text style={{color: Colors.principal.DEFAULT, fontWeight: 600, fontSize: 16}}>Agregar Notas</Text>
-                        <TextInput
-                           placeholder="Agregar notas..."
-                           multiline
-                           className="bg-white text-text rounded-lg py-2 px-3"
+                  <View
+                     className="flex flex-col items-center justify-center overflow-hidden"
+                     style={{ gap: 8 }}
+                  >
+                     <Image
+                        resizeMode="cover"
+                        source={{
+                           uri: dataService?.photo
+                              ? dataService?.photo
+                              : "https://1.bp.blogspot.com/-CLJH1C9LCj8/U_qBzC3WCII/AAAAAAACR9g/_QV42D7tkO8/s1600/imagenes%2Bbonitas%2By%2Bfotos%2Bde%2Bpaisajes%2Bnaturales%2B-%2Bamazing%2Bfree%2Bwallpapers%2B(1).jpg",
+                        }}
+                        width={110}
+                        height={110}
+                        className="rounded-lg"
+                     />
+                     <TouchableOpacity
+                        onPress={OpenCompany}
+                        className="flex flex-row"
+                        style={{ gap: 4 }}
+                     >
+                        <Text
                            style={{
-                              height: 120,
-                              fontWeight: 500,
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: Colors.principal.DEFAULT,
                            }}
-                           value={infoUserNote}
-                           onChangeText={(e) => setInfoUserNote(e)}
-                        />
-                     </View>
+                        >
+                           Empresa
+                        </Text>
+                     </TouchableOpacity>
+                     <Text className="text-text" style={{ fontSize: 12 }}>
+                        {dataService?.name ? dataService?.name : "Servicio"}
+                     </Text>
+                  </View>
 
-                     {dataService?.indefinite && (
-                        <View className="flex flex-col" style={{gap: 6}}>
-                           <Text style={{
+                  <View style={{ gap: 12 }} className="w-full flex flex-row">
+                     <Stats name="Ordenes" value={"1.2k"} />
+                     <Stats name="Vistas" value={"4.2k"} />
+                     <Stats name="Creado" value={"52d"} />
+                  </View>
+
+                  <View
+                     className="py-2 px-3 shadow-lg bg-white rounded-lg flex flex-col"
+                     style={{ gap: 6 }}
+                  >
+                     <Text
+                        style={{
+                           color: Colors.principal.DEFAULT,
+                           fontWeight: 600,
+                           fontSize: 16,
+                        }}
+                     >
+                        Descripcion del servicio
+                     </Text>
+                     <Text className="text-text" style={{ fontWeight: 500 }}>
+                        {dataService?.description}
+                     </Text>
+                  </View>
+
+                  <View className="flex flex-col" style={{ gap: 6 }}>
+                     <Text
+                        style={{
+                           color: Colors.principal.DEFAULT,
+                           fontWeight: 600,
+                           fontSize: 16,
+                        }}
+                     >
+                        Horarios de la empresa
+                     </Text>
+                     <View className="flex flex-row items-center space-x-2">
+                        <Text className="text-sm text-dark font-bold">
+                           Lunes
+                        </Text>
+                        <Text className="text-sm text-text font-medium">
+                           {getScheduleDescription(
+                              dataService.company.profile.openingHours.monday
+                                 .opensAt,
+                              dataService.company.profile.openingHours.monday
+                                 .closesAt
+                           )}
+                        </Text>
+                     </View>
+                     <View className="flex flex-row items-center space-x-2">
+                        <Text className="text-sm text-dark font-bold">
+                           Martes
+                        </Text>
+                        <Text className="text-sm text-text font-medium">
+                           {getScheduleDescription(
+                              dataService.company.profile.openingHours.tuesday
+                                 .opensAt,
+                              dataService.company.profile.openingHours.tuesday
+                                 .closesAt
+                           )}
+                        </Text>
+                     </View>
+                     <View className="flex flex-row items-center space-x-2">
+                        <Text className="text-sm text-dark font-bold">
+                           Miércoles
+                        </Text>
+                        <Text className="text-sm text-text font-medium">
+                           {getScheduleDescription(
+                              dataService.company.profile.openingHours.wednesday
+                                 .opensAt,
+                              dataService.company.profile.openingHours.wednesday
+                                 .closesAt
+                           )}
+                        </Text>
+                     </View>
+                     <View className="flex flex-row items-center space-x-2">
+                        <Text className="text-sm text-dark font-bold">
+                           Jueves
+                        </Text>
+                        <Text className="text-sm text-text font-medium">
+                           {getScheduleDescription(
+                              dataService.company.profile.openingHours.thursday
+                                 .opensAt,
+                              dataService.company.profile.openingHours.thursday
+                                 .closesAt
+                           )}
+                        </Text>
+                     </View>
+                     <View className="flex flex-row items-center space-x-2">
+                        <Text className="text-sm text-dark font-bold">
+                           Viernes
+                        </Text>
+                        <Text className="text-sm text-text font-medium">
+                           {getScheduleDescription(
+                              dataService.company.profile.openingHours.friday
+                                 .opensAt,
+                              dataService.company.profile.openingHours.friday
+                                 .closesAt
+                           )}
+                        </Text>
+                     </View>
+                     <View className="flex flex-row items-center space-x-2">
+                        <Text className="text-sm text-dark font-bold">
+                           Sábado
+                        </Text>
+                        <Text className="text-sm text-text font-medium">
+                           {getScheduleDescription(
+                              dataService.company.profile.openingHours.saturday
+                                 .opensAt,
+                              dataService.company.profile.openingHours.saturday
+                                 .closesAt
+                           )}
+                        </Text>
+                     </View>
+                     <View className="flex flex-row items-center space-x-2">
+                        <Text className="text-sm text-dark font-bold">
+                           Domingo
+                        </Text>
+                        <Text className="text-sm text-text font-medium">
+                           {getScheduleDescription(
+                              dataService.company.profile.openingHours.sunday
+                                 .opensAt,
+                              dataService.company.profile.openingHours.sunday
+                                 .closesAt
+                           )}
+                        </Text>
+                     </View>
+                  </View>
+
+                  {/* Billing */}
+                  <View className="flex flex-col" style={{ gap: 6 }}>
+                     <Text
+                        style={{
+                           color: Colors.principal.DEFAULT,
+                           fontWeight: 600,
+                           fontSize: 16,
+                        }}
+                     >
+                        Fecha de Entrega
+                     </Text>
+                     <TouchableOpacity
+                        onPress={() => setShowPickerDate(true)}
+                        className="flex flex-row items-center justify-between py-2 px-3 bg-transparent rounded-lg bg-white"
+                     >
+                        <Text className="text-text" style={{ fontWeight: 500 }}>
+                           {formatDateService(dateRequest)}
+                        </Text>
+                     </TouchableOpacity>
+                  </View>
+
+                  {!loadingBilling && (
+                     <View className="flex flex-col" style={{ gap: 6 }}>
+                        <Text
+                           style={{
                               color: Colors.principal.DEFAULT,
                               fontWeight: 600,
                               fontSize: 16,
-                           }}>Agrega un Precio</Text>
-                           <TextInput
-                              placeholder="Agrega un precio..."
-                              keyboardType="number-pad"
-                              className="bg-white text-text rounded-lg py-2 px-3"
-                              style={{
-                                 fontWeight: 500,
-                              }}
-                              value={dataService?.unit_amount ? valuePrice : ""}
-                              onChangeText={(e) => {
-                                 const cleanedValue = e.replace(/[^0-9]/g, '')
-                                 const numricValue = parseFloat(cleanedValue) * 100
-                                 setDataService({
-                                    ...dataService,
-                                    unit_amount: numricValue
-                                 })
+                           }}
+                        >
+                           Datos de Facturacion
+                        </Text>
+                        <Picker
+                           style={{
+                              backgroundColor: Colors.white,
+                              color: Colors.text,
+                              borderRadius: 8,
+                           }}
+                           selectedValue={selectedBilling}
+                           onValueChange={(itemValue) => {
+                              setSelectedBilling(itemValue);
+                           }}
+                        >
+                           <Picker.Item label="Ninguno" value="" />
+                           {dataBilling?.map((billing, index) => (
+                              <Picker.Item
+                                 key={index}
+                                 label={`${billing?.name}`}
+                                 value={billing?.id}
+                              />
+                           ))}
+                        </Picker>
+                     </View>
+                  )}
 
-                                 handleChange(e)
-                              }}
-                           />
-                        </View>
-                     )}
-
-                     <TouchableOpacity disabled={enableButton} onPress={handlePayService} className="flex flex-col items-center justify-center py-3 rounded-lg shadow-lg" style={{backgroundColor: Colors.principal.DEFAULT}}>
-                        <Text className="text-white" style={{fontWeight: 600, fontSize: 18}}>${(dataService.unit_amount / 100)?dataService.unit_amount / 100:0} {dataService?.currency.toUpperCase()}</Text>
-                     </TouchableOpacity>
+                  <View className="flex flex-col" style={{ gap: 6 }}>
+                     <Text
+                        style={{
+                           color: Colors.principal.DEFAULT,
+                           fontWeight: 600,
+                           fontSize: 16,
+                        }}
+                     >
+                        Agregar Notas
+                     </Text>
+                     <TextInput
+                        placeholder="Agregar notas..."
+                        multiline
+                        className="bg-white text-text rounded-lg py-2 px-3"
+                        style={{
+                           height: 120,
+                           fontWeight: 500,
+                        }}
+                        value={infoUserNote}
+                        onChangeText={(e) => setInfoUserNote(e)}
+                     />
                   </View>
-               </ScrollView>
-            </SafeAreaView>
 
-            <DatePicker
-               modal
-               mode="datetime"
-               date={dateRequest}
-               onConfirm={date => {
-                  setShowPickerDate(false)
-                  setDateRequest(date)
-               }}
-               onCancel={() => setShowPickerDate(false)}
-               open={showPickerDate}
-               minimumDate={new Date(new Date().setMinutes(new Date().getMinutes() + 30))}
-            />
-         </>
-      )
-   )
-}
+                  {dataService?.indefinite && (
+                     <View className="flex flex-col" style={{ gap: 6 }}>
+                        <Text
+                           style={{
+                              color: Colors.principal.DEFAULT,
+                              fontWeight: 600,
+                              fontSize: 16,
+                           }}
+                        >
+                           Agrega un Precio
+                        </Text>
+                        <TextInput
+                           placeholder="Agrega un precio..."
+                           keyboardType="number-pad"
+                           className="bg-white text-text rounded-lg py-2 px-3"
+                           style={{
+                              fontWeight: 500,
+                           }}
+                           value={dataService?.unit_amount ? valuePrice : ""}
+                           onChangeText={(e) => {
+                              const cleanedValue = e.replace(/[^0-9]/g, "");
+                              const numricValue =
+                                 parseFloat(cleanedValue) * 100;
+                              setDataService({
+                                 ...dataService,
+                                 unit_amount: numricValue,
+                              });
 
-export default ServiceHire
+                              handleChange(e);
+                           }}
+                        />
+                     </View>
+                  )}
+
+                  <TouchableOpacity
+                     disabled={enableButton}
+                     onPress={handlePayService}
+                     className="flex flex-col items-center justify-center py-3 rounded-lg shadow-lg"
+                     style={{ backgroundColor: Colors.principal.DEFAULT }}
+                  >
+                     <Text
+                        className="text-white"
+                        style={{ fontWeight: 600, fontSize: 18 }}
+                     >
+                        $
+                        {dataService.unit_amount / 100
+                           ? dataService.unit_amount / 100
+                           : 0}{" "}
+                        {dataService?.currency.toUpperCase()}
+                     </Text>
+                  </TouchableOpacity>
+               </View>
+            </ScrollView>
+         </SafeAreaView>
+
+         <DatePicker
+            modal
+            mode="datetime"
+            date={dateRequest}
+            onConfirm={(date) => {
+               const dayNames = {
+                  monday: "Lunes",
+                  tuesday: "Martes",
+                  wednesday: "Miércoles",
+                  thursday: "Jueves",
+                  friday: "Viernes",
+                  saturday: "Sábado",
+                  sunday: "Domingo",
+               };
+               const daysOfWeek = [
+                  "monday",
+                  "tuesday",
+                  "wednesday",
+                  "thursday",
+                  "friday",
+                  "saturday",
+                  "sunday",
+               ];
+
+               const dayOfWeek = daysOfWeek[date.getDay()];
+
+               const openingHours =
+                  dataService?.company?.profile?.openingHours?.[dayOfWeek];
+
+               if (
+                  !openingHours ||
+                  !openingHours.opensAt ||
+                  !openingHours.closesAt
+               ) {
+                  setShowPickerDate(false);
+                  Alert.alert(
+                     "Horario no disponible",
+                     "No hay horario de apertura configurado para este día."
+                  );
+                  return;
+               }
+
+               const openTime = openingHours.opensAt.split(":");
+               const closeTime = openingHours.closesAt.split(":");
+
+               const openDate = new Date(date);
+               openDate.setHours(
+                  Number(openTime[0]),
+                  Number(openTime[1]),
+                  0,
+                  0
+               );
+
+               const closeDate = new Date(date);
+               closeDate.setHours(
+                  Number(closeTime[0]),
+                  Number(closeTime[1]),
+                  0,
+                  0
+               );
+
+               if (date < openDate || date > closeDate) {
+                  setShowPickerDate(false);
+                  Alert.alert(
+                     `Hora fuera de rango para ${dayNames[dayOfWeek]}`,
+                     `Selecciona una hora entre ${getScheduleDescription(
+                        openingHours.opensAt,
+                        openingHours.closesAt
+                     )}`
+                  );
+                  return;
+               }
+
+               setShowPickerDate(false);
+               setDateRequest(date);
+            }}
+            onCancel={() => setShowPickerDate(false)}
+            open={showPickerDate}
+            minimumDate={
+               new Date(new Date().setMinutes(new Date().getMinutes() + 30))
+            }
+         />
+      </>
+   );
+};
+
+export default ServiceHire;

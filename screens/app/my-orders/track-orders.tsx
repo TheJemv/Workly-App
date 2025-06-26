@@ -15,7 +15,6 @@ import { useContext, useLayoutEffect, useState } from "react";
 import OrderStatusEnum from "enum/OrderStatusEnum";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import useGlobal from "core/globals";
-import { API_HOST } from "@env";
 import { AuthContext } from "context/AuthContext";
 import SpinLoading from "components/SpinLoading";
 import formatDateService from "functions/formatDateService";
@@ -44,10 +43,9 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    // Variables globales
    const sales = useGlobal((state) => state.sales);
    const orders = useGlobal((state) => state.orders);
-   const customerCompany = useGlobal((state) => state.customer);
    const company = useGlobal((state) => state.company);
 
-   const { token, customer } = useContext(AuthContext);
+   const { token } = useContext(AuthContext);
 
    const [loading, setLoading] = useState<boolean>(false);
    const [loadingAgreement, setLoadingAgreement] = useState<boolean>(false);
@@ -117,6 +115,23 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                screen: "Home",
             });
          });
+   };
+
+   const formatHour = (hour: string): string => {
+      const [h, m] = hour.split(":").map(Number);
+      const period = h >= 12 ? "p.m." : "a.m.";
+      const hour12 = h % 12 === 0 ? 12 : h % 12;
+      return `${hour12}:${m.toString().padStart(2, "0")} ${period}`;
+   };
+
+   const getScheduleDescription = (
+      opensAt: string,
+      closesAt: string
+   ): string => {
+      if (opensAt === "00:00" && closesAt === "00:00") {
+         return "Cerrado";
+      }
+      return `${formatHour(opensAt)} - ${formatHour(closesAt)}`;
    };
 
    return (
@@ -308,27 +323,6 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                                  </View>
                               </TouchableWithoutFeedback>
                            )}
-                           {!order.agreement &&
-                              customerCompany.customerId !==
-                                 customer.customer.customerId && (
-                                 <TouchableWithoutFeedback
-                                    onPress={handleApprobateAgreement}
-                                    disabled={loadingAgreement}
-                                 >
-                                    <View className="bg-green-500 py-2 rounded-md flex flex-row items-center justify-center flex-1">
-                                       {loadingAgreement ? (
-                                          <SpinLoading
-                                             color={"white"}
-                                             size={22}
-                                          />
-                                       ) : (
-                                          <Text className="text-white text-base">
-                                             Aprobar cambio
-                                          </Text>
-                                       )}
-                                    </View>
-                                 </TouchableWithoutFeedback>
-                              )}
                            <TouchableWithoutFeedback
                               onPress={handleCancel}
                               disabled={loadingCancel}
@@ -355,6 +349,22 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                      order.status === OrderStatusEnum.Pending) &&
                      orders?.data?.find((o) => o.id === order.id) && (
                         <View className="p-2 w-full" style={{ gap: 8 }}>
+                           {!order.agreement && (
+                              <TouchableWithoutFeedback
+                                 onPress={handleApprobateAgreement}
+                                 disabled={loadingAgreement}
+                              >
+                                 <View className="bg-green-500 py-2 rounded-md flex flex-row items-center justify-center flex-1">
+                                    {loadingAgreement ? (
+                                       <SpinLoading color={"white"} size={22} />
+                                    ) : (
+                                       <Text className="text-white text-base">
+                                          Aprobar cambio
+                                       </Text>
+                                    )}
+                                 </View>
+                              </TouchableWithoutFeedback>
+                           )}
                            <TouchableOpacity
                               onPress={handleCancel}
                               className="bg-red-500 py-2 rounded-md flex flex-row items-center justify-center flex-1"
@@ -443,7 +453,10 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                   setShowEditDate(false);
                   Alert.alert(
                      `Hora fuera de rango para ${dayNames[dayOfWeek]}`,
-                     `Selecciona una hora entre ${openingHours.opensAt} y ${openingHours.closesAt}`
+                     `Selecciona una hora entre ${getScheduleDescription(
+                        openingHours.opensAt,
+                        openingHours.closesAt
+                     )}`
                   );
                   return;
                }
