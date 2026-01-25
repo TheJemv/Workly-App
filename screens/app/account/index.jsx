@@ -15,7 +15,6 @@ import { UserConfigButton, Option } from "components";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { AuthContext } from "context/AuthContext";
 import { usePaymentSheet } from "@stripe/stripe-react-native";
 import { getPaymentParams } from "services/api/getPaymantParams";
 import useGlobal from "core/globals";
@@ -24,8 +23,6 @@ const AccountScreen = ({ navigation }) => {
    const { token } = useGlobal()
    const customerUser = useGlobal(state => state.customer)
 
-
-   const { isCompany } = useContext(AuthContext);
    const handleSingout = async () => {
       await Singout().catch((e) => {
          Alert.alert("Error", e.message);
@@ -35,8 +32,6 @@ const AccountScreen = ({ navigation }) => {
    const handleScreen = (name) => {
       navigation.navigate(name);
    };
-
-
 
    // Datos Bancarios
    const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
@@ -55,7 +50,7 @@ const AccountScreen = ({ navigation }) => {
          });
          return { ephemeralKey, setupIntent };
       } catch (error) {
-         console.error('Error fetching payment sheet parameters:', error);
+         console.error('Error fetching payment sheet parameters: "Index.jsx"', error);
          Alert.alert('Error', error.message);
       }
    };
@@ -102,7 +97,7 @@ const AccountScreen = ({ navigation }) => {
 
                <View className="rounded-lg overflow-hidden flex flex-col">
                   <Option
-                     styles="bg-gray-500"
+                     styles="bg-gray-600"
                      icon={Feather}
                      iconName="lock"
                      label="Privacidad"
@@ -111,12 +106,21 @@ const AccountScreen = ({ navigation }) => {
 
                <View className="rounded-lg overflow-hidden flex flex-col">
                   <Option
-                     styles="bg-cyan-400"
+                     styles="bg-cyan-500"
                      icon={AntDesign}
                      iconName="addfile"
                      label="Datos de Facturacion"
                      onPress={() => handleScreen("InvoiceData")}
                   />
+
+                  <Option
+                     styles="bg-slate-500"
+                     icon={MaterialIcons}
+                     iconName="history"
+                     label="Historial de ordenes"
+                     onPress={() => handleScreen("InvoiceData")}
+                  />
+
                   <Option
                      styles="bg-orange-500"
                      icon={MaterialIcons}

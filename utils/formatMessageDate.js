@@ -74,7 +74,6 @@ export default formatMessageDate = (dateString) => {
          return getFormattedDate(localDate);
       }
    } catch (error) {
-      console.error('Error en la función formatMessageDate:', error);
       return 'Fecha no válida';
    }
 };

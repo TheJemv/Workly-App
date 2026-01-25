@@ -7,12 +7,12 @@ import type { Time } from "../types";
 import { times } from "../data";
 
 type Props = {};
-export const TimesOpen = ({}: Props): JSX.Element => {
+export const TimesOpen = ({ }: Props): JSX.Element => {
    const [show, setShow] = useState<boolean>(false);
-
    const handleShow = (): void => {
       setShow(!show);
    };
+
    return (
       <View className="flex flex-col space-y-3">
          <View className="flex flex-row items-center space-x-2">
@@ -37,7 +37,7 @@ export const TimesOpen = ({}: Props): JSX.Element => {
             </Pressable>
          </View>
          {show && (
-            <View className="flex flex-col space-y-2 mb-3">
+            <View className="flex flex-col space-y-2 pl-6 mb-3">
                {times.map((time: Time, index: number): JSX.Element => {
                   return (
                      <View key={index}>

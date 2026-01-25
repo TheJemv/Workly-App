@@ -1,147 +1,136 @@
-import React, { createContext, useEffect, useState, useRef } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import { auth } from "../config/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { customer as getCustomer } from "services/auth/customer";
-import { getCompany } from "services/api/company.api";
 import useGlobal from "core/globals";
 
-const RETRY_DELAY = 3000;
+export const AuthContext = createContext(null);
 
-export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-   const { init, socketConnect } = useGlobal();
+   const setTokenGlobal = useGlobal((s) => s.setToken);
+   const socketDisconnect = useGlobal((s) => s.socketDisconnect);
+   const socketConnect = useGlobal((s) => s.socketConnect);
 
    const [user, setUser] = useState(null);
    const [token, setToken] = useState(null);
    const [customer, setCustomer] = useState(null);
-   const [isCompany, setIsCompany] = useState(false);
-   const [companyData, setCompanyData] = useState({});
-   const [statusSubscription, setStatusSubscription] = useState(false);
    const [loading, setLoading] = useState(false);
-   const [chatsUser, setChatsUser] = useState([]);
 
-   const isFetchingDataRef = useRef(false);
-   const isRetryingRef = useRef(false);
-   const retryTimeoutRef = useRef(null);
+   const isFetchingRef = useRef(false);
+   const tokenRefreshIntervalRef = useRef(null);
 
+   // 🔥 Función para refrescar el token
+   const refreshToken = async (currentUser) => {
+      if (!currentUser) return null;
 
-
-   const resetState = () => {
-      setUser(null);
-      setToken(null);
-      setCustomer(null);
-      setIsCompany(false);
-      setStatusSubscription(false);
-   };
-
-
-   const fetchData = async (user) => {
-      setLoading(false)
-      if (!user || isFetchingDataRef.current) {
-         resetState();
-         return;
-      }
-
-      isFetchingDataRef.current = true;
       try {
-         const token = await user.getIdToken(true).then((token) => {
-            setToken(token);
-            return token
-         }).catch(() => {
-            throw new Error("Error para obtener el token.");
-         });
-
-
-         // const { accountType, statusSubscription } = await user.getIdTokenResult().claims;
-         // console.log(accountType, statusSubscription)
-
-         setUser(user);
-         await getCustomer(token).then((user) => {
-            setCustomer(user);
-         }).catch(() => {
-            throw new Error("Error al cargar el customer");
-         });
-
-         // if (accountType === "account") {
-         //    await getCompany(token).then((data) => {
-         //       setIsCompany(true);
-         //       setCompanyData(data);
-         //       setStatusSubscription(statusSubscription === "active");
-         //    }).catch(async () => {
-         //       setIsCompany(false);
-         //       setCompanyData({});
-         //       setStatusSubscription(false);
-         //       await signOut(auth)
-         //       throw new Error("Error al cargar la empresa");
-         //    });
-         // } else {
-         //    setIsCompany(false);
-         //    setCompanyData({});
-         //    setStatusSubscription(false);
-         // }
-
-         await init();
-         await socketConnect();
-
-         setLoading(true);
-         isRetryingRef.current = false;
+         console.log('🔄 Refrescando token...');
+         const freshToken = await currentUser.getIdToken(true); // force refresh
+         setToken(freshToken);
+         setTokenGlobal(freshToken);
+         console.log('✅ Token refrescado exitosamente');
+         return freshToken;
       } catch (error) {
-         if (!isRetryingRef.current) {
-            isRetryingRef.current = true;
-            retryTimeoutRef.current = setTimeout(() => {
-               isRetryingRef.current = false;
-               fetchData(user);
-            }, RETRY_DELAY);
-         }
-      } finally {
-         isFetchingDataRef.current = false;
+         console.error('❌ Error refrescando token:', error);
+         return null;
       }
    };
 
+   // 🔥 Limpiar intervalo de refresh
+   const clearTokenRefreshInterval = () => {
+      if (tokenRefreshIntervalRef.current) {
+         clearInterval(tokenRefreshIntervalRef.current);
+         tokenRefreshIntervalRef.current = null;
+      }
+   };
 
+   // 🔥 Configurar auto-refresh del token cada 50 minutos
+   const setupTokenRefresh = (currentUser) => {
+      clearTokenRefreshInterval();
 
+      // Refrescar cada 50 minutos (el token expira en 60)
+      tokenRefreshIntervalRef.current = setInterval(async () => {
+         await refreshToken(currentUser);
+      }, 50 * 60 * 1000); // 50 minutos
+   };
 
    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-         setLoading(false);
-         if (user) {
-            await fetchData(user);
-         } else {
-            resetState();
-            setLoading(true);
+      // 🔥 Listener para cambios en el token (incluye auto-refresh)
+      const unsubscribeTokenChange = auth.onIdTokenChanged(async (u) => {
+         if (!u) return;
+
+         // Solo actualizar si no estamos en medio de un fetch
+         if (!isFetchingRef.current) {
+            try {
+               const freshToken = await u.getIdToken();
+               setToken(freshToken);
+               setTokenGlobal(freshToken);
+               console.log('🔄 Token actualizado automáticamente');
+            } catch (error) {
+               console.error('Error actualizando token:', error);
+            }
          }
       });
 
+      // Listener para cambios de autenticación
+      const unsubscribeAuth = onAuthStateChanged(auth, async (u) => {
+         setLoading(false);
+
+         if (!u) {
+            setUser(null);
+            setToken(null);
+            setCustomer(null);
+            setTokenGlobal(null);
+            socketDisconnect();
+            clearTokenRefreshInterval();
+            setLoading(true);
+            return;
+         }
+
+         if (isFetchingRef.current) return;
+         isFetchingRef.current = true;
+
+         try {
+            const t = await u.getIdToken(true); // Force refresh inicial
+            setUser(u);
+            setToken(t);
+            setTokenGlobal(t);
+
+            // Obtener información del customer
+            const c = await getCustomer(t);
+            setCustomer(c);
+
+            // 🔥 Configurar auto-refresh del token
+            setupTokenRefresh(u);
+
+            setLoading(true);
+         } catch (error) {
+            console.error('Error en autenticación:', error);
+            setLoading(true);
+         } finally {
+            isFetchingRef.current = false;
+         }
+      });
+
+      // Cleanup
       return () => {
-         unsubscribe();
-         clearTimeout(retryTimeoutRef.current);
+         unsubscribeAuth();
+         unsubscribeTokenChange();
+         clearTokenRefreshInterval();
       };
    }, []);
 
-
-   const reloadCompany = async () => {
-      if (isCompany) {
-         const companyData = await getCompany(token);
-         setCompanyData(companyData);
-      }
+   // 🔥 Exponer función para refrescar manualmente
+   const value = {
+      user,
+      token,
+      customer,
+      loading,
+      refreshToken: () => refreshToken(user),
    };
 
-
-
    return (
-      <AuthContext.Provider
-         value={{
-            user,
-            token,
-            customer,
-            isCompany,
-            statusSubscription,
-            companyData,
-            loading,
-            chatsUser,
-            reloadCompany,
-         }}
-      >
+      <AuthContext.Provider value={value}>
          {children}
       </AuthContext.Provider>
    );

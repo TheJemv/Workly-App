@@ -3,9 +3,12 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import NativeStackOptions from "constants/NativeStackOptions";
 import { MyOrdersScreen } from "./my-orders";
-import { TrackOrdersScreen } from "./my-orders/track-orders";
+// import { TrackOrdersScreen } from "./my-orders/track-orders";
 import { OrdersScreen } from "./my-orders/orders";
 import { SalesScreen } from "./my-orders/sales";
+
+import { TrackOrdersScreen } from "./my-orders/TrackOrdersScreen";
+
 import { Colors } from "lib";
 import useGlobal from "core/globals";
 import { useEffect } from "react";
@@ -14,13 +17,8 @@ const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
 type Props = {};
-function StackOrders({}: Props): JSX.Element {
+function StackOrders({ }: Props): JSX.Element {
    const isBusiness: object = useGlobal((state) => state.company);
-
-   useEffect(() => {
-      console.log("StackOrders rendered");
-   }, []);
-
    return (
       <View className="flex-1 bg-[#eee]">
          <SafeAreaView className="flex-1">

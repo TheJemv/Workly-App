@@ -3,6 +3,7 @@ const authRoutes = {
    LOGIN: 'Login',
    SIGNUP: 'SignUp',
    FORGOT_PASSWORD: 'ForgotPassword',
+   TERMS: 'TermsAndConditions',
 };
 
 const mainRoutes = {

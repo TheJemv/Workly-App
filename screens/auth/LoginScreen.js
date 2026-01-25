@@ -23,8 +23,8 @@ import { Singin } from '../../services/firebase/Singin';
 
 
 const LoginScreen = ({ navigation }) => {
-   const [ loading, setLoading ] = useState(false);
-   const [user, setUser] = useState({email: '', password: ''});
+   const [loading, setLoading] = useState(false);
+   const [user, setUser] = useState({ email: '', password: '' });
 
    const handleRegister = () => navigation.push(routes.SIGNUP);
    const handleLoginUser = async () => {
@@ -37,9 +37,10 @@ const LoginScreen = ({ navigation }) => {
    };
 
    const handleInput = (key, value) => {
+      const trimmedValue = value.trim();
       setUser(prevUser => ({
          ...prevUser,
-         [key]: value,
+         [key]: trimmedValue,
       }));
    };
 

@@ -2,6 +2,8 @@ import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta s
 
 export const getPaymentParams = async (token: string) => {
    try {
+      console.log(apiClient.defaults.baseURL);
+
       const response = await apiClient.get("/customer/payment", {
          headers: {
             Authorization: `Bearer ${token}`,
@@ -10,6 +12,7 @@ export const getPaymentParams = async (token: string) => {
 
       return response.data;
    } catch (error) {
+      console.log(error)
       throw new Error("Error al obtener los datos bancarios");
    }
 };

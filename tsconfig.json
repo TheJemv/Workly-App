@@ -40,7 +40,10 @@
       ],
       "utils/*": [
         "utils/*"
-      ]
+      ],
+      "@/types/*": [
+        "types/*"
+      ],
     }
   },
   "exclude": [

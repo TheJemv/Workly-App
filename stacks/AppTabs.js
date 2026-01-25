@@ -98,8 +98,8 @@ const AppTabs = () => {
                      {
                         position: "absolute",
                         // display: navigation?.getCurrentRoute()?.name === "UserChat" ? "none": "flex",
-                        height: navigation?.getCurrentRoute()?.name === "UserChat" ? 0:80,
-                        opacity: navigation?.getCurrentRoute()?.name === "UserChat" ? 0:1,
+                        height: navigation?.getCurrentRoute()?.name === "UserChat" ? 0 : 80,
+                        opacity: navigation?.getCurrentRoute()?.name === "UserChat" ? 0 : 1,
                      },
                   ],
                };

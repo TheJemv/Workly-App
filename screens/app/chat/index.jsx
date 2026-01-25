@@ -11,32 +11,12 @@ import useGlobal from 'core/globals';
 
 const ChatScreen = ({ navigation }) => {
    const { chats } = useGlobal()
+   console.log("chats", chats)
 
    const bottomTab = useBottomTabBarHeight()
    const router = useNavigation()
 
    const [searchValue, setSearchValue] = useState('');
-   const [loader, setLoader] = useState(false);
-
-   const [fakeChats, setFakeChats] = useState([]);
-   const [searchChat, setSearchChat] = useState([]);
-
-   useEffect(() => {
-      setLoader(true);
-      getMessages()
-         .then(data => {
-            setFakeChats(
-               data.sort(
-                  (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-               ),
-            );
-            setLoader(false);
-         })
-         .catch(e => {
-            setLoader(true);
-            throw new Error(e);
-         });
-   }, []);
 
    useLayoutEffect(() => {
       router.setOptions({
@@ -55,20 +35,6 @@ const ChatScreen = ({ navigation }) => {
       });
    }, [router])
 
-   useEffect(() => {
-      setLoader(true);
-      getMessages().then(data => {
-         if(!data) return
-         const filtered = data.filter(
-            message => message.name.toLowerCase().includes(searchValue.toLowerCase())
-         );
-         setSearchChat(filtered)
-         setLoader(false);
-      }).catch(e => {
-         setLoader(true);
-         throw new Error("Error en la busqueda...", e)
-      })
-   }, [searchValue]);
 
    return (
       <KeyboardAvoidingView

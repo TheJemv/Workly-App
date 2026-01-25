@@ -1,7 +1,7 @@
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 const NativeStackOptions: NativeStackNavigationOptions = {
-   headerTintColor: "#354671",
+   headerTintColor: "#000",
    headerTransparent: false,
    headerShadowVisible: false,
    headerBackTitleVisible: false,

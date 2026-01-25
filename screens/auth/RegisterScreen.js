@@ -8,6 +8,7 @@ import {
    Alert,
    Keyboard,
 } from 'react-native';
+import { Checkbox } from "expo-checkbox"
 import React, { useState, useEffect } from 'react';
 import { Colors } from '../../lib';
 import {
@@ -16,31 +17,92 @@ import {
    SpinLoading,
 } from '../../components';
 import { authRoutes as routes } from '../../constants/routes';
-import { Register } from "../../services/firebase/Register"
+import { Register } from "../../services/firebase/Register";
+import { registerSchema } from "../../schemas/auth.schema";
 
 const RegisterScreen = ({ navigation }) => {
-   const [loading, setLoading] = useState(false)
+   const [loading, setLoading] = useState(false);
+   const [errors, setErrors] = useState({});
+
    const handleLogin = () => navigation.push(routes.LOGIN);
+
    const [user, setUser] = useState({
       email: '',
       password: '',
       confirmPassword: '',
+      terms: false,
    });
 
    const handleInput = (key, value) => {
+      if (key === 'terms') {
+         setUser(prevUser => ({
+            ...prevUser,
+            [key]: value,
+         }));
+         return;
+      }
+
+      let trimmedValue = value.trim();
+      if (key == 'email') {
+         trimmedValue = trimmedValue.toLowerCase();
+      }
+
       setUser(prevUser => ({
          ...prevUser,
-         [key]: value,
+         [key]: trimmedValue,
       }));
+
+      // Limpiar error del campo cuando el usuario empieza a escribir
+      if (errors[key]) {
+         setErrors(prev => ({
+            ...prev,
+            [key]: undefined
+         }));
+      }
+   };
+
+   const validateForm = () => {
+      try {
+         registerSchema.parse(user);
+         setErrors({});
+         return true;
+      } catch (error) {
+         if (error.errors) {
+            const formattedErrors = {};
+            error.errors.forEach(err => {
+               formattedErrors[err.path[0]] = err.message;
+            });
+            setErrors(formattedErrors);
+         }
+         return false;
+      }
    };
 
    const handleRegisterUser = async () => {
-      setLoading(true)
-      await Register(user).catch((e) => {
-         Alert.alert("Error", e.message)
-      }).finally(() => {
-         setLoading(false)
-      })
+      // Cerrar teclado
+      Keyboard.dismiss();
+
+      // Validar formulario
+      if (!validateForm()) {
+         const firstError = Object.values(errors)[0];
+         Alert.alert("Error de validación", firstError || "Por favor corrige los errores");
+         return;
+      }
+
+      // Validar aceptación de términos
+      if (!user.terms) {
+         Alert.alert("Error", "Debes aceptar los términos y condiciones para continuar.");
+         return;
+      }
+
+      setLoading(true);
+      await Register(user)
+         .catch((e) => {
+            Alert.alert("Error", e.message);
+         })
+         .finally(() => {
+            setLoading(false);
+         });
    };
 
    return (
@@ -48,7 +110,9 @@ const RegisterScreen = ({ navigation }) => {
          <View style={styles.container}>
             {/* Titulo... */}
             <View style={styles.top}>
-               <Text style={styles.top.title}>Bienvenido de nuevo!, Tus Servicios al instante...</Text>
+               <Text style={styles.top.title}>
+                  Bienvenido de nuevo!, Tus Servicios al instante...
+               </Text>
             </View>
 
             <KeyboardAvoidingView
@@ -63,35 +127,72 @@ const RegisterScreen = ({ navigation }) => {
                      gap: 12
                   }}
                >
-                  <TextInputComponent
-                     value={user.email}
-                     onChangeText={e => handleInput('email', e)}
-                     label="Email"
-                     placeholder="email@hotmail.com"
-                     autoComplete="email"
-                     keyboardType="email-address"
-                     autoCapitalize="none"
-                  />
+                  <View>
+                     <TextInputComponent
+                        value={user.email}
+                        onChangeText={e => handleInput('email', e)}
+                        label="Email"
+                        placeholder="email@hotmail.com"
+                        autoComplete="email"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                     />
+                     {errors.email && (
+                        <Text style={styles.errorText}>{errors.email}</Text>
+                     )}
+                  </View>
 
-                  <TextInputComponent
-                     hide
-                     value={user.password}
-                     onChangeText={e => handleInput('password', e)}
-                     label="Password"
-                     placeholder="password"
-                     autoComplete="password"
-                     autoCapitalize="none"
-                  />
+                  <View>
+                     <TextInputComponent
+                        hide
+                        value={user.password}
+                        onChangeText={e => handleInput('password', e)}
+                        label="Password"
+                        placeholder="password"
+                        autoComplete="password"
+                        autoCapitalize="none"
+                     />
+                     {errors.password && (
+                        <Text style={styles.errorText}>{errors.password}</Text>
+                     )}
+                  </View>
 
-                  <TextInputComponent
-                     hide
-                     value={user.confirmPassword}
-                     onChangeText={e => handleInput('confirmPassword', e)}
-                     label="Confirm Password"
-                     placeholder="password"
-                     autoComplete="password"
-                     autoCapitalize="none"
-                  />
+                  <View>
+                     <TextInputComponent
+                        hide
+                        value={user.confirmPassword}
+                        onChangeText={e => handleInput('confirmPassword', e)}
+                        label="Confirm Password"
+                        placeholder="password"
+                        autoComplete="password"
+                        autoCapitalize="none"
+                     />
+                     {errors.confirmPassword && (
+                        <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+                     )}
+                  </View>
+
+                  {/* Check point */}
+                  <View className='flex flex-row items-center gap-x-2'>
+                     <Checkbox
+                        value={user.terms}
+                        onValueChange={(val) => {
+                           handleInput('terms', val);
+                        }}
+                        color={Colors.principal.DEFAULT}
+                     />
+
+                     <View className='flex flex-row items-center'>
+                        <Text>Acepto los </Text>
+                        <TouchableOpacity>
+                           <Text style={{ color: '#040048', fontWeight: '600' }} onPress={() => {
+                              navigation.navigate(routes.TERMS);
+                           }}>
+                              Terminos y Condiciones
+                           </Text>
+                        </TouchableOpacity>
+                     </View>
+                  </View>
                </View>
 
                <View
@@ -105,6 +206,7 @@ const RegisterScreen = ({ navigation }) => {
                      <TouchableOpacity
                         onPress={handleRegisterUser}
                         style={styles.bottom.button}
+                        disabled={loading}
                      >
                         {!loading ? (
                            <Text style={styles.bottom.button.text}>Sign Up</Text>
@@ -163,6 +265,13 @@ const styles = StyleSheet.create({
          paddingVertical: 8,
          flex: 1,
       },
+   },
+
+   errorText: {
+      color: '#EF4444',
+      fontSize: 12,
+      marginTop: 4,
+      marginLeft: 4,
    },
 
    bottom: {

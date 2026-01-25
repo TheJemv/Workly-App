@@ -1,46 +1,54 @@
-import { View, ScrollView, TextInput, TouchableOpacity, SafeAreaView, Text, FlatList } from 'react-native'
-import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-
+import {
+   View,
+   ScrollView,
+   TextInput,
+   TouchableOpacity,
+   SafeAreaView,
+   Text,
+   FlatList,
+   Alert,
+} from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { API_HOST } from '@env';
-import axios from 'axios';
 
-import useGlobal from 'core/globals';
+import useGlobal from "core/globals";
+import { searchCompany } from "services/api/company.api";
 
 const SearchScreen = () => {
    // States
-   const token = useGlobal((state) => state.token)
-   const [search, setSearch] = useState('')
-   const [services, setServices] = useState([])
-   const [loading, setLoading] = useState(false)
+   const [search, setSearch] = useState("");
 
+   const [suggestions, setSuggetions] = useState([]);
+   const [loading, setLoading] = useState(false);
 
    // Navigations
-   const navigation = useNavigation()
+   const navigation = useNavigation();
    useLayoutEffect(() => {
       navigation.setOptions({
          headerTitle: () => (
             <View
                style={{
                   flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  justifyContent: "center",
+                  alignItems: "center",
                   paddingLeft: 0, // Asegúrate de que no haya espacio a la izquierda
                   marginLeft: -30,
                }}
             >
-               <View style={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "row",
-                  marginHorizontal: 22,
-                  alignItems: "center",
-                  gap: 12,
-                  paddingHorizontal: 4,
-               }}>
+               <View
+                  style={{
+                     flex: 1,
+                     display: "flex",
+                     flexDirection: "row",
+                     marginHorizontal: 22,
+                     alignItems: "center",
+                     gap: 0,
+                     paddingHorizontal: 4,
+                  }}
+               >
                   <TouchableOpacity
                      onPress={() => navigation.goBack()}
                      style={{
@@ -53,7 +61,10 @@ const SearchScreen = () => {
                      <FontAwesome
                         name="angle-left"
                         color={"#B1B1B4"}
-                        size={28}
+                        size={38}
+                        style={{
+                           paddingRight: 12,
+                        }}
                      />
                   </TouchableOpacity>
 
@@ -71,7 +82,7 @@ const SearchScreen = () => {
                      }}
                   >
                      <TextInput
-                        placeholder='buscar un servicio...'
+                        placeholder="buscar un servicio..."
                         style={{
                            fontSize: 16,
                            fontWeight: 500,
@@ -84,7 +95,7 @@ const SearchScreen = () => {
 
                      {search && (
                         <TouchableOpacity
-                           onPress={() => setSearch('')}
+                           onPress={() => setSearch("")}
                            style={{
                               display: "flex",
                               flexDirection: "row",
@@ -96,20 +107,20 @@ const SearchScreen = () => {
                               name="closecircle"
                               size={18}
                               color={"#B1B1B4"}
-                              onPress={() => setSearch('')}
+                              onPress={() => setSearch("")}
                            />
                         </TouchableOpacity>
                      )}
 
                      <AntDesign
-                        name='minus'
+                        name="minus"
                         size={18}
                         color={"#B1B1B4"}
-                        transform={[{ rotate: '90deg' }]}
+                        transform={[{ rotate: "90deg" }]}
                      />
 
                      <FontAwesome
-                        name={loading?"hourglass-end":"search"}
+                        name={loading ? "hourglass-end" : "search"}
                         size={18}
                         color={"#B1B1B4"}
                      />
@@ -118,54 +129,47 @@ const SearchScreen = () => {
             </View>
          ),
          headerBackVisible: false,
-         headerTitleAlign: 'center',
-      })
-   }, [navigation, search])
-
+         headerTitleAlign: "center",
+      });
+   }, [navigation, search]);
 
    useEffect(() => {
-      // Lógica para buscar servicios
       const fetchServices = async () => {
-         if (!token) return
-         if (!search) {
-            setServices([])
-            return
+         if (!search) return;
+         try {
+            setLoading(true);
+            await searchCompany(search).then((data) => {
+               setSuggetions(data.suggestions);
+            });
+         } catch (error) {
+            Alert.alert("Error", error.message);
+         } finally {
+            setLoading(false);
          }
-         setLoading(true)
-         await axios.get(`${await API_HOST}service/search`, {
-            params: {
-               q: search
-            },
-            headers: {
-               Authorization: `Bearer ${token}`
-            }
-         }).then(({ data }) => {
-            setServices(data?.services)
-         }).catch((err) => {
-            console.error(err)
-         }).finally(() => {
-            setLoading(false)
-         })
-      }
+      };
 
-      fetchServices()
-   }, [search])
-
+      fetchServices();
+   }, [search]);
 
    // Render
    return (
-      <SafeAreaView style={{
-         flex: 1
-      }}>
-         <ScrollView style={{
+      <SafeAreaView
+         style={{
             flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: 18,
-         }}>
+         }}
+      >
+         <ScrollView
+            style={{
+               flex: 1,
+               display: "flex",
+               flexDirection: "column",
+               gap: 18,
+            }}
+         >
             {/* Contenido */}
-            { !search ? (
-               <View style={{
+            {!search ? (
+               <View
+                  style={{
                      flex: 1,
                      display: "flex",
                      paddingHorizontal: 12,
@@ -173,29 +177,37 @@ const SearchScreen = () => {
                      gap: 18,
                   }}
                >
-                  <Text style={{
-                     fontSize: 18,
-                     fontWeight: 600,
-                     width: "100%",
-                  }}>Recomendados...</Text>
+                  <Text
+                     style={{
+                        fontSize: 18,
+                        fontWeight: 600,
+                        width: "100%",
+                     }}
+                  >
+                     Recomendados...
+                  </Text>
                </View>
             ) : (
                <FlatList
-                  data={services}
-                  keyExtractor={(item) => item.id}
+                  data={suggestions}
+                  // 1. CORRECCIÓN: Usar el índice o el propio string como key
+                  keyExtractor={(item, index) => index.toString()}
                   scrollEnabled={false}
                   renderItem={({ item }) => (
                      <TouchableOpacity
-                        key={item.id}
-                        onPress={() => navigation.navigate('service', { id: item.objectID })}
+                        // Nota: No necesitas poner 'key' aquí, el keyExtractor ya lo maneja
+                        onPress={() =>
+                           // 2. CORRECCIÓN: Pasas el 'item' (el texto) directamente, ya que no hay ID
+                           navigation.navigate("results", { query: item })
+                        }
                         style={{
                            display: "flex",
-                        flexDirection: "row",
+                           flexDirection: "row",
                            gap: 12,
                            alignItems: "center",
                            paddingVertical: 12,
                            paddingHorizontal: 12,
-                           marginEnd: 12
+                           marginEnd: 12,
                         }}
                      >
                         <FontAwesome
@@ -203,9 +215,14 @@ const SearchScreen = () => {
                            size={16}
                            color={"#00000060"}
                         />
-                        <View className='flex flex-col'>
-                           <Text className='font-bold'>{item.name}</Text>
-                           <Text className='text-[12px] font-light' numberOfLines={2}>{item.description}</Text>
+                        <View className="flex flex-col">
+                           {/* 3. Esto ya estaba bien, 'item' es el texto */}
+                           <Text
+                              numberOfLines={1}
+                              className="text-[#00000060] font-bold"
+                           >
+                              {item}
+                           </Text>
                         </View>
                      </TouchableOpacity>
                   )}
@@ -217,16 +234,18 @@ const SearchScreen = () => {
                      paddingHorizontal: 12,
                   }}
                   ItemSeparatorComponent={() => (
-                     <View style={{
-                        height: 1,
-                        backgroundColor: "#00000010",
-                     }} />
+                     <View
+                        style={{
+                           height: 1,
+                           backgroundColor: "#00000010",
+                        }}
+                     />
                   )}
                />
             )}
          </ScrollView>
       </SafeAreaView>
-   )
-}
+   );
+};
 
-export default SearchScreen
+export default SearchScreen;

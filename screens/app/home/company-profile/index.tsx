@@ -1,138 +1,144 @@
 import {
    SafeAreaView,
-   ScrollView,
    View,
    Text,
-   Linking,
+   StatusBar,
+   Image,
+   FlatList,
    Alert,
+   ScrollView,
 } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Colors } from "lib";
-import { CardService } from "./components/card-service";
-import { ButtonIconLink } from "./components/button-link";
-import { TimesOpen } from "./components/times-open";
-import type { SocialMedia, Service } from "./types";
-import { socialMedia, services } from "./data";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
-type Props = {};
-const ProfileCompanyScreen = ({}: Props): JSX.Element => {
-   const handleOpenLink = (url: string) => async (): Promise<void> => {
-      try {
-         const supported: boolean = await Linking.canOpenURL(url);
-         if (!supported) {
-            Alert.alert(
-               "Error",
-               "No se puede abrir la aplicación de llamadas."
-            );
-         } else {
-            return Linking.openURL(url);
+import { TimesOpen } from "components/times-open";
+import { CardService, handleCall, handleOpenLink } from "./components";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { getByIdCompany } from "services/api/company.api";
+import { Company as CompanyType } from "@/types/Company";
+import { useNavigation } from "@react-navigation/native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { ButtonIconLink } from "./components/button-link";
+import { Colors } from "lib";
+
+type Props = { route: any };
+const ProfileCompanyScreen = ({ route }: Props): JSX.Element => {
+   const navigation = useNavigation();
+   const [loading, setLoading] = useState<boolean>(false);
+   const [company, setCompany] = useState<CompanyType | null>(null);
+
+   const dataMedia: string[] = [
+      "instagram",
+      "facebook",
+      "phone",
+      "linkedin",
+   ];
+
+   useEffect(() => {
+      const fetchData = async () => {
+         try {
+            setLoading(true);
+            await getByIdCompany(route.params.id).then((data) => {
+               setCompany(data.company);
+               console.log("Company Data:", data.company);
+            });
+         } catch (error) {
+            Alert.alert("Error", "Error al obtener la empresa");
+         } finally {
+            setLoading(false);
          }
-      } catch (error) {
-         console.error("Error al intentar hacer la llamada:", error);
-      }
-   };
-   const handleCall = (phoneNumber: string) => async (): Promise<void> => {
-      try {
-         const url: string = `tel:${phoneNumber}`;
-         const supported: boolean = await Linking.canOpenURL(url);
-         if (!supported) {
-            Alert.alert(
-               "Error",
-               "No se puede abrir la aplicación de llamadas."
-            );
-         } else {
-            return Linking.openURL(url);
-         }
-      } catch (error) {
-         console.error("Error al intentar hacer la llamada:", error);
-      }
-   };
-   return (
-      <SafeAreaView className="flex-1">
+      };
+      fetchData();
+   }, []);
+
+   useLayoutEffect(() => {
+      navigation.setOptions({
+         headerTitle: "Workly",
+      });
+   }, [navigation, company]);
+
+   return loading || !company ? (
+      <View className="flex pb-[70px] h-full flex-col items-center justify-center">
+         <FontAwesome name="hourglass-end" color={"#B1B1B4"} size={52} />
+      </View>
+   ) : (
+      <SafeAreaView
+         className="flex-1"
+         style={{
+            marginTop: StatusBar.currentHeight,
+         }}
+      >
          <ScrollView
-            className="flex-1 px-3 my-3 space-y-5"
-            style={{ marginBottom: useBottomTabBarHeight() }}
+            className="flex-1 px-3 mb-0 space-y-5"
+            style={{ marginBottom: useBottomTabBarHeight() - 34 }}
          >
             <View className="flex flex-col space-y-3">
-               <View className="flex flex-row items-center space-x-3">
-                  <View className="w-12 h-12 rounded-full bg-light/25" />
+               <View className="flex flex-row items-center space-x-3 w-full">
+                  <View className="w-14 h-14 rounded-full bg-light/25">
+                     <Image
+                        className="w-full h-full rounded-full"
+                        source={{
+                           uri: company.profile.photo,
+                        }}
+                     />
+                  </View>
+
                   <View className="flex flex-col space-y-1">
-                     <Text className="text-base text-dark font-semibold">
-                        Google Inc.
-                     </Text>
-                     <View className="flex flex-row items-center space-x-1">
-                        <FontAwesome
-                           name="map-marker"
-                           size={20}
-                           color={Colors.buttonColor}
-                        />
-                        <Text className="text-sm text-text font-medium">
-                           Valle de Mexico #18
+                     <View className="flex flex-row justify-between">
+                        <Text className="text-base text-dark font-semibold">
+                           {company.profile.name}
                         </Text>
                      </View>
                   </View>
                </View>
+
                <Text
                   className="text-base text-text font-medium"
                   numberOfLines={3}
                >
-                  Google, LLC es una empresa de tecnología de Google que se
-                  dedica a proporcionar servicios de internet y servicios de
-                  aplicaciones a los usuarios.
+                  {company.profile.description}
                </Text>
-               <View className="flex flex-col space-y-3">
-                  <View>
-                     <TimesOpen />
-                  </View>
-                  <View className="flex flex-row items-center justify-between space-x-2">
-                     {socialMedia.map(
-                        (
-                           socialMedia: SocialMedia,
-                           index: number
-                        ): JSX.Element => {
-                           return (
-                              <View key={index}>
-                                 {socialMedia.isCall ? (
+
+               <View className="flex flex-col gap-0">
+                  <View className="flex flex-row justify-center items-center space-x-6 pb-2">
+                     {Object.entries(company.profile.contact).map(
+                        ([key, value]) => {
+                           if (dataMedia.includes(key) && value) {
+                              return (
+                                 <View key={key}>
                                     <ButtonIconLink
-                                       icon={socialMedia.icon}
-                                       color={socialMedia.color}
-                                       onPress={handleCall(socialMedia.phone)}
+                                       icon={key as "facebook" | "linkedin" | "phone" | "instagram"}
+                                       onPress={() =>
+                                          key === "phone"
+                                             ? handleCall(value as string)
+                                             : handleOpenLink(value as string)
+                                       }
                                     />
-                                 ) : (
-                                    <ButtonIconLink
-                                       icon={socialMedia.icon}
-                                       color={socialMedia.color}
-                                       onPress={handleOpenLink(socialMedia.url)}
-                                    />
-                                 )}
-                              </View>
-                           );
+                                 </View>
+                              )
+                           }
                         }
                      )}
                   </View>
+
+                  <TimesOpen businessHours={company.businessHours} />
                </View>
             </View>
-            <View className="flex flex-col space-y-3">
-               <Text className="text-lg text-dark font-bold">
-                  Servicios que ofrezco
-               </Text>
-               <View className="flex flex-col space-y-2">
-                  {services.map(
-                     (service: Service, index: number): JSX.Element => {
-                        return (
-                           <View key={index}>
-                              <CardService
-                                 title={service.title}
-                                 description={service.description}
-                                 price={service.price}
-                              />
-                           </View>
-                        );
-                     }
-                  )}
-               </View>
-            </View>
+
+            {/* Servicios que ofrece la empresa */}
+            <FlatList
+               data={company.services}
+               contentContainerStyle={{
+                  gap: 8,
+                  paddingBottom: 16,
+               }}
+               ListHeaderComponent={() => (
+                  <Text className="text-base text-dark font-semibold">
+                     Servicios de la Empresa
+                  </Text>
+               )}
+               renderItem={({ item }) => <CardService item={item} />}
+               scrollEnabled={false}
+            />
          </ScrollView>
       </SafeAreaView>
    );

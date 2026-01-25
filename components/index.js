@@ -16,7 +16,6 @@ import Grid from "./Grid"
 import ContainerScreen from "./ContainerScreen"
 import ItemCreditCard from "./ItemCreditCard"
 import DataOptions from "./DataOptions"
-import PaymentSubscription from "./PaymentSubscription"
 import ServiceItem from "./ServiceItem"
 import TextInputUser from "./TextInput.component"
 import ThumnailEdit from "./ThumbnailEdit.component"
@@ -29,7 +28,7 @@ export {
    ChatItem, ChatItemSearch, UserConfigButton,
    ContainerScreenApp, LoginFacebook, LoginGoogle,
    ItemPriceOrderDetails, Grid, ContainerScreen,
-   ItemCreditCard, DataOptions, PaymentSubscription,
+   ItemCreditCard, DataOptions,
    ServiceItem, TextInputUser, ThumnailEdit,
    DropdownInput
 }

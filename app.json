@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "workit",
-    "slug": "services",
-    "version": "3.0.1",
+    "name": "workly",
+    "slug": "Workly",
+    "version": "1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,7 +17,14 @@
       "bundleIdentifier": "com.worklyplatforms.services",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrar información relevante.",
-        "NSLocationAlwaysUsageDescription": "Necesitamos tu ubicación para proporcionar funcionalidades avanzadas incluso cuando la aplicación no esté en uso."
+        "NSLocationAlwaysUsageDescription": "Necesitamos tu ubicación para proporcionar funcionalidades avanzadas incluso cuando la aplicación no esté en uso.",
+        "LSApplicationQueriesSchemes": [
+          "tel",
+          "whatsapp",
+          "fb-messenger",
+          "instagram",
+          "linkedin"
+        ]
       }
     },
     "android": {
