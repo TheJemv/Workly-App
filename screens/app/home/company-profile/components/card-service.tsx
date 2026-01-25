@@ -1,51 +1,57 @@
-import { View, Text, Pressable } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
-
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import { ServiceType } from "../type";
+import formatterUnit from "utils/fomatterUnit";
+import { useNavigation } from "@react-navigation/native";
 type Props = {
-   title: string;
-   description: string;
-   price: number;
+   item: ServiceType;
 };
-export const CardService = ({
-   title,
-   description,
-   price,
-}: Props): JSX.Element => {
+
+const CardService = ({ item }: Props): JSX.Element => {
+   const navigation = useNavigation();
+   const handleService = () => {
+      navigation.navigate("service", {
+         id: item.id,
+      });
+   };
+
    return (
-      <View className="flex flex-col items-end space-y-3 bg-white border-2 border-border rounded-xl p-4">
+      <TouchableOpacity onPress={handleService} className="flex flex-col items-start space-y-3 bg-white border-2 border-border rounded-xl p-2">
          <View className="flex flex-row space-x-3">
-            <View className="flex items-center justify-center w-10 h-10 rounded-lg bg-light/10">
-               <FontAwesome
-                  name="location-arrow"
-                  size={20}
-                  color={Colors.principal.DEFAULT}
+            <View className="flex items-center justify-center overflow-hidden w-[56px] h-[56px] rounded-[6px] bg-light/10">
+               <Image
+                  className="w-full h-full cover"
+                  source={{
+                     uri: item.photo,
+                  }}
                />
             </View>
-            <View className="flex flex-1 flex-col space-y-1">
-               <Text
-                  className="text-base text-dark font-semibold"
-                  numberOfLines={1}
-               >
-                  {title}
-               </Text>
-               <Text
-                  className="text-sm text-text font-medium"
-                  numberOfLines={2}
-               >
-                  {description}
-               </Text>
+
+            <View className="flex flex-1 flex-col">
+               <View className="flex flex-col space-y-[-2]">
+                  <Text
+                     className="text-base text-dark font-semibold"
+                     numberOfLines={1}
+                  >
+                     {item.name}
+                  </Text>
+                  <Text className="text-sm text-text">{item.category}</Text>
+               </View>
             </View>
          </View>
-         <Text className="text-sm text-dark font-bold">Desde ${price} USD</Text>
-         <View className="flex flex-row items-center justify-end space-x-3">
-            <Pressable className="bg-yellow border-2 border-yellow rounded-lg px-4 py-1">
-               <Text className="text-sm text-dark font-medium">Editar</Text>
-            </Pressable>
-            <Pressable className="bg-red border-2 border-red rounded-lg px-4 py-1">
-               <Text className="text-sm text-white font-medium">Eliminar</Text>
-            </Pressable>
-         </View>
-      </View>
+
+         <Text numberOfLines={3} className="text-text">
+            {item.description}
+         </Text>
+
+         <Text
+            style={{ paddingTop: 8, color: Colors.principal.DEFAULT }}
+            className="font-bold text-principal w-full text-right"
+         >
+            {item.indefinite ? "Precio indefinido" : `Desde ${formatterUnit.format(item.unit_amount / 100)} ${item.currency.toUpperCase()}`}
+         </Text>
+      </TouchableOpacity>
    );
 };
+
+export default CardService;

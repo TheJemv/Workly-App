@@ -6,6 +6,7 @@ import { Colors } from '../lib';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import * as WebBrowser from "expo-web-browser"
+import TermsScreen from 'screens/auth/TermsScreen';
 WebBrowser.maybeCompleteAuthSession()
 
 const Stack = createNativeStackNavigator();
@@ -23,6 +24,15 @@ const AuthNavigator = () => {
          <Stack.Screen component={HomeScreen} name={routes.HOME} />
          <Stack.Screen component={LoginScreen} name={routes.LOGIN} />
          <Stack.Screen component={RegisterScreen} name={routes.SIGNUP} />
+         <Stack.Screen
+            name={routes.TERMS}
+            component={TermsScreen}
+            options={{
+               presentation: 'modal',
+               headerShown: true,
+               title: 'Términos y Condiciones de Workly',
+            }}
+         />
       </Stack.Navigator>
    );
 };

@@ -34,7 +34,7 @@ const PaymentScreen = () => {
          });
          return { ephemeralKey, setupIntent };
       } catch (error) {
-         console.error('Error fetching payment sheet parameters:', error);
+         console.error('Error fetching payment sheet parameters: "Payment.jsx"', error);
          Alert.alert('Error', error.message);
       }
    };

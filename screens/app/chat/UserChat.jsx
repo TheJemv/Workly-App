@@ -10,12 +10,10 @@ import { BottomTabBar } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import IonIcons from "@expo/vector-icons/Ionicons"
-import Feather from "@expo/vector-icons/Feather"
-import { Colors } from "lib";
 import { useNavigation } from "@react-navigation/native";
 
-function MessageHeader({ friend={ photo: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpixnio.com%2Ffree-images%2F2017%2F09%2F26%2F2017-09-26-07-22-55.jpg&f=1&nofb=1&ipt=4923b00e5b975ad061af58fac6903a8ca00e37790e7b205af1da4a278231d6b8&ipo=images", name: "Kira" } }) {
-	return  (
+function MessageHeader({ friend = { photo: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpixnio.com%2Ffree-images%2F2017%2F09%2F26%2F2017-09-26-07-22-55.jpg&f=1&nofb=1&ipt=4923b00e5b975ad061af58fac6903a8ca00e37790e7b205af1da4a278231d6b8&ipo=images", name: "Kira" } }) {
+	return (
 		<View
 			style={{
 				flex: 1,
@@ -23,14 +21,14 @@ function MessageHeader({ friend={ photo: "https://external-content.duckduckgo.co
 				alignItems: 'center'
 			}}
 		>
-         <Image
-            source={{ uri: friend.photo }}
-            style={{
-               width: 30,
-               height: 30,
-               borderRadius: 20
-            }}
-         />
+			<Image
+				source={{ uri: friend.photo }}
+				style={{
+					width: 30,
+					height: 30,
+					borderRadius: 20
+				}}
+			/>
 			<Text
 				style={{
 					color: '#202020',
@@ -45,7 +43,7 @@ function MessageHeader({ friend={ photo: "https://external-content.duckduckgo.co
 	)
 }
 
-function MessageBubbleFriend({ text='', typing=false, positions }) {
+function MessageBubbleFriend({ text = '', typing = false, positions }) {
 	return (
 		<View
 			style={{
@@ -70,8 +68,8 @@ function MessageBubbleFriend({ text='', typing=false, positions }) {
 					marginLeft: 8,
 					minHeight: 42,
 
-               borderBottomLeftRadius: positions.last ? 20 : 4,
-               borderTopLeftRadius: positions.next ? 20 : 4,
+					borderBottomLeftRadius: positions.last ? 20 : 4,
+					borderTopLeftRadius: positions.next ? 20 : 4,
 				}}
 			>
 				{typing ? (
@@ -93,7 +91,7 @@ function MessageBubbleFriend({ text='', typing=false, positions }) {
 				)}
 
 			</View>
-			<View style={{ flex: 1}} />
+			<View style={{ flex: 1 }} />
 		</View>
 	)
 }
@@ -107,7 +105,7 @@ function MessageLoadingBubble({ item }) {
 				paddingLeft: 16,
 			}}
 		>
-			<View style={{ flex: 1}} />
+			<View style={{ flex: 1 }} />
 			<View
 				style={{
 					backgroundColor: '#d0d2db',
@@ -130,55 +128,55 @@ function MessageLoadingBubble({ item }) {
 	)
 }
 
-function MessageBubbleMe ({ text, positions }) {
-   return (
-      <View
-         style={{
-            flexDirection: 'row',
-            padding: 1,
-            paddingRight: 12
-         }}
-      >
-         <View style={{ flex: 1}} />
-         <View
-            style={{
-               backgroundColor: '#303040',
-               borderRadius: 20,
-               maxWidth: '75%',
-               paddingHorizontal: 16,
-               paddingVertical: 12,
-               justifyContent: 'center',
-               marginRight: 8,
-               minHeight: 42,
-               borderBottomRightRadius: positions.last ? 4 : 20,
-               borderTopRightRadius: positions.next ? 4 : 20,
-            }}
-         >
-            <Text
-               style={{
-                  color: 'white',
-                  fontSize: 16,
-                  lineHeight: 18
-               }}
-            >
-               {text}
-            </Text>
-         </View>
+function MessageBubbleMe({ text, positions }) {
+	return (
+		<View
+			style={{
+				flexDirection: 'row',
+				padding: 1,
+				paddingRight: 12
+			}}
+		>
+			<View style={{ flex: 1 }} />
+			<View
+				style={{
+					backgroundColor: '#303040',
+					borderRadius: 20,
+					maxWidth: '75%',
+					paddingHorizontal: 16,
+					paddingVertical: 12,
+					justifyContent: 'center',
+					marginRight: 8,
+					minHeight: 42,
+					borderBottomRightRadius: positions.last ? 4 : 20,
+					borderTopRightRadius: positions.next ? 4 : 20,
+				}}
+			>
+				<Text
+					style={{
+						color: 'white',
+						fontSize: 16,
+						lineHeight: 18
+					}}
+				>
+					{text}
+				</Text>
+			</View>
 
-      </View>
-   )
+		</View>
+	)
 }
 
 
 function MessageBubble({ message, chats }) {
-   const { customer } = useContext(AuthContext)
+	const { customer } = useContext(AuthContext)
 	const index = chats.findIndex(chat => chat.id === message.id)
-   const positions = {
-      last: chats[index - 1]?.customer?.customerId === customer.customer?.customerId,
-      next: chats[index + 1]?.customer?.customerId === customer.customer?.customerId
-   }
+	const positions = {
+		last: chats[index - 1]?.customer?.customerId === customer.customer?.customerId,
+		next: chats[index + 1]?.customer?.customerId === customer.customer?.customerId
+	}
 
-	return message?.customer?.customerId === customer.customer?.customerId? (
+	return message?.customer?.customerId === customer.customer?.customerId ? (
 		<MessageBubbleMe positions={positions} text={message?.content} />
 	) : (
 		<MessageBubbleFriend positions={positions} text={message?.content} />
@@ -212,7 +210,7 @@ function MessageInput({ message, setMessage, onSend, functionShare }) {
 	return (
 		<View
 			style={{
-            paddingHorizontal: 10,
+				paddingHorizontal: 10,
 				backgroundColor: '#eee',
 				flexDirection: 'row',
 				alignItems: 'center',
@@ -263,22 +261,45 @@ function MessageInput({ message, setMessage, onSend, functionShare }) {
 	)
 }
 
+function ListHeaderComponent() {
+	return (
+		<View className="w-full flex items-center py-32 gap-0">
+			<Image
+				source={require("assets/ChatImage.png")}
+				style={{
+					width: 220,
+					height: 220,
+					resizeMode: 'contain'
+				}}
+			/>
+			<View className="flex flex-col items-center px-8 gap-y-1">
+				<Text className="text-dark text-lg font-semibold">
+					Envía y recibe mensajes
+				</Text>
+				<Text className="text-text text-center mt-2">
+					Chatea con tus clientes de manera fácil y rápida a través de nuestra plataforma.
+				</Text>
+			</View>
+		</View>
+	)
+}
+
 
 const UserChatScreen = ({ route, navigation }) => {
 	// UseState
 	const [page, setPage] = useState(0)
 	const [loadingMessages, setLoadingMessages] = useState(false)
 
-   // Variables
+	// Variables
 	const messagesNext = useGlobal(state => state.messagesNext)
 	const messagesList = useGlobal(state => state.messagesList)
 
-   // Funcions Globals
-   const sendMessage = useGlobal(state => state.sendMessage)
+	// Funcions Globals
+	const sendMessage = useGlobal(state => state.sendMessage)
 	const messageList = useGlobal(state => state.messageList)
 
-   // States
-   const [message, setMessage] = useState('')
+	// States
+	const [message, setMessage] = useState('')
 	const [modalIsOpen, setModalIsOpen] = useState(false)
 
 	//	Ref
@@ -294,33 +315,30 @@ const UserChatScreen = ({ route, navigation }) => {
 		setModalIsOpen(true)
 	}
 
-	const handleCloseModal = () => {
-		bottomSheetRef.current?.close()
-	}
-
 	//	UseEffect
 	useEffect(() => {
-		if(loadingMessages) return
+		if (loadingMessages) return
 		messageList(route.params.id, 0)
 		setLoadingMessages(true)
 	}, [])
 
 	// UseLayoutEffect
-   useLayoutEffect(() => {
-      navigation.setOptions({
+	useLayoutEffect(() => {
+		navigation.setOptions({
 			headerTitle: () => (
 				<MessageHeader friend={route.params.customers[0].profile} />
 			)
 		})
-   }, [])
+	}, [])
 
 
-   const onSend = () => {
-      sendMessage(route.params.id, message, route.params.friend)
-      setMessage('')
-   }
+	const onSend = () => {
+		const cleanedMessage = message.split('\n').map(line => line.trimEnd()).join('\n').trim();
+		sendMessage(route.params.id, cleanedMessage, route.params.friend)
+		setMessage('')
+	}
 
-   function onType(value) {
+	function onType(value) {
 		setMessage(value)
 		// messageType(friend.username)
 	}
@@ -335,9 +353,9 @@ const UserChatScreen = ({ route, navigation }) => {
 		title: 'Datos de Facturacion',
 		icon: 'albums',
 	}]
-   return (
+	return (
 		<>
-			<View style={{flex: 1, opacity: modalIsOpen ? 0.3:1, backgroundColor: modalIsOpen ? "#00000080" : "white"}}>
+			<View style={{ flex: 1, opacity: modalIsOpen ? 0.3 : 1, backgroundColor: modalIsOpen ? "#00000080" : "white" }}>
 				<View
 					style={{
 						flex: 1,
@@ -346,7 +364,7 @@ const UserChatScreen = ({ route, navigation }) => {
 				>
 					<FlatList
 						onEndReached={() => {
-							if(messagesNext) {
+							if (messagesNext) {
 								messageList(route.params.id, page + 1)
 								setPage(page + 1)
 							}
@@ -378,6 +396,7 @@ const UserChatScreen = ({ route, navigation }) => {
 								<MessageLoadingBubble item={item} />
 							)
 						)}
+						ListFooterComponent={ListHeaderComponent}
 					/>
 				</View>
 
@@ -398,11 +417,11 @@ const UserChatScreen = ({ route, navigation }) => {
 				index={-1}
 			>
 				<BottomSheetView>
-					<View className="px-2 flex items-center flex-col h-full" style={{gap: 12}}>
+					<View className="px-2 flex items-center flex-col h-full" style={{ gap: 12 }}>
 						{OptionsAttach.map((option, index) => (
 							<TouchableOpacity
 								key={index}
-								style={{gap: 12}}
+								style={{ gap: 12 }}
 								className="w-full flex flex-row items-center"
 							>
 								<View className="p-2 bg-[black]/30 rounded-full">
@@ -417,7 +436,7 @@ const UserChatScreen = ({ route, navigation }) => {
 				</BottomSheetView>
 			</BottomSheet>
 		</>
-   )
+	)
 }
 
 export default UserChatScreen

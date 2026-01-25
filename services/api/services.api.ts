@@ -1,4 +1,3 @@
-import { API_HOST } from "@env";
 import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
 
 export const setService = async (token: string, data: object) => {
@@ -80,7 +79,7 @@ export const getService = async (token: string, id: string) => {
 export const getServicePayment = async (
    token: string,
    id: string,
-   data: object
+   data: object,
 ) => {
    try {
       const response = await apiClient.post(`/service/pay/${id}`, data, {
@@ -92,7 +91,7 @@ export const getServicePayment = async (
       return response.data;
    } catch (error) {
       throw new Error(
-         error.message || "Error al procesar el pago del servicio"
+         error.message || "Error al procesar el pago del servicio",
       );
    }
 };

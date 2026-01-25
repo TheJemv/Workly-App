@@ -1,3 +1,5 @@
+import OrderStatusEnum from "enum/OrderStatusEnum";
+
 export type Order = {
    numberOrder: number;
    dateCreated: string;
@@ -10,7 +12,7 @@ export type Order = {
    id: string;
    createdAt: Date;
    servicePhoto: string;
-   status: string;
+   status: string | OrderStatusEnum;
 
    serviceName: string;
    serviceDescription: string;

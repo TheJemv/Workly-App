@@ -3,6 +3,8 @@ import { Colors, Padding } from '../lib';
 import { formatMessageDate } from '../utils';
 
 const ChatItem = ({ data, navigation }) => {
+   console.log(data?.messages[0]);
+
    const handleItemPress = () => {
       navigation.navigate('UserChat', {
          ...data

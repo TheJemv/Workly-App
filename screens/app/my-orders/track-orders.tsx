@@ -11,18 +11,23 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 import { Order } from "./types";
 import { StepTrack } from "./components/step-track";
-import { useContext, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import OrderStatusEnum from "enum/OrderStatusEnum";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import useGlobal from "core/globals";
-import { API_HOST } from "@env";
-import { AuthContext } from "context/AuthContext";
 import SpinLoading from "components/SpinLoading";
 import formatDateService from "functions/formatDateService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import DatePicker from "react-native-date-picker";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { cancelOrder, nextOrder } from "services/api/orders.api";
+import {
+   acceptOrder,
+   modifyDeliveryDate,
+   approveDateChange,
+   rejectDateChange,
+   confirmDelivery,
+   cancelOrder
+} from "services/api/orders.api";
 
 type Props = {
    navigation: any;
@@ -41,8 +46,6 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    const sales = useGlobal((state) => state.sales);
    const orders = useGlobal((state) => state.orders);
 
-   const { token } = useContext(AuthContext);
-
    const [loading, setLoading] = useState<boolean>(false);
    const [loadingCancel, setLoadingCancel] = useState<boolean>(false);
    const [showEditDate, setShowEditDate] = useState<boolean>(false);
@@ -53,30 +56,6 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
    } else if (sales?.data?.find((o) => o.id === order.id)) {
       order = sales.data.find((o) => o.id === order.id);
    }
-
-   const handleCancel = async () => {
-      setLoadingCancel(true);
-      await cancelOrder(token, order.id)
-         .catch((error) => {
-            console.error("Error:", error);
-            Alert.alert("Error", "No se pudo realizar la acción");
-         })
-         .finally(() => {
-            setLoadingCancel(false);
-         });
-   };
-
-   const handleNext = async () => {
-      setLoading(true);
-      await nextOrder(token, order.id)
-         .catch((error) => {
-            console.error("Error:", error);
-            Alert.alert("Error", "No se pudo realizar la acción");
-         })
-         .finally(() => {
-            setLoading(false);
-         });
-   };
 
    return (
       <>
@@ -165,6 +144,8 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                            color={Colors.principal.DEFAULT}
                         />
                      </View>
+
+
                      <View className="flex flex-col -space-y-0.5">
                         <StepTrack
                            icon="file-text"
@@ -178,6 +159,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                               order.status === OrderStatusEnum.Cancel
                            }
                         />
+
                         <StepTrack
                            icon="credit-card"
                            title="Pedido Confirmado"
@@ -219,7 +201,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                            style={{ gap: 8 }}
                         >
                            <TouchableWithoutFeedback
-                              onPress={handleNext}
+                              onPress={() => console.log("Next")}
                               disabled={loading}
                            >
                               <View className="bg-green-500 py-2 rounded-md flex flex-row items-center justify-center flex-1">
@@ -239,7 +221,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                            </TouchableWithoutFeedback>
 
                            <TouchableWithoutFeedback
-                              onPress={handleCancel}
+                              onPress={() => console.log("Cancel")}
                               disabled={loadingCancel}
                            >
                               <View className="bg-red-500 py-2 rounded-md flex flex-row items-center justify-center flex-1">
@@ -265,7 +247,7 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                      orders?.data?.find((o) => o.id === order.id) && (
                         <View className="p-2 w-full" style={{ gap: 8 }}>
                            <TouchableOpacity
-                              onPress={handleCancel}
+                              onPress={() => console.log("Cancel")}
                               className="bg-red-500 py-2 rounded-md flex flex-row items-center justify-center flex-1"
                               disabled={loadingCancel}
                            >
@@ -297,8 +279,8 @@ export function TrackOrdersScreen({ navigation, route }: Props): JSX.Element {
                Alert.alert(
                   "Actualizar Fecha",
                   '¿Estás seguro de actualizar la fecha de solicitud a "' +
-                     formatDateService(date) +
-                     '"?',
+                  formatDateService(date) +
+                  '"?',
                   [
                      {
                         text: "Cancelar",

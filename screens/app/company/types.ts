@@ -22,3 +22,20 @@ export type Time = {
    title: string;
    description: string;
 };
+
+export type DayName = 'Lunes' | 'Martes' | 'Miércoles' | 'Jueves' | 'Viernes' | 'Sábado' | 'Domingo';
+export interface TimeInterval {
+   start: string;
+   end: string;
+}
+
+export interface Day {
+   open: boolean;
+   intervals: TimeInterval;
+}
+
+export type DataDays = {
+   [key in DayName]: Day;
+};
+
+export type Period = 'AM' | 'PM';

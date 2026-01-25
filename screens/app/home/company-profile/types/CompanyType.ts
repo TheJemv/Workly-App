@@ -1,0 +1,9 @@
+import { ServiceType, Profile } from "./";
+
+type CompanyType = {
+   id: string;
+   services: ServiceType[];
+   profile: Profile;
+};
+
+export default CompanyType;
