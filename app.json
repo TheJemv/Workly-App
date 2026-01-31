@@ -38,7 +38,8 @@
         "android.permission.RECORD_AUDIO"
       ],
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.workly.workly"
+      "package": "com.workly.workly",
+      "googleServicesFile": "./google-services.com"
     },
     "web": {
       "favicon": "./assets/favicon.png"

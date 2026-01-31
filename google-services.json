@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "642547837410",
+    "project_id": "workitapp-92de2",
+    "storage_bucket": "workitapp-92de2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642547837410:android:072e3988db5f3ba27d71bb",
+        "android_client_info": {
+          "package_name": "com.worklyplatforms.services"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642547837410-pe0af417r0qson1r4c7fntpbcdagg3d6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.worklyplatforms.services",
+            "certificate_hash": "fdf879e3a3a53ab8ea42a2a167291496102317f2"
+          }
+        },
+        {
+          "client_id": "642547837410-ua5umahbh07furo9f5vtvhfceejqghqk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmQcT2KGznXm_e7qXdBqN3AJW8NqCWKN8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642547837410-ua5umahbh07furo9f5vtvhfceejqghqk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "642547837410-9o9pbupnjh5aq05ta5rj1gnt6jh44kap.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.WorkIt"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
