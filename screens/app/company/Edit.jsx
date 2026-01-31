@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { AuthContext } from "context/AuthContext";
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import {
    SafeAreaView,
    ScrollView,
@@ -8,7 +8,6 @@ import {
    View,
    Image,
    Text,
-   Linking,
    Alert,
 } from "react-native";
 import getValue from "utils/getValue";

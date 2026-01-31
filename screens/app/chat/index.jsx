@@ -1,7 +1,6 @@
 import { FlatList, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import { ChatItem } from 'components';
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { getMessages } from '@/services/api/getMessage';
+import { useLayoutEffect, useState } from 'react';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 

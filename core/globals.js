@@ -1,11 +1,11 @@
-import { getAuth } from "firebase/auth";
+import { getAuth } from "@react-native-firebase/auth"; // ✅ Cambiado
 import { create } from "zustand";
 import utils from "./utils";
 import { API_WEBHOOK, API_HOST } from "@env";
+import { Platform } from "react-native";
 
 // Configuración de reconexión automática
 const MAX_AUTO_RETRIES = 3;
-
 
 const responseMessageSend = (set, get, data) => {
    const index = get().chats.findIndex((chat) => chat.id === data.room.id);
@@ -110,6 +110,10 @@ const responseOrdersGet = (set, get, data) => {
    }));
 };
 
+const responsePong = () => {
+   console.log(`🏓 [${new Date().toLocaleTimeString()}] Pong recibido`);
+}
+
 const responses = {
    "message.send": responseMessageSend,
    "message.chats": responseMessageChats,
@@ -123,6 +127,8 @@ const responses = {
    "sales.list": responseSalesGet,
    "services.list": responseServicesGet,
    "orders.list": responseOrdersGet,
+
+   "pong": responsePong,
 };
 
 const useGlobal = create((set, get) => ({
@@ -160,7 +166,8 @@ const useGlobal = create((set, get) => ({
 
    init: async () => {
       await get().serverPing();
-      const user = getAuth().currentUser;
+      const auth = getAuth(); // ✅ Corregido
+      const user = auth.currentUser;
       if (!user) return;
       const token = await user.getIdToken(true);
       set({
@@ -172,7 +179,6 @@ const useGlobal = create((set, get) => ({
       // 🔑 iniciar socket DESPUÉS
       await get().socketConnect();
    },
-
 
    setToken: (token) => {
       set({ token });
@@ -240,15 +246,51 @@ const useGlobal = create((set, get) => ({
          return;
       }
 
-      const ws = new WebSocket(`${API_WEBHOOK}?token=${token}`);
+      // Modificar ws -> con android
+      // wss -> con iOS
+
+      let ws
+      if (Platform.OS == "android") {
+         ws = new WebSocket(`ws://${API_WEBHOOK}?token=${token}`)
+      } else {
+         ws = new WebSocket(`wss://${API_WEBHOOK}?token=${token}`)
+      }
+
       set({ socket: ws });
 
       ws.onopen = () => {
+         const now = new Date().toLocaleTimeString();
+         console.log(`🟢 [${now}] Socket conectado`);
+
          set({
             socketStatus: "connected",
             connectInFlight: false,
             autoRetryCount: 0,
          });
+
+         // ✅ ENVIAR PRIMER PING INMEDIATAMENTE (no esperar 60s)
+         if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+               type: "ping",
+               timestamp: Date.now()
+            }));
+            console.log(`🏓 [${new Date().toLocaleTimeString()}] Ping inicial enviado`);
+         }
+
+         // ✅ Luego continuar cada 60 segundos
+         const pingInterval = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+               ws.send(JSON.stringify({
+                  type: "ping",
+                  timestamp: Date.now()
+               }));
+               console.log(`🏓 [${new Date().toLocaleTimeString()}] Ping enviado`);
+            } else {
+               clearInterval(pingInterval);
+            }
+         }, 50000); // 50 segundos
+
+         ws._pingInterval = pingInterval;
       };
 
       ws.onerror = () => {
@@ -256,6 +298,13 @@ const useGlobal = create((set, get) => ({
       };
 
       ws.onclose = () => {
+         const now = new Date().toLocaleTimeString();
+         console.log(`🔴 [${now}] Socket cerrado`);
+
+         if (ws._pingInterval) {
+            clearInterval(ws._pingInterval);
+         }
+
          set({ socket: null, connectInFlight: false });
 
          // auto-retry con backoff simple
@@ -303,7 +352,7 @@ const useGlobal = create((set, get) => ({
       };
    },
 
-   // botón “Reintentar”: reinicia contador y reintenta 3 veces auto otra vez
+   // botón "Reintentar": reinicia contador y reintenta 3 veces auto otra vez
    handleRetrySocket: () => {
       if (!get().token) return;
       get().clearRetryTimer();
@@ -320,7 +369,6 @@ const useGlobal = create((set, get) => ({
          get().socketConnect({ auto: true });
       }
    },
-
 
    // API calls via WebSocket
    sendMessage: (room, message) => {
@@ -383,6 +431,12 @@ const useGlobal = create((set, get) => ({
       );
    },
 
+   removeTempService: (id) => {
+      set((state) => ({
+         services: state.services.filter(service => service.id !== id),
+      }));
+   },
+
    getOrders: () => {
       set((state) => ({
          orders: {
@@ -415,4 +469,3 @@ const useGlobal = create((set, get) => ({
 }));
 
 export default useGlobal;
-

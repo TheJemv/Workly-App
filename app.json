@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "entryPoint": "./node_modules/expo/AppEntry.js",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -14,7 +13,8 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.worklyplatforms.services",
+      "bundleIdentifier": "com.workly.workly",
+      "googleServicesFile": "./googleService-Info.plist",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrar información relevante.",
         "NSLocationAlwaysUsageDescription": "Necesitamos tu ubicación para proporcionar funcionalidades avanzadas incluso cuando la aplicación no esté en uso.",
@@ -38,7 +38,7 @@
         "android.permission.RECORD_AUDIO"
       ],
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.worklyplatforms.services"
+      "package": "com.workly.workly"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -51,8 +51,8 @@
         "origin": false
       }
     },
-    "owner": "worklyplatforms",
-    "scheme": "services",
+    "owner": "workly",
+    "scheme": "workly",
     "plugins": [
       "expo-router",
       [
@@ -62,18 +62,29 @@
         }
       ],
       [
-        "expo-dev-launcher",
-        {
-          "launchMode": "most-recent"
-        }
-      ],
-      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Work It to use your location."
         }
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "com.workly.wortky",
+          "enableGooglePay": true
+        }
+      ],
+      "expo-web-browser",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
       ]
-    ],
-    "assets": []
+    ]
   }
 }

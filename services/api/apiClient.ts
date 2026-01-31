@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_HOST } from "@env";
-import { getAuth } from "firebase/auth";
+import { getApp } from "@react-native-firebase/app";
+import { getAuth, getIdToken } from "@react-native-firebase/auth";
 
 const apiClient = axios.create({
    baseURL: API_HOST,
@@ -9,9 +10,12 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
    async (config) => {
-      const credentials = getAuth().currentUser;
-      const token = await credentials.getIdToken();
-      if (token) {
+      const app = getApp();
+      const auth = getAuth(app);
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+         const token = await getIdToken(currentUser);
          config.headers.Authorization = `Bearer ${token}`;
       }
 
@@ -23,7 +27,7 @@ apiClient.interceptors.request.use(
    },
 );
 
-axios.interceptors.response.use(
+apiClient.interceptors.response.use(
    (response) => {
       return response;
    },

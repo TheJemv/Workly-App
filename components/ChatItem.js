@@ -1,17 +1,17 @@
 import { Image, StyleSheet, View, Text, Pressable } from 'react-native';
 import { Colors, Padding } from '../lib';
 import { formatMessageDate } from '../utils';
+import { router } from 'expo-router';
 
-const ChatItem = ({ data, navigation }) => {
-   console.log(data?.messages[0]);
-
+const ChatItem = ({ data }) => {
    const handleItemPress = () => {
-      navigation.navigate('UserChat', {
-         ...data
-      });
+      router.push({
+         pathname: "/(app)/chat",
+         params: {
+            data: JSON.stringify(data)
+         }
+      })
    };
-
-   console.log(data.customers[0].profile?.photo);
 
    return (
       <Pressable

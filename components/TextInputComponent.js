@@ -16,7 +16,6 @@ const TextInputComponent = ({
    autoComplete = '',
    keyboardType = '',
    hide = false,
-   label = 'label',
 }) => {
    const [viewPassword, setViewPassword] = useState(true);
    return (

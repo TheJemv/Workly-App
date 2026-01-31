@@ -1,4 +1,4 @@
-function getChangedProperties(obj1, obj2) {
+export default function getChangedProperties(obj1, obj2) {
   const changedProperties = {};
 
   function compareObjects(o1, o2, result) {
@@ -21,5 +21,3 @@ function getChangedProperties(obj1, obj2) {
   compareObjects(obj1, obj2, changedProperties);
   return changedProperties;
 }
-
-export default getChangedProperties

@@ -321,21 +321,8 @@ const ScreenEditService = ({ route }) => {
                            }}
                            labelField="label"
                            valueField="value"
-                           placeholder="Escoje tu Categoria:"
-                           placeholderStyle={{
-                              color: "#92929D",
-                              fontSize: 14,
-                           }}
-                           itemContainerStyle={{
-                              backgroundColor: Colors.white,
-                              borderRadius: 8,
-                              fontSize: 14,
-                           }}
-                           containerStyle={{
-                              borderRadius: 8,
-                              borderWidth: 1,
-                           }}
-                           dropdownPosition="top"
+
+
                            data={Object.keys(ServiceCategoryEnum).map(
                               (key) => ({
                                  label: ServiceCategoryEnum[key],

@@ -1,4 +1,4 @@
-const currently_due = {
+export default currently_due = {
    external_account: "Falta agregar o verificar la cuenta bancaria.",
    "company.tax_id": "Hace falta agregar un RFC/Tax ID.",
    "company.directors_provided": "Falta agregar los directores de la compañía.",
@@ -15,5 +15,3 @@ const currently_due = {
    "tos_acceptance.date": "Falta aceptar los términos y condiciones.",
    "tos_acceptance.ip": "Falta registrar la IP que aceptó los TOS.",
 };
-
-export default currently_due;

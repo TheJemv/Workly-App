@@ -33,8 +33,6 @@ const Stats = ({ name = "Ordenes", value = 50 }: StatsProps) => (
 );
 
 export default function StatsComponent({ orders, views, createdAt }: Props) {
-    console.log("StatsComponent - orders:", orders, "views:", views, "createdAt:", createdAt);
-
     return (
         <View style={Styles.container}>
             <Stats name="Ordenes" value={orders} />

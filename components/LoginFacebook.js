@@ -4,7 +4,6 @@ import * as Facebook from "expo-auth-session/providers/facebook"
 import { ResponseType } from 'expo-auth-session';
 import FacebookeIcon from '../assets/Icons/facebookIcon.png';
 import { FacebookAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from '../config/firebase';
 
 const LoginFacebook = () => {
    const [_request, response, promptAsync] = Facebook.useAuthRequest({
@@ -13,7 +12,7 @@ const LoginFacebook = () => {
    })
 
    useEffect(() => {
-      if(response?.type === "success") {
+      if (response?.type === "success") {
          const { access_token } = response.params
          const credential = FacebookAuthProvider.credential(access_token)
          signInWithCredential(auth, credential)

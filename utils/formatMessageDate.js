@@ -1,4 +1,4 @@
-export default formatMessageDate = (dateString) => {
+const formatMessageDate = (dateString) => {
    try {
       // Verifica que dateString esté en un formato válido
       const date = new Date(dateString);
@@ -77,3 +77,5 @@ export default formatMessageDate = (dateString) => {
       return 'Fecha no válida';
    }
 };
+
+export default formatMessageDate
