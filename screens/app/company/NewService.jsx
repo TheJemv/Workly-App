@@ -6,15 +6,15 @@ import * as ImagePicker from "expo-image-picker";
 import { setService } from "services/api/services.api";
 import { AuthContext } from "context/AuthContext";
 import SpinLoading from "components/SpinLoading";
-import{ Picker } from "@react-native-picker/picker"
+import { Picker } from "@react-native-picker/picker"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import ServiceCategoryEnum from "enum/ServiceCategoryEnum";
 import loadImageFile from "utils/loadImageFile";
 import { Dropdown } from "react-native-element-dropdown";
 
 
-const Col = ({children, gap=0, className=""}) => (
-   <View className={`flex flex-col ${className&&className}`} style={{gap:gap}}>
+const Col = ({ children, gap = 0, className = "" }) => (
+   <View className={`flex flex-col ${className && className}`} style={{ gap: gap }}>
       {children}
    </View>
 )
@@ -23,7 +23,7 @@ const formatPrice = (text) => {
    const numericText = text.replace(/[^0-9]/g, '');
    const formattedText = numericText.replace(/(\d)(\d{2})$/, '$1.$2');
 
-   if(text > 0) {
+   if (text > 0) {
       return `$${formattedText}`;
    }
    return text
@@ -48,7 +48,6 @@ const NewService = () => {
       photo: '',
    })
 
-
    useEffect(() => {
       navigation.setOptions({
          headerTitle: 'Nuevo Servicio'
@@ -67,7 +66,7 @@ const NewService = () => {
          await setService(token, value)
          await reloadCompany()
          navigation.goBack()
-      } catch(e) {
+      } catch (e) {
          Alert.alert("Error", e.message)
       } finally {
          setLoading(false)
@@ -76,7 +75,7 @@ const NewService = () => {
 
 
    const handleImageService = async () => {
-      if(loadingPhoto) return;
+      if (loadingPhoto) return;
       setLoadingPhoto(true)
       try {
          let result = await ImagePicker.launchImageLibraryAsync({
@@ -85,7 +84,7 @@ const NewService = () => {
             aspect: [1, 1],
             quality: 1
          });
-         if(result.canceled) return;
+         if (result.canceled) return;
 
          const base64 = await loadImageFile(result.assets[0].uri)
          setValue((prevData) => ({
@@ -94,7 +93,7 @@ const NewService = () => {
          }))
 
          setCurrentImage(result.assets[0].uri)
-      } catch(e) {
+      } catch (e) {
          Alert.alert("Error", e.message)
       } finally {
          setLoadingPhoto(false)
@@ -104,25 +103,25 @@ const NewService = () => {
 
    return (
       loading ? (
-         <View style={{flex:1}} className="flex flex-col items-center justify-center">
+         <View style={{ flex: 1 }} className="flex flex-col items-center justify-center">
             <SpinLoading size={64} color={"#364670"} />
          </View>
-      ):(
+      ) : (
          <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             style={{ flex: 1 }}
             keyboardVerticalOffset={50}
          >
             <ScrollView className="flex-1">
-               <View className="flex-1 flex flex-col pt-4 px-3" style={{paddingBottom:bottomHeight+12}} gap={32}>
-                  <Text className="text-center" style={{color:Colors.principal.DEFAULT,fontSize:22,fontWeight:700}}>Añadir un servicio</Text>
+               <View className="flex-1 flex flex-col pt-4 px-3" style={{ paddingBottom: bottomHeight + 12 }} gap={32}>
+                  <Text className="text-center" style={{ color: Colors.principal.DEFAULT, fontSize: 22, fontWeight: 700 }}>Añadir un servicio</Text>
                   <Col gap={40}>
                      <Col gap={8}>
                         <TouchableOpacity onPress={handleImageService} className="flex flex-col items-center">
                            <View className="items-center justify-center" style={styles.imageBox}>
                               <Image
                                  style={styles.image}
-                                 source={{uri: currentImage}}
+                                 source={{ uri: currentImage }}
                                  resizeMode="cover"
                                  width={110}
                                  height={110}
@@ -132,7 +131,7 @@ const NewService = () => {
                      </Col>
 
                      <Col gap={8}>
-                        <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Nombre del servicio</Text>
+                        <Text style={{ color: Colors.principal.DEFAULT, fontSize: 14, fontWeight: 700 }}>Nombre del servicio</Text>
                         <TextInput
                            value={value.name}
                            onChangeText={e => setValue((prevData) => ({
@@ -147,7 +146,7 @@ const NewService = () => {
                      </Col>
 
                      <Col gap={8}>
-                        <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Descripcion del servicio</Text>
+                        <Text style={{ color: Colors.principal.DEFAULT, fontSize: 14, fontWeight: 700 }}>Descripcion del servicio</Text>
                         <TextInput
                            value={value.description}
                            onChangeText={(e) => setValue((prevData) => ({
@@ -163,7 +162,7 @@ const NewService = () => {
                      </Col>
 
                      <Col gap={8}>
-                        <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Precio Fijo</Text>
+                        <Text style={{ color: Colors.principal.DEFAULT, fontSize: 14, fontWeight: 700 }}>Precio Fijo</Text>
                         <Dropdown
                            className="border-dark/10 rounded-lg border py-2 px-2"
                            style={{
@@ -174,8 +173,8 @@ const NewService = () => {
                               fontSize: 14,
                            }}
                            data={[
-                              {label: 'Indefinido', value: true},
-                              {label: 'Fijo', value: false}
+                              { label: 'Indefinido', value: true },
+                              { label: 'Fijo', value: false }
                            ]}
                            labelField="label"
                            valueField="value"
@@ -197,7 +196,7 @@ const NewService = () => {
                            value={value?.indefinite}
                            onChange={(e) => {
                               console.log(e)
-                              if(e.value) {
+                              if (e.value) {
                                  setValue((prevData) => ({
                                     ...prevData,
                                     unit_amount: null
@@ -213,7 +212,7 @@ const NewService = () => {
 
                      {(value?.indefinite === false) && (
                         <Col gap={8}>
-                           <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Precio del servicio</Text>
+                           <Text style={{ color: Colors.principal.DEFAULT, fontSize: 14, fontWeight: 700 }}>Precio del servicio</Text>
                            <TextInput
                               onChangeText={(e) => {
                                  const cleanedValue = e.replace(/[^0-9.]/g, '');
@@ -237,7 +236,7 @@ const NewService = () => {
                   </Col>
 
                   <Col gap={8}>
-                     <Text style={{color:Colors.principal.DEFAULT,fontSize:14,fontWeight:700}}>Categorio del servicio</Text>
+                     <Text style={{ color: Colors.principal.DEFAULT, fontSize: 14, fontWeight: 700 }}>Categorio del servicio</Text>
                      <Dropdown
                         className="border-dark/10 rounded-lg border py-2 px-2"
                         style={{
@@ -280,7 +279,7 @@ const NewService = () => {
                   </Col>
 
                   <TouchableOpacity disabled={loading} onPress={handleService} className="bg-[#364670] py-3 rounded-lg">
-                     <Text className="text-white text-center" style={{fontWeight:600,fontSize:22}}>Publicar</Text>
+                     <Text className="text-white text-center" style={{ fontWeight: 600, fontSize: 22 }}>Publicar</Text>
                   </TouchableOpacity>
                </View>
             </ScrollView>

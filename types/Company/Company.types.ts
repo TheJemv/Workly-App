@@ -1,10 +1,10 @@
 import { DataDays } from "@/types/Schedule";
 import Profile from "./Profile.types";
-import ServiceType from "./Service.types";
+import { Service } from "@/types/Service"
 
 interface CompanyType {
     id: string;
-    services: ServiceType[];
+    services: Service[];
     profile: Profile;
     businessHours: DataDays[];
 }

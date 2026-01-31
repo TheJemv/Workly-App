@@ -8,7 +8,6 @@ type Props = {
 };
 
 export function OrderCard({ order, onPress }: Props): JSX.Element {
-   console.log(order);
    return (
       <TouchableOpacity
          className="flex flex-col space-y-4 p-4 rounded-xl bg-white shadow-lg shadow-dark/10 active:bg-white/80"

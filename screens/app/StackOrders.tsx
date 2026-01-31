@@ -11,13 +11,11 @@ import { TrackOrdersScreen } from "./my-orders/TrackOrdersScreen";
 
 import { Colors } from "lib";
 import useGlobal from "core/globals";
-import { useEffect } from "react";
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
-type Props = {};
-function StackOrders({ }: Props): JSX.Element {
+function StackOrders(): JSX.Element {
    const isBusiness: object = useGlobal((state) => state.company);
    return (
       <View className="flex-1 bg-[#eee]">

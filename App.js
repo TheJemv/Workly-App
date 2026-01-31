@@ -1,6 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { AuthProvider } from "./context/AuthContext";
-import SwitchAuth from "./auth/SwitchAuth";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -11,6 +10,8 @@ import { PUBLISHABLE_KEY } from "@env";
 import useGlobal from "core/globals";
 import { useEffect } from "react";
 import { AppState } from "react-native";
+
+import { Stack } from "expo-router";
 
 export default function App() {
    const init = useGlobal(s => s.init);
@@ -37,7 +38,8 @@ export default function App() {
             <NavigationContainer>
                <AuthProvider>
                   <BottomSheetModalProvider>
-                     <SwitchAuth />
+                     {/* <SwitchAuth /> */}
+                     <Stack />
                   </BottomSheetModalProvider>
                </AuthProvider>
             </NavigationContainer>

@@ -340,7 +340,6 @@ const UserChatScreen = ({ route, navigation }) => {
 
 	function onType(value) {
 		setMessage(value)
-		// messageType(friend.username)
 	}
 
 	const OptionsAttach = [{

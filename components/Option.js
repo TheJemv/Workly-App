@@ -2,7 +2,7 @@ import { Easing, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react'
 import Entypo from "@expo/vector-icons/Entypo"
 import { Animated } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Option = ({ icon: IconComponent, iconName = "plus", label = "Option", colorIcon = "#fff", disabled = false, onPress, styles, loading = true }) => {
    const spinValue = new Animated.Value(0)
@@ -47,7 +47,7 @@ const Option = ({ icon: IconComponent, iconName = "plus", label = "Option", colo
                   className={"flex flex-row w-full h-full"}
                >
                   <AntDesign
-                     name='loading1'
+                     name='loading'
                      className='text-primary'
                      size={16}
                      style={{

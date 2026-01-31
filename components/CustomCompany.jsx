@@ -19,7 +19,7 @@ const CustomCompany = () => {
    const { companyData, token, reloadCompany } = useContext(AuthContext);
    const [currentImage, setCurrentImage] = useState("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn1.vectorstock.com%2Fi%2F1000x1000%2F00%2F65%2Fuser-profile-grey-icon-web-avatar-employee-vector-32550065.jpg");
    const [editinData, setEditingData] = useState(companyData)
-   
+
 
    const dataPrivacy = ["publica", "privada"]
    const dataContact = ["facebook", "instagram", "linkedin", "phone"]
@@ -55,7 +55,7 @@ const CustomCompany = () => {
       setLoading(true);
       try {
          const newData = getChangedProperties(companyData, editinData);
-         await updateCompany(token, newData);
+         await updateCompany(newData);
          await reloadCompany();
       } catch (error) {
          Alert.alert('Error', error.message);
@@ -66,7 +66,7 @@ const CustomCompany = () => {
 
 
    const saveComponent = () => (
-      JSON.stringify(editinData) !== JSON.stringify(companyData)  && (
+      JSON.stringify(editinData) !== JSON.stringify(companyData) && (
          <TouchableOpacity onPress={handleSaveData} className="rounded-full p-[6px]" style={{ backgroundColor: Colors.principal.DEFAULT }}>
             <Entypo name='save' size={18} color={"white"} />
          </TouchableOpacity>
@@ -86,54 +86,54 @@ const CustomCompany = () => {
          <ScrollView>
             <View className="flex flex-col" style={{ gap: 32 }}>
                <View className="flex flex-row items-center justify-between">
-               <Text className="text-dark" style={{ fontWeight: 700, fontSize: 20 }}>Modifica tu empresa.</Text>
-            </View>
+                  <Text className="text-dark" style={{ fontWeight: 700, fontSize: 20 }}>Modifica tu empresa.</Text>
+               </View>
 
-            <View className="flex flex-col items-center justify-center" style={{ gap: 4 }}>
-               <TouchableOpacity onPress={handleImage} style={styles.image} className="border-[4px] rounded-full">
-                  <Image style={styles.image.box} source={{ uri: currentImage }} />
-                  <View style={styles.image.icon}>
-                     <MaterialCommunityIcons name='image-edit' size={24} color={"white"} />
-                  </View>
-               </TouchableOpacity>
+               <View className="flex flex-col items-center justify-center" style={{ gap: 4 }}>
+                  <TouchableOpacity onPress={handleImage} style={styles.image} className="border-[4px] rounded-full">
+                     <Image style={styles.image.box} source={{ uri: currentImage }} />
+                     <View style={styles.image.icon}>
+                        <MaterialCommunityIcons name='image-edit' size={24} color={"white"} />
+                     </View>
+                  </TouchableOpacity>
 
-               <TouchableOpacity onPress={() => focusInput(0)} className="flex flex-row items-center" style={{ gap: 6 }}>
+                  <TouchableOpacity onPress={() => focusInput(0)} className="flex flex-row items-center" style={{ gap: 6 }}>
+                     <TextInput
+                        ref={el => inputRefs.current[0] = el}
+                        maxLength={24}
+
+                        value={editinData?.profile.name}
+                        onChangeText={e => setEditingData((prevData) => ({
+                           ...prevData,
+                           profile: {
+                              ...prevData?.profile,
+                              name: e
+                           }
+                        }))}
+                     />
+                     <AntDesign name='edit' size={18} color={Colors.principal.DEFAULT} />
+                  </TouchableOpacity>
+                  <Text className="text-text text-xs" style={{ fontWeight: 600, fontSize: 10 }}>{companyData?.id}</Text>
+               </View>
+
+               <View className="bg-white rounded-lg px-2 py-1 flex flex-col" style={{ gap: 4 }}>
+                  <Text className="text-dark" style={{ fontSize: 16, fontWeight: 700 }}>Descripción de tu empresa.</Text>
                   <TextInput
-                     ref={el => inputRefs.current[0] = el}
-                     maxLength={24}
+                     ref={el => inputRefs.current[1] = el}
+                     placeholder="Agrega la descripción de tu empresa..."
+                     multiline
+                     style={styles.textarea}
+                     className="text-text"
 
-                     value={editinData?.profile.name}
+                     value={editinData?.profile?.description}
                      onChangeText={e => setEditingData((prevData) => ({
                         ...prevData,
                         profile: {
                            ...prevData?.profile,
-                           name: e
+                           description: e
                         }
                      }))}
                   />
-                  <AntDesign name='edit' size={18} color={Colors.principal.DEFAULT} />
-               </TouchableOpacity>
-               <Text className="text-text text-xs" style={{ fontWeight: 600, fontSize: 10 }}>{companyData?.id}</Text>
-               </View>
-
-               <View className="bg-white rounded-lg px-2 py-1 flex flex-col" style={{ gap: 4 }}>
-               <Text className="text-dark" style={{ fontSize: 16, fontWeight: 700 }}>Descripción de tu empresa.</Text>
-               <TextInput
-                  ref={el => inputRefs.current[1] = el}
-                  placeholder="Agrega la descripción de tu empresa..."
-                  multiline
-                  style={styles.textarea}
-                  className="text-text"
-
-                  value={editinData?.profile?.description}
-                  onChangeText={e => setEditingData((prevData) => ({
-                     ...prevData,
-                     profile: {
-                        ...prevData?.profile,
-                        description: e
-                     }
-                  }))}
-               />
                </View>
 
                <View className="flex flex-col" style={{ gap: 4 }}>
@@ -150,10 +150,10 @@ const CustomCompany = () => {
                   />
                </View>
 
-               <View className="flex flex-col" style={{gap:12}}>
-                  <Text className="text-dark pb-4" style={{fontWeight:700, fontSize:22}}>Contacto</Text>
+               <View className="flex flex-col" style={{ gap: 12 }}>
+                  <Text className="text-dark pb-4" style={{ fontWeight: 700, fontSize: 22 }}>Contacto</Text>
                   {dataContact.map((data, index) => (
-                     <TouchableOpacity onPress={() => focusInput(index+12)} key={index} className="py-3 px-2 rounded-lg flex flex-row items-center border-[0] border-light" style={{gap:12}}>
+                     <TouchableOpacity onPress={() => focusInput(index + 12)} key={index} className="py-3 px-2 rounded-lg flex flex-row items-center border-[0] border-light" style={{ gap: 12 }}>
                         <Entypo name={data} size={22} color={Colors.principal.DEFAULT} />
                         <TextInput
                            value={editinData.profile.contact[data]}
@@ -168,7 +168,7 @@ const CustomCompany = () => {
                               }
                            }))}
 
-                           ref={el=>inputRefs.current[index+12] = el}
+                           ref={el => inputRefs.current[index + 12] = el}
                            placeholder={data}
                            style={{ fontSize: 18, flex: 1 }}
                            className="text-dark"
@@ -179,8 +179,8 @@ const CustomCompany = () => {
                </View>
             </View>
          </ScrollView>
-      ):(
-         <View className="flex flex-col items-center justify-center my-auto bg-transparent" style={{flex:1}}>
+      ) : (
+         <View className="flex flex-col items-center justify-center my-auto bg-transparent" style={{ flex: 1 }}>
             <SpinLoading size={62} color={Colors.principal.DEFAULT} />
          </View>
       )

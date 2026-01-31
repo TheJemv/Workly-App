@@ -1,12 +1,11 @@
-import { signOut } from "firebase/auth"
-import { auth } from "../../config/firebase"
+import { getAuth, signOut } from "@react-native-firebase/auth";
 
 export const Singout = async () => {
    try {
-      await signOut(auth).catch((e) => {
-         throw new Error(e)
-      })
-   } catch(e) { 
-      throw new Error(e.message)
+      const auth = getAuth();
+      await signOut(auth);
+   } catch (e) {
+      console.error("Error al cerrar sesión:", e);
+      throw e;
    }
-}
+};

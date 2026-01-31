@@ -1,4 +1,3 @@
-import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import {
    View,
    ScrollView,

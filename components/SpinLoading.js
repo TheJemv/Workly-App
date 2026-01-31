@@ -1,6 +1,6 @@
 import React from 'react';
 import { Colors } from '../lib';
-import AntDesing from 'react-native-vector-icons/AntDesign';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { Animated, Easing } from 'react-native';
 
 export default function ({ color = Colors.principal.DEFAULT, size = 24 }) {
@@ -24,8 +24,8 @@ export default function ({ color = Colors.principal.DEFAULT, size = 24 }) {
       <Animated.View
          style={{ transform: [{ rotate: spin }], marginVertical: 'auto' }}
       >
-         <AntDesing
-            name="loading1"
+         <AntDesign
+            name="loading"
             color={color}
             style={{
                marginVertical: 'auto',

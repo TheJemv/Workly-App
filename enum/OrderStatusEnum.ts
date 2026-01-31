@@ -11,6 +11,7 @@ enum OrderStatusEnum {
    DATE_MODIFIED = 'date_modified',
    CONFIRMED = 'confirmed',
    DELIVERED = 'delivered',
+
    CANCELLED = 'cancelled',
    FAILED = 'failed'
 }

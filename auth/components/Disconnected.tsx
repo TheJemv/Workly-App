@@ -3,7 +3,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useGlobal from 'core/globals'
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { getAuth, signOut } from 'firebase/auth';
+import { Singout } from 'services/firebase/Singout';
 
 
 //  Screen shown when the app is disconnected from the server and button to try reconnect
@@ -26,7 +26,7 @@ export default function Disconnected() {
                 top: 32 + 32,
                 right: 32,
             }}>
-                <TouchableOpacity onPress={() => signOut(getAuth())}>
+                <TouchableOpacity onPress={() => Singout()}>
                     <AntDesign name="close" size={32} color="#ccc" />
                 </TouchableOpacity>
             </View>

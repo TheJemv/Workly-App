@@ -6,7 +6,7 @@ import SpinLoading from "./SpinLoading";
 import { useNavigation } from "@react-navigation/native";
 
 const ServiceItem = ({ data }) => {
-   const {token, reloadCompany} = useContext(AuthContext)
+   const { token, reloadCompany } = useContext(AuthContext)
    const [loading, setLoading] = useState(false)
    const navigation = useNavigation()
 
@@ -17,13 +17,13 @@ const ServiceItem = ({ data }) => {
          [{
             text: 'Cancelar',
             style: 'cancel'
-         },{
+         }, {
             text: 'Aceptar',
             onPress: () => handleDelete(),
             style: 'default'
          }], {
-            cancelable: false
-         }
+         cancelable: false
+      }
       );
    };
 
@@ -33,7 +33,7 @@ const ServiceItem = ({ data }) => {
       try {
          await delService(token, data?.id)
          await reloadCompany()
-      } catch(e) {
+      } catch (e) {
          throw new Error(e)
       } finally {
          setLoading(false)
@@ -47,12 +47,12 @@ const ServiceItem = ({ data }) => {
             <View>
                <SpinLoading color={"#364670"} size={48} />
             </View>
-         ):(
+         ) : (
             <View className="flex flex-col space-y-1">
                <View style={styles.innerContainer}>
                   <Image
                      style={styles.imageService}
-                     source={{uri: data?.photo?data?.photo:"https://1.bp.blogspot.com/-CLJH1C9LCj8/U_qBzC3WCII/AAAAAAACR9g/_QV42D7tkO8/s1600/imagenes%2Bbonitas%2By%2Bfotos%2Bde%2Bpaisajes%2Bnaturales%2B-%2Bamazing%2Bfree%2Bwallpapers%2B(1).jpg"}}
+                     source={{ uri: data?.photo ? data?.photo : "https://1.bp.blogspot.com/-CLJH1C9LCj8/U_qBzC3WCII/AAAAAAACR9g/_QV42D7tkO8/s1600/imagenes%2Bbonitas%2By%2Bfotos%2Bde%2Bpaisajes%2Bnaturales%2B-%2Bamazing%2Bfree%2Bwallpapers%2B(1).jpg" }}
                      resizeMode="cover"
                      width={110}
                      height={110}
@@ -64,18 +64,18 @@ const ServiceItem = ({ data }) => {
                </View>
 
                {!data?.indefinite && (
-                  <Text className="" style={{fontSize:16,fontWeight:800,color:'#364670',paddingTop:6}}>Desde ${data?.unit_amount/100} {data?.currency}</Text>
+                  <Text className="" style={{ fontSize: 16, fontWeight: 800, color: '#364670', paddingTop: 6 }}>Desde ${data?.unit_amount / 100} {data?.currency}</Text>
                )}
 
                <View style={styles.buttonContainer}>
                   <TouchableOpacity onPress={() => navigation.navigate("editservice", {
                      service: data
                   })} className="bg-[#364670]" style={styles.buttonService}>
-                     <Text className="text-center text-white" style={{ fontWeight:700, fontSize:16 }}>Editar</Text>
+                     <Text className="text-center text-white" style={{ fontWeight: 700, fontSize: 16 }}>Editar</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity onPress={handleDeleteAlert} className="bg-gray-400" style={styles.buttonService}>
-                     <Text className="text-center text-white" style={{ fontWeight:700, fontSize:16 }}>Eliminar</Text>
+                     <Text className="text-center text-white" style={{ fontWeight: 700, fontSize: 16 }}>Eliminar</Text>
                   </TouchableOpacity>
                </View>
             </View>

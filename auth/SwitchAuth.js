@@ -1,19 +1,21 @@
-import AuthNavigator from "../stacks/AuthNavigator";
-import AppTabs from "stacks/AppTabs";
-import useGlobal from "core/globals";
-import { Background, Connecting, Disconnected } from "./components";
-import { useContext, useEffect, useState, useRef } from "react";
-import { AuthContext } from "context/AuthContext";
-import { AppState } from "react-native";
+import { useContext, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
+import { Slot, useRouter } from 'expo-router';
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AuthProvider, AuthContext } from "../context/AuthContext";
+import useGlobal from "../core/globals";
+import { Background, Connecting, Disconnected } from "../components/Auth";
+import { PUBLISHABLE_KEY } from "@env";
 
 const SwitchAuth = () => {
-   const { token, loading } = useContext(AuthContext); // loading=true => auth listo
+   const router = useRouter();
+   const { token, loading } = useContext(AuthContext);
    const socketStatus = useGlobal((s) => s.socketStatus);
    const onAppForeground = useGlobal((s) => s.onAppForeground);
-   const handleRetrySocket = useGlobal((s) => s.handleRetrySocket);
-
    const [appState, setAppState] = useState(AppState.currentState);
    const appStateRef = useRef(AppState.currentState);
+   const [isNavigationReady, setIsNavigationReady] = useState(false);
 
    useEffect(() => {
       const sub = AppState.addEventListener("change", (nextAppState) => {
@@ -21,7 +23,6 @@ const SwitchAuth = () => {
          appStateRef.current = nextAppState;
          setAppState(nextAppState);
 
-         // 🔥 Solo ejecutar onAppForeground cuando la app pasa de background/inactive a active
          if (
             nextAppState === "active" &&
             (previousAppState === "background" || previousAppState === "inactive")
@@ -30,43 +31,67 @@ const SwitchAuth = () => {
             onAppForeground();
          }
       });
-
       return () => sub.remove();
    }, [onAppForeground]);
 
-   // 🔥 Estados de carga prioritarios
-   // 1. Si la app está en background/inactive, mostrar Background
+   // Esperar a que la navegación esté lista
+   useEffect(() => {
+      setIsNavigationReady(true);
+   }, []);
+
+   // Manejar redirecciones cuando todo esté listo
+   useEffect(() => {
+      if (!isNavigationReady || !loading) return;
+
+      if (!token) {
+         router.replace('/');
+      } else if (socketStatus === "connected") {
+         router.replace('/(app)');
+      }
+   }, [isNavigationReady, token, loading, socketStatus]);
+
+   // 1. Si la app está en background/inactive
    if (appState === "background" || appState === "inactive") {
       return <Background />;
    }
 
-   // 2. Si la autenticación NO está lista (loading=false), mostrar Connecting
+   // 2. Si la autenticación NO está lista
    if (!loading) {
       return <Connecting />;
    }
 
-   // 3. Si NO hay token (usuario no autenticado), mostrar Login
+   // 3. Si NO hay token (usuario no autenticado)
    if (!token) {
-      return <AuthNavigator />;
+      return <Slot />;
    }
 
-   // 4. Si hay token pero el socket está desconectado, mostrar Disconnected con opción de reintentar
+   // 4. Si hay token pero el socket está desconectado
    if (socketStatus === "disconnected") {
-      return <Disconnected onRetry={handleRetrySocket} />;
+      return <Disconnected />;
    }
 
-   // 5. Si el socket está conectando, mostrar Connecting
+   // 5. Si el socket está conectando
    if (socketStatus === "connecting") {
       return <Connecting />;
    }
 
    // 6. Socket conectado, mostrar la app principal
    if (socketStatus === "connected") {
-      return <AppTabs />;
+      return <Slot />;
    }
 
-   // 7. Fallback: si el estado del socket no es ninguno de los anteriores, mostrar Connecting
+   // 7. Fallback
    return <Connecting />;
 };
 
-export default SwitchAuth;
+export default function RootLayout() {
+   return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+         <StripeProvider publishableKey={PUBLISHABLE_KEY}>
+            <AuthProvider>
+               <SwitchAuth />
+            </AuthProvider>
+         </StripeProvider>
+      </GestureHandlerRootView>
+   );
+}

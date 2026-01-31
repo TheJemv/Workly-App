@@ -2,18 +2,10 @@ import { StyleSheet, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import * as Google from "expo-auth-session/providers/google"
 import GoogleIcon from '../assets/Icons/googleIcon.png';
-import { ParamsAuthRequest, GoogleProvider } from '../services/firebase/GoogleProvider';
+import { ParamsAuthRequest } from '../services/firebase/GoogleProvider';
 
 const LoginGoogle = () => {
    const [_request, response, promptAsync] = Google.useAuthRequest(ParamsAuthRequest)
-   useEffect(() => {
-      try {
-         GoogleProvider(response)
-      } catch (e) {
-         Alert.alert("Error", e.message)
-      }
-   }, [response])
-
    return (
       <TouchableOpacity onPress={() => promptAsync()} style={styles.buttons}>
          <Image

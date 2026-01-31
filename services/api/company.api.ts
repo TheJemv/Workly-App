@@ -20,12 +20,11 @@ export const getCompany = async (token: string) => {
    }
 };
 
-export const updateCompany = async (token: string, data: object) => {
+export const updateCompany = async (data: object) => {
    console.log("Funcion...");
    try {
       const response = await apiClient.patch("/company", data, {
          headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
          },
       });
@@ -62,11 +61,10 @@ export const fetchOnboardingCompany = async (token: string) => {
    }
 };
 
-export const companyRequest = async (token: string, data: RequestData) => {
+export const companyRequest = async (data: RequestData) => {
    try {
       const response = await apiClient.post("/company/request", data, {
          headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
          },
       });

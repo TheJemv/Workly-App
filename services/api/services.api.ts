@@ -1,10 +1,9 @@
 import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
 
-export const setService = async (token: string, data: object) => {
+export const setService = async (data: object) => {
    try {
       const response = await apiClient.post("/service", data, {
          headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
          },
       });
@@ -32,11 +31,10 @@ export const delService = async (token: string, id: string) => {
    }
 };
 
-export const patchService = async (token: string, id: string, obj: object) => {
+export const patchService = async (id: string, obj: object) => {
    try {
       const response = await apiClient.patch(`/service/${id}`, obj, {
          headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
          },
       });

@@ -4,7 +4,8 @@ const themes = require("./config/theme.json")
 module.exports = {
   content: [
     "./components/**/*.{js,jsx,ts,tsx}",
-    "./screens/**/*.{js,jsx,ts,tsx}"
+    "./screens/**/*.{js,jsx,ts,tsx}",
+    "./app/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
