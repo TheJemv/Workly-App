@@ -65,16 +65,17 @@ const CompanyItem = ({ item }: { item: CompanyType }) => {
                <Image
                   source={require("assets/Icons/Home/star.png")}
                   style={{
-                     width: 10,
-                     height: 10,
+                     width: 20,
+                     height: 20,
+                     position: "absolute"
                   }}
                />
                <Text
-                  className="text-white font-semibold"
+                  className="text-white font-semibold pl-[14]"
                   style={{ fontSize: 10, fontWeight: 500 }}
                   numberOfLines={1}
                >
-                  WorkIt Top
+                  Workly Top
                </Text>
             </View>
          </View>

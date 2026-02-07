@@ -4,6 +4,7 @@ interface ServiceType {
    photo: string;
    currency: string;
    unit_amount: number;
+   indefinite: boolean;
 
    company: {
       profile: {

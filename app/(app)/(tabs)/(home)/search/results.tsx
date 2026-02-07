@@ -36,7 +36,7 @@ export default function ResultsScreen() {
     }, []);
 
     return (
-        loading || companies === null ? (
+        !loading || companies === null ? (
             <ScrollView className="h-full flex-1">
                 <FlatList
                     scrollEnabled={false}

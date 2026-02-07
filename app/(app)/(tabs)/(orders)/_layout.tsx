@@ -21,7 +21,7 @@ export default function OrdersLayout() {
             <Stack.Screen
                 name="(tabs)"
                 options={{
-                    headerShown: false, // Los tabs manejan su propio header
+                    headerShown: false,
                 }}
             />
             <Stack.Screen

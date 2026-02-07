@@ -67,7 +67,7 @@ const CompanyItem = ({ item }: { item: CompanyType }) => {
                <Image
                   source={require("assets/Icons/Home/star.png")}
                   style={{
-                     width: 10,
+                     width: 30,
                      height: 10,
                   }}
                />
@@ -76,7 +76,7 @@ const CompanyItem = ({ item }: { item: CompanyType }) => {
                   style={{ fontSize: 10, fontWeight: 500 }}
                   numberOfLines={1}
                >
-                  WorkIt Top
+                  Workly Top
                </Text>
             </View>
          </View>

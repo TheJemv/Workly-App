@@ -16,7 +16,7 @@ const CategoryItem = ({ item }: { item: any }) => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 12,
+            gap: 6,
             maxWidth: 92,
             width: 92,
             paddingHorizontal: 4,
@@ -39,7 +39,7 @@ const CategoryItem = ({ item }: { item: any }) => {
          <Image
             source={item.Icon}
             style={{
-               width: 38,
+               width: 110,
                height: 38,
             }}
          />

@@ -76,9 +76,6 @@ export default function Edit() {
     const companyData = useGlobal((state) => state.company);
     const reloadCompany = useGlobal((state) => state.companyReload);
 
-    console.log(JSON.stringify(companyData, null, 2))
-    console.log(companyData["profile"]["name"])
-
     const options = route.params as RouteParams;
     const { token } = useContext(AuthContext);
 

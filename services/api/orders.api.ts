@@ -52,6 +52,16 @@ export const modifyDeliveryDate = async (id: string, newDeliveryDate: string) =>
    }
 };
 
+// Historial de Ordenes
+export const ordersHistory = async () => {
+   try {
+      const response = await apiClient.get("/orders/history")
+      return response.data
+   } catch (error) {
+      throw new Error((error as Error).message);
+   }
+}
+
 // ===== CLIENTE: Aprueba cambio de fecha =====
 export const approveDateChange = async (id: string) => {
    try {

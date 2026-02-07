@@ -14,6 +14,7 @@ import { UserConfigButton, Option } from "components";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 import { usePaymentSheet } from "@stripe/stripe-react-native";
 import { getPaymentParams } from "services/api/getPaymantParams";
@@ -102,19 +103,11 @@ const AccountScreen = () => {
 
                     <View className="rounded-lg overflow-hidden flex flex-col">
                         <Option
-                            styles="bg-cyan-500"
-                            icon={Feather}
-                            iconName="file-plus"
-                            label="Datos de Facturacion"
-                            onPress={() => router.push('/billing')}
-                        />
-
-                        <Option
                             styles="bg-slate-500"
                             icon={MaterialIcons}
                             iconName="history"
                             label="Historial de ordenes"
-                            onPress={() => router.push('/support')}
+                            onPress={() => router.push('/history')}
                         />
 
                         <Option
@@ -128,8 +121,24 @@ const AccountScreen = () => {
 
                     <View className="rounded-lg overflow-hidden flex flex-col">
                         <Option
+                            styles="bg-cyan-500"
+                            icon={Feather}
+                            iconName="file-plus"
+                            label="Datos de Facturacion"
+                            onPress={() => router.push('/billing')}
+                        />
+
+                        <Option
+                            styles="bg-rose-500"
+                            icon={FontAwesome5}
+                            iconName="location-arrow"
+                            label="Direcciones"
+                            onPress={() => router.push('/location')}
+                        />
+
+                        <Option
                             onPress={handleNewCard}
-                            styles="bg-red-500"
+                            styles="bg-blue-500"
                             icon={FontAwesome}
                             iconName="credit-card"
                             label="Datos Bancarios"

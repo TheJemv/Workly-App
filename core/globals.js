@@ -1,4 +1,4 @@
-import { getAuth } from "@react-native-firebase/auth"; // ✅ Cambiado
+import { getAuth } from "@react-native-firebase/auth";
 import { create } from "zustand";
 import utils from "./utils";
 import { API_WEBHOOK, API_HOST } from "@env";
@@ -133,7 +133,7 @@ const responses = {
 
 const useGlobal = create((set, get) => ({
    // Server
-   initiainitialized: false,
+   initialized: false,
    socket: null,
    serverUp: true,
 
@@ -164,11 +164,40 @@ const useGlobal = create((set, get) => ({
    services: null,
    sales: null,
 
+   // Limpia todo el estado de datos del usuario actual.
+   // Se llama al cerrar sesión o al detectar que no hay usuario.
+   clearData: () => {
+      set({
+         // customer
+         customer: null,
+         orders: null,
+         chats: [],
+
+         // messages
+         messagesList: [],
+         messagesNext: null,
+         messagesUser: null,
+         messagesRoom: null,
+
+         // company
+         company: null,
+         services: null,
+         sales: null,
+      });
+      console.log("🧹 Estado de usuario limpiado");
+   },
+
    init: async () => {
       await get().serverPing();
-      const auth = getAuth(); // ✅ Corregido
+      const auth = getAuth();
       const user = auth.currentUser;
-      if (!user) return;
+
+      // Si no hay usuario, limpiar datos y salir
+      if (!user) {
+         get().clearData();
+         return;
+      }
+
       const token = await user.getIdToken(true);
       set({
          initialized: true,
@@ -181,13 +210,15 @@ const useGlobal = create((set, get) => ({
    },
 
    setToken: (token) => {
-      set({ token });
+      // Si el token es null = cierre de sesión → limpiar todo
       if (!token) {
+         get().clearData();
          get().socketDisconnect();
+         set({ token: null, user: null });
          return;
       }
 
-      set({ socketStatus: "connecting", autoRetryCount: 0 })
+      set({ token, socketStatus: "connecting", autoRetryCount: 0 });
       get().socketConnect();
    },
 
@@ -246,9 +277,6 @@ const useGlobal = create((set, get) => ({
          return;
       }
 
-      // Modificar ws -> con android
-      // wss -> con iOS
-
       let ws
       if (Platform.OS == "android") {
          ws = new WebSocket(`ws://${API_WEBHOOK}?token=${token}`)
@@ -268,7 +296,7 @@ const useGlobal = create((set, get) => ({
             autoRetryCount: 0,
          });
 
-         // ✅ ENVIAR PRIMER PING INMEDIATAMENTE (no esperar 60s)
+         // ✅ ENVIAR PRIMER PING INMEDIATAMENTE
          if (ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({
                type: "ping",
@@ -277,7 +305,7 @@ const useGlobal = create((set, get) => ({
             console.log(`🏓 [${new Date().toLocaleTimeString()}] Ping inicial enviado`);
          }
 
-         // ✅ Luego continuar cada 60 segundos
+         // ✅ Luego continuar cada 50 segundos
          const pingInterval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
                ws.send(JSON.stringify({
@@ -288,7 +316,7 @@ const useGlobal = create((set, get) => ({
             } else {
                clearInterval(pingInterval);
             }
-         }, 50000); // 50 segundos
+         }, 50000);
 
          ws._pingInterval = pingInterval;
       };
@@ -365,7 +393,6 @@ const useGlobal = create((set, get) => ({
       const { socketStatus, token } = get();
       if (!token) return;
       if (socketStatus !== "connected") {
-         // no reseteo contador aquí, para no loop infinito si el server está caído
          get().socketConnect({ auto: true });
       }
    },

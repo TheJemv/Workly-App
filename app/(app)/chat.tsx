@@ -1,11 +1,13 @@
-import { View, Text, Image, Pressable, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react'
+import { View, Text, Image, Pressable, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Animated } from 'react-native'
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { AuthContext } from 'context/AuthContext'
 import useGlobal from 'core/globals'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TextInput } from 'react-native-gesture-handler'
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome"
+import { BlurView } from 'expo-blur'
+import Feather from "@expo/vector-icons/Feather"
 
 
 function MessageHeader({ friend }) {
@@ -94,21 +96,40 @@ function ServiceBubble({ order }) {
     )
 }
 
-function MessageInput({ message, setMessage, onSend, onShare }) {
+const AnimatedFeather = Animated.createAnimatedComponent(Feather);
+function MessageInput({ message, setMessage, onSend, onShare, modalIsOpen }) {
     const insets = useSafeAreaInsets()
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+    useEffect(() => {
+        Animated.timing(rotateAnim, {
+            toValue: modalIsOpen ? 1 : 0,
+            duration: 100,
+            useNativeDriver: true,
+        }).start();
+    }, [modalIsOpen]);
+
+    const rotation = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ["0deg", "-45deg"], // Usa strings con 'deg'
+    });
 
     return (
         <View
             className="bg-gray-200 flex-row items-center py-2"
-            style={{ paddingBottom: insets.bottom, gap: 12, paddingHorizontal: 12 }}
+            style={{ paddingBottom: insets.bottom, gap: 12, paddingHorizontal: 18 }}
         >
-            <TouchableOpacity onPress={onShare}>
-                <FontAwesomeIcon
-                    name='paperclip'
-                    size={22}
-                    color={'#303040'}
-                />
-            </TouchableOpacity>
+            <View>
+                <TouchableOpacity onPress={onShare}>
+                    <AnimatedFeather
+                        name='plus-circle'
+                        size={24}
+                        color={'#303040'}
+                        style={{
+                            transform: [{ rotate: rotation }]
+                        }}
+                    />
+                </TouchableOpacity>
+            </View>
 
             <TextInput
                 placeholder="Mensaje..."
@@ -179,7 +200,6 @@ export default function Chat() {
     const [page, setPage] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
 
-
     // Error handling
     if (!conversation) {
         return (
@@ -215,8 +235,8 @@ export default function Chat() {
     }, [message, conversation, sendMessage])
 
     const handleShare = useCallback(() => {
-        router.push("attach-modal")
-    }, [])
+        setModalIsOpen(!modalIsOpen)
+    }, [modalIsOpen])
 
     const handleLoadMore = useCallback(() => {
         if (messagesNext && conversation?.id) {
@@ -224,10 +244,6 @@ export default function Chat() {
             setPage(prev => prev + 1)
         }
     }, [messagesNext, conversation?.id, page, messageList])
-
-    const handleSheetClose = useCallback(() => {
-        setModalIsOpen(false)
-    }, [])
 
     // Render message item
     const renderMessage = useCallback(({ item }) => {
@@ -255,27 +271,43 @@ export default function Chat() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
-            <FlatList
-                data={messagesList || Array(6).fill(null).map((_, i) => ({ id: i }))}
-                inverted
-                keyExtractor={(item) => item?.id?.toString() || Math.random().toString()}
-                renderItem={renderMessage}
-                onEndReached={handleLoadMore}
-                onEndReachedThreshold={0.5}
-                contentContainerStyle={{
-                    flexGrow: 1,
-                    paddingTop: 10,
-                }}
-                ListFooterComponent={!messagesList ? EmptyState : null}
-                automaticallyAdjustKeyboardInsets={true}
-                keyboardShouldPersistTaps="handled"
-            />
+
+            <View className='flex-1'>
+                <FlatList
+                    data={messagesList || Array(6).fill(null).map((_, i) => ({ id: i }))}
+                    inverted
+                    keyExtractor={(item) => item?.id?.toString() || Math.random().toString()}
+                    renderItem={renderMessage}
+                    onEndReached={handleLoadMore}
+                    onEndReachedThreshold={0.5}
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        paddingTop: 10,
+                    }}
+                    ListFooterComponent={!messagesList ? EmptyState : null}
+                    automaticallyAdjustKeyboardInsets={true}
+                    keyboardShouldPersistTaps="handled"
+                    scrollEnabled={!modalIsOpen}
+                />
+                {modalIsOpen && (
+                    <BlurView tint="dark" intensity={10} style={{ position: "absolute", left: 10, bottom: 10, zIndex: 20, borderRadius: 8, overflow: "hidden", display: "flex", padding: 8 }}>
+                        <TouchableOpacity
+                            className='flex flex-row items-center gap-2 p-1'
+                            activeOpacity={0.7}
+                        >
+                            <Feather size={18} name='file-plus' />
+                            <Text>Facturas</Text>
+                        </TouchableOpacity>
+                    </BlurView>
+                )}
+            </View>
 
             <MessageInput
                 message={message}
                 setMessage={setMessage}
                 onSend={handleSend}
                 onShare={handleShare}
+                modalIsOpen={modalIsOpen}
             />
         </KeyboardAvoidingView>
     )
