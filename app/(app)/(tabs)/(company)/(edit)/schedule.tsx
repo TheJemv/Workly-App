@@ -62,10 +62,7 @@ export default function EditSchedule() {
         setSelectedTimeType(timeType);
 
         const currentTime = openDays[day].intervals[timeType];
-        console.log('Opening picker for:', day, timeType, 'Current time:', currentTime);
-
         const parsed = parseTimeString(currentTime);
-        console.log('Parsed time:', parsed);
 
         setSelectedHour(parsed.hour);
         setSelectedMinute(parsed.minute);

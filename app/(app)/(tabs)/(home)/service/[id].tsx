@@ -23,13 +23,13 @@ import { getService, getServicePayment } from "services/api/services.api";
 import LoadingScreen from "components/LoadingScreen";
 
 import { timeToNumber } from "utils"
-import * as Sharing from "expo-sharing"
 import * as Linking from "expo-linking"
 
 import type { Service as ServiceType } from "@/types/Service";
 import type { Day, DayName } from "@/types/Schedule";
 
 import ShareButton from "components/Header/ShareButton";
+import { MoneyTextInput } from "@alexzunik/react-native-money-input";
 
 const daysArray: DayName[] = [
     'Domingo',
@@ -68,13 +68,7 @@ const ServiceHire = () => {
         new Date(new Date().setMinutes(new Date().getMinutes() + 30)),
     ); // Plus 30 minutes
     const [showPickerDate, setShowPickerDate] = useState(false);
-    const [valuePrice, setValuePrice] = useState(
-        formatPrice(String(dataService?.unit_amount)),
-    );
-
-    const handleChange = (text) => {
-        setValuePrice(formatPrice(text));
-    };
+    const [valuePrice, setValuePrice] = useState<number>(dataService?.unit_amount / 100 || 0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -82,6 +76,7 @@ const ServiceHire = () => {
             try {
                 await getService(token, params.id as string).then(data => {
                     setDataService(data?.service);
+                    setValuePrice(data.service.unit_amount / 100)
                     setLoading(false);
                 })
             } catch (error) {
@@ -95,7 +90,7 @@ const ServiceHire = () => {
     // Stripe Payment
     const handlePayService = async () => {
         setEnableButton(true);
-        if (!dataService?.unit_amount || dataService?.unit_amount <= 4999) {
+        if (valuePrice * 100 <= 4999) {
             Alert.alert(
                 "Error",
                 "El precio del servicio no puede ser menor a $50.00",
@@ -111,15 +106,25 @@ const ServiceHire = () => {
                 {
                     notes: infoUserNote,
                     dateRequest: dateRequest.toString(),
-                    amount: dataService?.unit_amount,
+                    amount: valuePrice * 100,
                 },
             );
 
             await initializePaymentSheet(paymentintent, ephemeralKey);
-            await presentPaymentSheet();
-            if (router.canGoBack()) {
-                router.back()
+
+            const { error: payError } = await presentPaymentSheet()
+            if (payError) {
+                // El usuario canceló o falló el pago
+                if (payError.code === "Canceled") {
+                    console.error("Pago cancelado por el usuario");
+                } else {
+                    console.error("Falló el pago:", payError.message);
+                }
+                return;
             }
+
+            // ✅ En este punto, para el usuario "se pagó"
+            if (router.canGoBack()) router.back()
         } catch (error) {
             Alert.alert(error?.message);
         } finally {
@@ -183,21 +188,11 @@ const ServiceHire = () => {
     const handleShare = async () => {
         try {
             const deepLink = Linking.createURL(`/(app)/(tabs)/(home)/service/${params.id}`);
-            const result = await Share.share({
+            await Share.share({
                 title: dataService?.name,
                 message: `¡Mira este servicio en Workly!\n\n${deepLink}`,
                 url: "https://www.whatsapp.com/?lang=es"
             });
-
-            if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    console.log('Compartido con:', result.activityType);
-                } else {
-                    console.log('Compartido exitosamente');
-                }
-            } else if (result.action === Share.dismissedAction) {
-                console.log('Cancelado');
-            }
         } catch (e) {
             console.error(e)
         }
@@ -214,9 +209,9 @@ const ServiceHire = () => {
         <LoadingScreen />
     ) : (
         <>
-            <ScrollView className="px-2 flex flex-col">
+            <ScrollView className="px-3 flex flex-col">
                 <View
-                    className="flex flex-col"
+                    className="flex flex-col pb-3"
                     style={{
                         gap: 18
                     }}
@@ -344,25 +339,16 @@ const ServiceHire = () => {
                             >
                                 Agrega un Precio
                             </Text>
-                            <TextInput
+                            <MoneyTextInput
                                 placeholder="Agrega un precio..."
-                                keyboardType="number-pad"
-                                className="bg-white text-text rounded-lg py-2 px-3"
-                                style={{
-                                    fontWeight: 500,
+                                value={valuePrice.toString()}
+                                onChangeText={(_, extracted) => {
+                                    setValuePrice(Number(extracted))
                                 }}
-                                value={dataService?.unit_amount ? valuePrice : ""}
-                                onChangeText={(e) => {
-                                    const cleanedValue = e.replace(/[^0-9]/g, "");
-                                    const numricValue =
-                                        parseFloat(cleanedValue) * 100;
-                                    setDataService({
-                                        ...dataService,
-                                        unit_amount: numricValue,
-                                    });
-
-                                    handleChange(e);
-                                }}
+                                style={{ paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 0, borderColor: "#04040420", backgroundColor: "#fff" }}
+                                prefix="$"
+                                groupingSeparator=","
+                                fractionSeparator="."
                             />
                         </View>
                     )}
@@ -377,11 +363,13 @@ const ServiceHire = () => {
                             className="text-white"
                             style={{ fontWeight: 600, fontSize: 18 }}
                         >
-                            $
-                            {dataService.unit_amount / 100
-                                ? dataService.unit_amount / 100
-                                : 0}{" "}
-                            {dataService?.currency.toUpperCase()}
+                            {(valuePrice).toLocaleString('es-MX', {
+                                style: 'currency',
+                                currency: 'MXN',
+                                minimumFractionDigits: 2,
+                            })}
+                            {" "}
+                            {dataService.currency.toUpperCase()}
                         </Text>
                     </TouchableOpacity>
                 </View>

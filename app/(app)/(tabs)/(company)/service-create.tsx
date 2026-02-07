@@ -10,10 +10,9 @@ import {
     Platform
 } from 'react-native'
 import { TextInput } from "components/Profile/Billing/components/text-input"
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { router, useNavigation } from 'expo-router'
 import useGlobal from 'core/globals'
-import { Service } from '@/types/Company'
 import { Colors } from 'lib'
 import { Controller, useForm } from 'react-hook-form'
 import { defaultServiceData, ServiceData, serviceDataResolver } from '@/types/Service/EditService.types'

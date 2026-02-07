@@ -2,11 +2,12 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { AppState, View, StyleSheet } from 'react-native';
 import { Redirect, Stack, useRouter, useSegments } from 'expo-router';
 import { StripeProvider } from "@stripe/stripe-react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, AuthContext } from "../context/AuthContext";
 import useGlobal from "../core/globals";
 import { Background, Connecting, Disconnected } from "../components/Auth";
 import { PUBLISHABLE_KEY } from "@env";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const SwitchAuth = () => {
     const router = useRouter();
@@ -86,11 +87,13 @@ const SwitchAuth = () => {
 function RootLayout() {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <StripeProvider publishableKey={PUBLISHABLE_KEY}>
-                <AuthProvider>
-                    <SwitchAuth />
-                </AuthProvider>
-            </StripeProvider>
+            <BottomSheetModalProvider>
+                <StripeProvider publishableKey={PUBLISHABLE_KEY}>
+                    <AuthProvider>
+                        <SwitchAuth />
+                    </AuthProvider>
+                </StripeProvider>
+            </BottomSheetModalProvider>
         </GestureHandlerRootView>
     );
 }

@@ -23,7 +23,7 @@ export default function BusinessHours({ businessHours }: Props) {
             <Text style={Styles.title}>Horarios de la Empresa</Text>
 
             <View className='flex flex-col gap-y-1 mb-3'>
-                {daysArray.map((day): JSX.Element => {
+                {daysArray.map((day) => {
                     const dayData: Day = businessHours[day];
                     return (
                         <View key={day} className='flex flex-row pl-4 justify-between items-center'>

@@ -8,9 +8,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SpinLoading, TextInputUser, ThumnailEdit } from "components";
-import * as Location from "expo-location";
 import { Colors } from "lib";
-import MapView, { Marker } from "react-native-maps";
 import { getStreetName } from "services/api/google.api";
 import { Entypo } from "@expo/vector-icons";
 import useGlobal from "core/globals";
@@ -18,10 +16,11 @@ import isEqual from "lodash/isEqual";
 import getChangedProperties from "utils/CompareObjects";
 import { updatedCustomer } from "services/api/customer.api";
 
+import DatePicker from "react-native-date-picker"
+
 const Profile = () => {
     // Globals Variables
     const customer = useGlobal((state) => state.customer);
-    const token = useGlobal((state) => state.token);
 
     // Variables
     const navigation = useNavigation();
@@ -35,16 +34,15 @@ const Profile = () => {
         longitude: customer?.address?.longitude || 0,
     });
     const [markerDirection, setMarkerDirection] = useState(null);
-    const [locationNow, setLocationNow] = useState({
-        latitude: customer?.address?.latitude || 0,
-        longitude: customer?.address?.longitude || 0,
-    });
+
+    // Nuevo estado para el DatePicker
+    const [openDatePicker, setOpenDatePicker] = useState(false);
 
     // Functions
     const handleValue = useCallback((key, handleValue) => {
         setValueDataEdit((prevValue) => {
             const keys = key.split(".");
-            const newValue = JSON.parse(JSON.stringify(prevValue)); // Deep clone using JSON methods
+            const newValue = JSON.parse(JSON.stringify(prevValue));
             let temp = newValue;
             for (let i = 0; i < keys.length - 1; i++) {
                 if (!temp[keys[i]]) {
@@ -57,34 +55,18 @@ const Profile = () => {
         });
     }, []);
 
-    const getLocation = async () => {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-            Alert.alert("Error", "Permiso denegado para acceder a la ubicación");
-            return;
-        }
-
-        const currentLocation = await Location.getCurrentPositionAsync({});
-        setLocationNow({
-            latitude: currentLocation.coords.latitude,
-            longitude: currentLocation.coords.longitude,
+    const formatearFecha = (fecha) => {
+        return fecha.toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-
-        try {
-            const res = await getStreetName(
-                currentLocation.coords.latitude,
-                currentLocation.coords.longitude,
-            );
-            setMarkerDirection(res);
-        } catch (e) {
-            Alert.alert("Error", e.message);
-        }
     };
 
     const handleEditProfile = async () => {
         const newData = getChangedProperties(customer, valueDataEdit);
         setLoading(true);
-        await updatedCustomer(token, newData)
+        await updatedCustomer(newData)
             .then(() => {
                 navigation.goBack();
             })
@@ -95,11 +77,6 @@ const Profile = () => {
                 setLoading(false);
             });
     };
-
-    // UseEffects
-    useEffect(() => {
-        setValueDataEdit(customer);
-    }, [customer]);
 
     useEffect(() => {
         navigation.setOptions({
@@ -118,12 +95,6 @@ const Profile = () => {
                 ) : undefined,
         });
     }, [navigation, valueDataEdit, customer, loading]);
-
-    useEffect(() => {
-        (async () => {
-            await getLocation();
-        })();
-    }, []);
 
     useEffect(() => {
         const updateAddress = async () => {
@@ -184,102 +155,42 @@ const Profile = () => {
                         value={valueDataEdit?.profile?.phone || ""}
                         setValue={(e) => handleValue("profile.phone", e)}
                     />
-                    <TextInputUser
-                        label="Fecha de nacimiento"
-                        placeholder="fecha de nacimiento"
-                        value={valueDataEdit?.profile?.bornDate || ""}
-                        setValue={(e) => handleValue("profile.birthday", e)}
+
+                    {/* Campo de fecha de nacimiento con DatePicker */}
+                    <View className="flex flex-col" style={{ gap: 4 }}>
+                        <Text style={{ color: Colors.principal.DEFAULT, fontSize: 14, fontWeight: 700 }}>Fecha de Nacimiento</Text>
+                        <TouchableOpacity
+                            onPress={() => setOpenDatePicker(true)}
+                            className="py-2 px-2 rounded-lg border border-dark/10"
+                        >
+                            {valueDataEdit?.profile?.bornDate ? (
+                                <Text>{formatearFecha(new Date(valueDataEdit.profile.bornDate))}</Text>
+                            ) : (
+                                <Text style={{ fontSize: 14, color: "#92929D" }}>Selecciona tu fecha de nacimiento.</Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* DatePicker Modal */}
+                    <DatePicker
+                        modal
+                        open={openDatePicker}
+                        date={new Date(valueDataEdit.profile.bornDate) || new Date()}
+                        mode="date"
+                        locale="es"
+                        title="Selecciona la fecga de nacimiento"
+                        confirmText="Confirmar"
+                        cancelText="Cancelar"
+                        maximumDate={new Date()}
+                        minimumDate={new Date(1924, 0, 1)}
+                        onConfirm={(date) => {
+                            setOpenDatePicker(false);
+                            handleValue("profile.bornDate", date);
+                        }}
+                        onCancel={() => {
+                            setOpenDatePicker(false);
+                        }}
                     />
-
-                    <View style={{ gap: 4 }}>
-                        <Text
-                            style={{
-                                color: Colors.principal.DEFAULT,
-                                fontSize: 14,
-                                fontWeight: "700",
-                            }}
-                        >
-                            Calle
-                        </Text>
-                        <Text
-                            numberOfLines={1}
-                            style={{
-                                borderWidth: 1,
-                                borderRadius: 8,
-                                borderColor: "rgba(4,4,4,0.1)",
-                            }}
-                            className="py-2 px-2"
-                        >
-                            {(markerCoordinate && markerDirection) ||
-                                "No disponible"}
-                        </Text>
-                    </View>
-
-                    {/* Ubicacion */}
-                    <View style={{ gap: 4 }}>
-                        <Text
-                            style={{
-                                color: Colors.principal.DEFAULT,
-                                fontSize: 14,
-                                fontWeight: "700",
-                            }}
-                        >
-                            Ubicación
-                        </Text>
-                        {locationNow.latitude !== 0 && (
-                            <MapView
-                                zoomControlEnabled={true}
-                                style={{
-                                    height: 300,
-                                    width: "100%",
-                                    borderRadius: 12,
-                                }}
-                                initialRegion={{
-                                    latitudeDelta: 0.0022,
-                                    longitudeDelta: 0.0021,
-                                    latitude: locationNow.latitude,
-                                    longitude: locationNow.longitude,
-                                }}
-                                showsUserLocation={true}
-                                mapType="satellite"
-                                onRegionChangeComplete={(region) => {
-                                    setLocationNow({
-                                        latitude: region.latitude,
-                                        longitude: region.longitude,
-                                    });
-                                }}
-                                onPress={(e) => {
-                                    const { latitude, longitude } =
-                                        e.nativeEvent.coordinate;
-                                    setMarkerCoordinate({ latitude, longitude });
-                                }}
-                            >
-                                <Marker
-                                    coordinate={markerCoordinate}
-                                    title="Mi ubicación"
-                                    description={markerDirection}
-                                    draggable={true}
-                                    onDragEnd={(e) => {
-                                        setMarkerCoordinate({
-                                            latitude: e.nativeEvent.coordinate.latitude,
-                                            longitude:
-                                                e.nativeEvent.coordinate.longitude,
-                                        });
-                                        getStreetName(
-                                            e.nativeEvent.coordinate.latitude,
-                                            e.nativeEvent.coordinate.longitude,
-                                        )
-                                            .then((res) => {
-                                                setMarkerDirection(res);
-                                            })
-                                            .catch((e) => {
-                                                Alert.alert("Error", e.message);
-                                            });
-                                    }}
-                                />
-                            </MapView>
-                        )}
-                    </View>
                 </View>
             </View>
         </ScrollView>
@@ -287,4 +198,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

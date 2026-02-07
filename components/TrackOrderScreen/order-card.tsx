@@ -63,7 +63,13 @@ export function OrderCard({ order, onPress }: Props) {
                className="text-white"
                style={{ fontWeight: 600, fontSize: 16 }}
             >
-               {order?.status}
+
+               {order.status === OrderStatusEnum.PENDING && "Orden pendiente"}
+               {order.status === OrderStatusEnum.DATE_MODIFIED && "Fecha modificada"}
+               {order.status === OrderStatusEnum.CONFIRMED && "Orden en curso"}
+               {order.status === OrderStatusEnum.DELIVERED && "Orden entregada"}
+               {order.status === OrderStatusEnum.CANCELLED && "Orden cancelada"}
+               {order.status === OrderStatusEnum.FAILED && "Pedido fallido"}
             </Text>
          </View>
 

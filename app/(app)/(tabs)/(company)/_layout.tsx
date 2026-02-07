@@ -22,7 +22,7 @@ export default function CompanyLayout() {
                 <Stack.Protected guard={!company}>
                     <Stack.Screen name='index' />
                     <Stack.Screen
-                        name='requestonboarding-information'
+                        name='request'
                         options={{
                             presentation: "modal",
                             headerShown: true,

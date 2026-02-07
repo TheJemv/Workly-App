@@ -59,7 +59,7 @@ export default function Billing() {
         loading ? (
             <LoadingScreen />
         ) : (
-            data.length <= 0 ? (
+            data.length === 0 ? (
                 <View className="flex-1 items-center justify-center px-6">
                     <Image
                         source={require("../../../../../assets/Empty/Billing.png")}
@@ -77,7 +77,7 @@ export default function Billing() {
                 </View>
             ) : (
                 <ScrollView className="flex-1">
-                    <View className="flex flex-col space-y-5 px-3 py-5 mb-20">
+                    <View className="flex flex-col space-y-5 px-3 mb-20">
                         <FlatList
                             data={data}
                             keyExtractor={(item) => item.id}

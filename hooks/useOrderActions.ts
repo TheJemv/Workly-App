@@ -94,8 +94,8 @@ export const useOrderActions = (order: Order) => {
                         onPress: async () => {
                             try {
                                 setLoading(true);
-                                const response = await approveDateChange(order.id);
-                                updateOrderInState(response.data);
+                                await approveDateChange(order.id);
+                                // updateOrderInState(response.data);
                                 Alert.alert(
                                     "Cambio Aprobado",
                                     "La orden ha sido confirmada con la nueva fecha"
@@ -131,8 +131,8 @@ export const useOrderActions = (order: Order) => {
                         onPress: async () => {
                             try {
                                 setLoading(true);
-                                const response = await rejectDateChange(order.id);
-                                updateOrderInState(response.data);
+                                await rejectDateChange(order.id);
+                                // updateOrderInState(response.data);
                                 Alert.alert(
                                     "Cambio Rechazado",
                                     "Se ha restaurado la fecha original"
@@ -167,8 +167,8 @@ export const useOrderActions = (order: Order) => {
                         onPress: async () => {
                             try {
                                 setLoading(true);
-                                const response = await confirmDelivery(order.id);
-                                updateOrderInState(response.data);
+                                await confirmDelivery(order.id);
+                                // updateOrderInState(response.data);
                                 Alert.alert(
                                     "Entrega Confirmada",
                                     "El pago ha sido liberado exitosamente"
@@ -204,8 +204,8 @@ export const useOrderActions = (order: Order) => {
                         onPress: async () => {
                             try {
                                 setLoadingCancel(true);
-                                const response = await cancelOrder(order.id);
-                                updateOrderInState(response.data);
+                                cancelOrder(order.id);
+                                // updateOrderInState(response.data);
                                 Alert.alert("Orden Cancelada", "La orden ha sido cancelada exitosamente");
                             } catch (error) {
                                 Alert.alert("Error", (error as Error).message);

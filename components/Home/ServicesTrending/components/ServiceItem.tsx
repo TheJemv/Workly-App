@@ -84,7 +84,7 @@ const PopularItem = ({ item }: { item: ServiceType }) => {
                className="text-text/70 text-xs uppercase font-semibold"
                numberOfLines={1}
             >
-               {`${item.currency} ${formatterUnit.format(item.unit_amount / 100)}`}
+               {item.indefinite ? "Pago por Consumo" : `${item.currency} ${formatterUnit.format(item.unit_amount / 100)}`}
             </Text>
          </View>
       </TouchableOpacity>

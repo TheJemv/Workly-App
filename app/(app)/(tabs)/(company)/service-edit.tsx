@@ -140,7 +140,7 @@ export default function EditService() {
         try {
             const newData = getChangedProperties(service, data);
             await patchService(service.id, newData).catch((e) => {
-                console.log("Error: ", e)
+                console.error("Error: ", e)
             });
             if (router.canGoBack()) {
                 router.back()
