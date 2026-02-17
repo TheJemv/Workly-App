@@ -120,7 +120,7 @@ const RegisterScreen = () => {
                 <KeyboardAvoidingView
                     style={styles.fills}
                     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                    keyboardVerticalOffset={100}
+                    keyboardVerticalOffset={110}
                 >
                     <View style={styles.inputsContainer}>
                         <View>

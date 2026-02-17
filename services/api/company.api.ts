@@ -21,7 +21,6 @@ export const getCompany = async (token: string) => {
 };
 
 export const updateCompany = async (data: object) => {
-   console.log("Funcion...");
    try {
       const response = await apiClient.patch("/company", data, {
          headers: {

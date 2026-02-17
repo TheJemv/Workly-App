@@ -13,12 +13,10 @@ apiClient.interceptors.request.use(
       const app = getApp();
       const auth = getAuth(app);
       const currentUser = auth.currentUser;
-
       if (currentUser) {
          const token = await getIdToken(currentUser);
          config.headers.Authorization = `Bearer ${token}`;
       }
-
       return config;
    },
    (error) => {
@@ -32,7 +30,7 @@ apiClient.interceptors.response.use(
       return response;
    },
    (error) => {
-      console.error("Response Error:", error);
+      console.log("Response Error:", apiClient.getUri());
       return Promise.reject(error);
    },
 );

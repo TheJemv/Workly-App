@@ -13,7 +13,7 @@ module.exports = {
         text: themes.colors.default.text_color.default,
         light: themes.colors.default.text_color.light,
         dark: themes.colors.default.text_color.dark,
-        primary: "#354671",
+        primary: "#3a3770",
         secondary: themes.colors.default.theme_color.secondary,
         body: themes.colors.default.theme_color.body,
         border: themes.colors.default.theme_color.border,

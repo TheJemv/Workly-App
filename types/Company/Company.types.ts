@@ -7,6 +7,11 @@ interface CompanyType {
     services: Service[];
     profile: Profile;
     businessHours: DataDays[];
+    location?: {
+        address: string;
+        latitude: number;
+        longitude: number;
+    };
 }
 
 export default CompanyType;

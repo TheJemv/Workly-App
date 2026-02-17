@@ -33,7 +33,7 @@ export default function CompanyLayout() {
                 </Stack.Protected>
 
                 <Stack.Protected guard={!!company}>
-                    <Stack.Screen name='company' />
+                    <Stack.Screen name='company' options={{ headerShown: true, title: "Empresa" }} />
                     <Stack.Screen name='edit' options={{ headerShown: true, title: "Editar", headerLeft: () => <CustomBackButton /> }} />
                     <Stack.Screen name='service-create' options={{ headerShown: true, title: "Agregar Servicio", headerLeft: () => <CustomBackButton /> }} />
                     <Stack.Screen name='service-edit' options={{ headerShown: true, title: "Editar Servicio", headerLeft: () => <CustomBackButton /> }} />

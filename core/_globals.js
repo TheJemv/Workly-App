@@ -1,115 +1,11 @@
 import { getAuth } from "@react-native-firebase/auth";
 import { create } from "zustand";
-import utils from "./utils";
 import { API_WEBHOOK, API_HOST } from "@env";
 import { Platform } from "react-native";
+import { responseCompanyActivity, responseCompanyGet, responseCustomerGet, responseMessageChats, responseMessageList, responseMessageNew, responseMessageSend, responseSalesGet } from "./store/websocket/events";
 
 // Configuración de reconexión automática
 const MAX_AUTO_RETRIES = 3;
-
-const responseMessageSend = (set, get, data) => {
-   const index = get().chats.findIndex((chat) => chat.id === data.room.id);
-
-   // Verificar si el mensaje ya existe en el chat
-   const checkIfExistMessage = get().chats[index]?.messages.find(
-      (message) => message.id === data.id,
-   );
-   if (checkIfExistMessage) return;
-
-   if (index !== -1) {
-      const selectedRoom = get().chats[index];
-      const updatedRoom = {
-         ...selectedRoom,
-         messages: [data, ...selectedRoom.messages],
-      };
-
-      set((state) => ({
-         chats: [
-            updatedRoom,
-            ...state.chats.filter((chat) => chat.id !== data.room.id),
-         ],
-      }));
-   } else {
-      const selectedRoom = get().chats.find((chat) => chat.id === data.room.id);
-
-      const updatedRoom = {
-         ...selectedRoom,
-         messages: [...selectedRoom.messages, data],
-      };
-
-      set((state) => ({
-         chats: [
-            ...state.chats.filter((chat) => chat.id !== data.room.id),
-            updatedRoom,
-         ],
-      }));
-   }
-
-   if (get().messagesRoom === data.room.id) {
-      set((state) => ({
-         messagesList: [data, ...get().messagesList],
-      }));
-   }
-};
-
-const responseMessageChats = (set, get, data) => {
-   set((state) => ({
-      chats: data,
-   }));
-};
-
-const responseMessageNew = (set, get, data) => {
-   utils.log("responseMessageNew", data);
-};
-
-const responseMessageList = (set, get, data) => {
-   set((state) => ({
-      messagesList: [...get().messagesList, ...data.messages],
-      messagesNext: data.next,
-      messagesUser: data.room.customers[0],
-      messagesRoom: data.room.id,
-   }));
-};
-
-const responseCustomerGet = (set, get, data) => {
-   set((state) => ({
-      customer: data,
-   }));
-};
-
-const responseCompanyGet = (set, get, data) => {
-   set((state) => ({
-      company: data,
-   }));
-};
-
-const responseCompanyActivity = (set, get, data) => {
-   set((state) => ({
-      company: {
-         ...get().company,
-         activity: data,
-      },
-   }));
-}
-
-const responseServicesGet = (set, get, data) => {
-   set((state) => ({
-      services: data,
-   }));
-};
-
-const responseSalesGet = (set, get, data) => {
-   set((state) => ({
-      sales: data,
-   }));
-};
-
-const responseOrdersGet = (set, get, data) => {
-   set((state) => ({
-      orders: data,
-   }));
-};
-
 const responsePong = () => {
    console.log(`🏓 [${new Date().toLocaleTimeString()}] Pong recibido`);
 }
@@ -279,9 +175,9 @@ const useGlobal = create((set, get) => ({
 
       let ws
       if (Platform.OS == "android") {
-         ws = new WebSocket(`ws://${API_WEBHOOK}?token=${token}`)
+         ws = new WebSocket(`ws://${API_WEBHOOK}/ws?token=${token}`)
       } else {
-         ws = new WebSocket(`wss://${API_WEBHOOK}?token=${token}`)
+         ws = new WebSocket(`wss://${API_WEBHOOK}/ws?token=${token}`)
       }
 
       set({ socket: ws });

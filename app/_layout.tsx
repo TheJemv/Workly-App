@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppState, View, StyleSheet } from 'react-native';
-import { Redirect, Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { AuthProvider, AuthContext } from "../context/AuthContext";
 import useGlobal from "../core/globals";
@@ -13,8 +13,10 @@ const SwitchAuth = () => {
     const router = useRouter();
     const segments = useSegments();
     const { token, loading } = useContext(AuthContext);
+
     const socketStatus = useGlobal((s) => s.socketStatus);
     const onAppForeground = useGlobal((s) => s.onAppForeground);
+
     const [appState, setAppState] = useState(AppState.currentState);
     const appStateRef = useRef(AppState.currentState);
 
@@ -37,22 +39,17 @@ const SwitchAuth = () => {
     // Navegación basada en auth
     useEffect(() => {
         if (!loading) return; // Esperar a que auth esté lista
-
         const inAuthGroup = segments[0] === '(auth)';
         const inAppGroup = segments[0] === '(app)';
-
         if (!token && !inAuthGroup) {
-            console.log("🔴 No token - redirigiendo a auth");
             router.replace('/(auth)');
         } else if (token && socketStatus === "connected" && !inAppGroup) {
-            console.log("🟢 Token + conectado - redirigiendo a app");
             router.replace('/(app)/(home)');
         }
     }, [token, loading, socketStatus, segments]);
 
     // Determinar qué mostrar
     let showOverlay = null;
-
     if (appState === "background" || appState === "inactive") {
         showOverlay = <Background />;
     } else if (!loading) {

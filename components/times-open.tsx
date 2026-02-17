@@ -19,7 +19,7 @@ type Props = {
    businessHours?: DataDays[];
 };
 
-export const TimesOpen = ({ businessHours }: Props): JSX.Element => {
+export const TimesOpen = ({ businessHours }: Props) => {
    const [show, setShow] = useState<boolean>(false);
 
    const handleShow = (): void => {
@@ -50,7 +50,7 @@ export const TimesOpen = ({ businessHours }: Props): JSX.Element => {
          </View>
          {show && businessHours && (
             <View className="flex flex-col space-y-1 mb-3">
-               {daysArray.map((day): JSX.Element => {
+               {daysArray.map((day) => {
                   const dayData = businessHours[day];
                   return (
                      <View key={day} className="flex flex-row pl-4 justify-between items-center">

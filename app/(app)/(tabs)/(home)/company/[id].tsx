@@ -17,13 +17,16 @@ import { Company as CompanyType } from "@/types/Company";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Entypo from '@expo/vector-icons/Entypo';
 
 import {
     BottomSheetBackdrop,
     BottomSheetModal,
     BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { DataDays, Day, DayName } from "@/types/Schedule";
+import { Day, DayName } from "@/types/Schedule";
+import TextSchedule from "components/Schedule/TextSchedule";
+import DayView from "components/Schedule/DayView";
 import { Colors } from "lib";
 
 
@@ -37,54 +40,12 @@ const daysArray: DayName[] = [
     'Domingo',
 ];
 
-interface PropsScheduleView {
-    label: DayName
-    data: Day
-}
-
-const ComponentScheduleDayView = ({ label, data }: PropsScheduleView) => {
-    const date = new Date()
-    const currentDay = daysArray[date.getDay() - 1]
-    return (
-        <View className="flex flex-row items-center justify-between py-3" style={{ borderBottomWidth: 1, borderBottomColor: "#c2c2c2" }}>
-            <Text style={{ color: currentDay === label ? "#6366f1" : "#040404" }} className="text-lg text-indigo-500 font-semibold">{label}</Text>
-            <Text style={{ color: data.open ? "#000" : "#444444" }}>{data.open ? `${data.intervals.start} - ${data.intervals.end}` : "Cerrado"}</Text>
-        </View>
-    )
-}
-
-const timeToMinutes = (time: string) => {
-    const [hourMin, period] = time.split(/(AM|PM)/);
-    let [hours, minutes] = hourMin.split(":").map(Number);
-
-    if (period === "PM" && hours !== 12) hours += 12;
-    if (period === "AM" && hours === 12) hours = 0;
-
-    return hours * 60 + minutes;
-};
-
-const messageSchedule = (dataDays: DataDays[]) => {
-    const date = new Date()
-    const currentDay = daysArray[date.getDay() - 1]
-    const currentDaySchedule: Day = dataDays[currentDay]
-    const currentMinutes = date.getHours() * 60 + date.getMinutes();
-
-    if (currentDaySchedule.open === false) return "Cerrado"
-    if (currentMinutes < timeToMinutes(currentDaySchedule.intervals.start)) return `Abre a las ${currentDaySchedule.intervals.start}`
-    if (currentMinutes < timeToMinutes(currentDaySchedule.intervals.end)) return `Cierra a las ${currentDaySchedule.intervals.end}`
-    return "Cerrado por hoy, revisa otro dia."
-}
-
-
 const ProfileCompanyScreen = () => {
     const params = useLocalSearchParams();
-
     const [loading, setLoading] = useState(false);
     const [company, setCompany] = useState<CompanyType | null>(null);
-
     const scheduleModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["85%"], []);
-
     const openSchedule = () => scheduleModalRef.current?.present();
     const closeSchedule = () => scheduleModalRef.current?.dismiss();
 
@@ -132,7 +93,7 @@ const ProfileCompanyScreen = () => {
 
     return (
         <>
-            <ScrollView className="flex-1 px-3 mb-0 space-y-5">
+            {/* <ScrollView className="flex-1 px-3 mb-0 space-y-5">
                 <View className="flex flex-col space-y-3">
                     <View className="flex flex-row items-center space-x-3 w-full">
                         <View className="w-14 h-14 rounded-full bg-light/25">
@@ -192,7 +153,82 @@ const ProfileCompanyScreen = () => {
                     renderItem={({ item }) => <CardService item={item} />}
                     scrollEnabled={false}
                 />
+            </ScrollView> */}
+
+            {/* Company */}
+            <ScrollView className="flex-1 px-2">
+                <View style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    {/* TopSide */}
+                    <View className="flex flex-col items-center justify-center" style={{ gap: 32 }}>
+                        <View style={{ backgroundColor: Colors.principal[200], borderRadius: 12 }} className="w-full h-48 flex items-center justify-center">
+                            <View style={{ width: 150, height: 150, borderRadius: 9999, overflow: "hidden", backgroundColor: Colors.principal[400] }} className="absolute -bottom-8 border-[#f2f2f2] border-4">
+                                <Image
+                                    className="w-full h-full rounded-2xl"
+                                    source={{ uri: company.profile.photo }}
+                                />
+                            </View>
+                        </View>
+
+                        <Text className="text-xl font-bold" style={{ color: Colors.principal.DEFAULT }}>
+                            {company.profile.name}
+                        </Text>
+                    </View>
+
+                    {/* Description */}
+                    <View className="flex flex-col" style={{ gap: 18 }}>
+                        <View className="flex flex-col" style={{ gap: 6 }}>
+                            <View className="flex flex-row items-center">
+                                <Text style={{ color: Colors.principal.DEFAULT, fontWeight: "600" }} className="text-base">
+                                    Detalles de la Empresa
+                                </Text>
+                                <Entypo name="chevron-down" size={24} color={Colors.principal.DEFAULT} />
+                            </View>
+                            <Text style={{ color: Colors.principal.DEFAULT }}>
+                                {company.profile.description}
+                            </Text>
+                        </View>
+
+                        <View className="flex flex-row justify-between items-center" style={{ gap: 8 }}>
+                            <TouchableOpacity
+                                onPress={openSchedule}
+                                className="flex-1 flex flex-row items-center justify-center py-3 px-4 rounded-full"
+                                style={{ backgroundColor: Colors.principal.DEFAULT, gap: 6 }}
+                            >
+                                <MaterialIcons name="schedule" size={18} color="white" />
+                                <Text className="text-white font-medium">Horarios</Text>
+                            </TouchableOpacity>
+
+                            {company.location && (
+                                <TouchableOpacity
+                                    className="flex-1 flex flex-row items-center justify-center py-3 px-4 rounded-full"
+                                    style={{ backgroundColor: Colors.principal.DEFAULT, gap: 6 }}
+                                >
+                                    <Ionicons name="location-outline" size={18} color="white" />
+                                    <Text className="text-white font-medium">Ubicación</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    </View>
+
+                    {/* Services */}
+                    <View className="flex flex-col" style={{ gap: 6 }}>
+                        <View className="flex flex-row items-center">
+                            <Text style={{ color: Colors.principal.DEFAULT, fontWeight: "600" }} className="text-base">
+                                Servicios de la Empresa
+                            </Text>
+                            <Entypo name="chevron-down" size={24} color={Colors.principal.DEFAULT} />
+                        </View>
+
+                        <View style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                            {company.services.map((service, k) => (
+                                <CardService item={service} key={k} />
+                            ))}
+                        </View>
+                    </View>
+                </View>
             </ScrollView>
+
+
 
             {/* ✅ MODAL: esto ya tapa el header del Stack */}
             <BottomSheetModal
@@ -201,23 +237,24 @@ const ProfileCompanyScreen = () => {
                 backdropComponent={renderBackdrop}
                 enablePanDownToClose
                 onDismiss={() => { }}
+                backgroundStyle={{ backgroundColor: "white", borderRadius: 32, borderWidth: 3, borderColor: "#b0aed720" }}
             >
                 <BottomSheetView className="flex-1">
-                    <View className="px-2 flex-1 pt-8 pb-16" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-                        <View style={{ display: "flex", alignItems: "center", width: "100%", gap: 12 }}>
+                    <View className="px-2 flex-1 pt-4 pb-16" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+                        <View style={{ display: "flex", alignItems: "center", width: "100%", gap: 6 }}>
                             <Text className="text-2xl text-dark font-bold">Horarios de la empresa</Text>
-                            <Text className="text-text">{messageSchedule(company.businessHours)}</Text>
+                            <Text className="text-text">{TextSchedule(company.businessHours, daysArray)}</Text>
                         </View>
 
                         <View className="px-4 flex flex-col">
                             {daysArray.map((day, k) => {
                                 const dayData: Day = company.businessHours[day];
-                                return <ComponentScheduleDayView data={dayData} key={k} label={day} />
+                                return <DayView daysArray={daysArray} data={dayData} key={k} label={day} />
                             })}
                         </View>
 
-                        <TouchableOpacity onPress={closeSchedule} className="py-2">
-                            <Text className="w-full text-center font-semibold text-dark">Cerrar</Text>
+                        <TouchableOpacity onPress={closeSchedule} className="py-3 px-12" style={{ backgroundColor: Colors.principal.DEFAULT, borderRadius: 9999, alignSelf: "center" }}>
+                            <Text className="w-full text-center font-semibold text-white">Cerrar</Text>
                         </TouchableOpacity>
                     </View>
                 </BottomSheetView>

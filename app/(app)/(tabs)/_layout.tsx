@@ -15,7 +15,7 @@ export default function AppLayout() {
                 screenOptions={{
                     headerShown: false,
                     tabBarShowLabel: false,
-                    tabBarActiveTintColor: Colors.principal[500],
+                    tabBarActiveTintColor: Colors.principal[400],
                     tabBarInactiveTintColor: "#858585",
                     tabBarIconStyle: {
                         fontSize: 102

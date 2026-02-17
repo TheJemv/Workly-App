@@ -44,7 +44,10 @@ function getByPath(obj: any, path: string) {
 export default function OptionScreen() {
     const navigation = useNavigation()
     const params = useLocalSearchParams()
+
     const companyData = useGlobal(s => s.company)
+    const reloadCompany = useGlobal((state) => state.companyReload);
+
     const phoneInput = useRef(null);
     const inputRef = useRef(null);
 
@@ -70,7 +73,8 @@ export default function OptionScreen() {
         setLoading(true)
         try {
             const data = buildByPath(params.key as string, value)
-            await updateCompany(data).then((e) => {
+            await updateCompany(data).then(async () => {
+                await reloadCompany();
                 setLoading(false)
                 if (router.canGoBack()) router.back()
             })

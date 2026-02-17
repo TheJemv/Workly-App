@@ -6,11 +6,6 @@ export default function OrdersLayout() {
     return (
         <Stack
             screenOptions={{
-                headerTintColor: Colors.principal.DEFAULT,
-                headerTitleStyle: {
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                },
                 headerShown: false,
                 headerShadowVisible: false,
                 headerStyle: {
