@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from 'lib';
-import loginImage from '../../assets/LoginImage.jpg';
 
 export default function WelcomeScreen() {
     const router = useRouter();
@@ -17,12 +16,12 @@ export default function WelcomeScreen() {
     const handleSignUp = () => router.push('/register');
 
     return (
-        <ImageBackground source={loginImage} style={styles.container}>
+        <ImageBackground source={require("assets/LoginImage.jpg")} style={styles.container}>
             <View style={styles.bottomContainer}>
                 <View style={{ flex: 1 }}>
                     <View style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Text style={styles.bottomContainer.title}>Welcome to</Text>
-                        <Text style={styles.bottomContainer.subName}>WorkIt</Text>
+                        <Text style={styles.bottomContainer.title}>Bienvenido a</Text>
+                        <Text style={styles.bottomContainer.subName}>Workly</Text>
                     </View>
                     <Text style={{ color: Colors.gray.DEFAULT, marginTop: 18 }}>
                         Bienvenido a WorkIt, somos una empresa que gestiona y vende
@@ -36,7 +35,7 @@ export default function WelcomeScreen() {
                                 flex: 1,
                                 paddingVertical: 12,
                                 borderRadius: 50,
-                                backgroundColor: '#040048',
+                                backgroundColor: '#24214a',
                             }}
                         >
                             <Text
@@ -87,17 +86,19 @@ const styles = StyleSheet.create({
         right: 0,
         paddingHorizontal: 24,
         backgroundColor: Colors.white,
+        borderColor: '#b0aed720',
+        borderWidth: 3,
         height: '50%',
         borderTopRightRadius: 24,
         borderTopLeftRadius: 24,
         paddingVertical: 36,
         title: {
-            color: '#040048',
+            color: '#d2d0f0',
             fontWeight: '700',
             fontSize: 46,
         },
         subName: {
-            color: '#F66',
+            color: '#24214a',
             fontWeight: '700',
             fontSize: 46,
         },
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         width: '100%',
         marginTop: 'auto',
-        borderColor: '#040048',
+        borderColor: '#24214a',
         display: 'flex',
         flexDirection: 'row',
     },

@@ -8,7 +8,7 @@ type Props = {
    item: ServiceType;
 };
 
-const CardService = ({ item }: Props): JSX.Element => {
+const CardService = ({ item }: Props) => {
    const handleService = () => {
       router.navigate({
          pathname: '/(home)/service/[id]',

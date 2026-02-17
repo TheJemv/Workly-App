@@ -22,9 +22,15 @@ import checkcompany from "utils/validations/companyValidation";
 import { router } from "expo-router";
 import OptionsKeyEnum from "enum/OptionsKeyEnum";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB en bytes
-const IMAGE_SIZE = 120;
+import { Entypo, AntDesign } from "@expo/vector-icons";
 
+
+const truncateText = (text: string, maxLength: number = 35) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+};
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB en bytes
 interface RouteParams {
     [key: string]: {
         title: string;
@@ -38,24 +44,8 @@ function getByPath(obj: any, path: string) {
 
 const OptionsKey = [
     {
-        title: "Nombre",
-        key: OptionsKeyEnum.name,
-    },
-    {
         title: "Descripcion",
         key: OptionsKeyEnum.description,
-    },
-    {
-        title: "Facebook",
-        key: OptionsKeyEnum.facebook,
-    },
-    {
-        title: "Instagram",
-        key: OptionsKeyEnum.instagram,
-    },
-    {
-        title: "Linkedin",
-        key: OptionsKeyEnum.linkedin,
     },
     {
         title: "Telefono",
@@ -150,7 +140,7 @@ export default function Edit() {
             const base64 = await RNFS.readFile(imageUri, "base64");
 
             // Actualizar en el servidor
-            const data = await updateCompany(token, {
+            const data = await updateCompany({
                 photo: base64,
             });
 
@@ -171,36 +161,132 @@ export default function Edit() {
         }
     }, [token, getFileSize, reloadCompany]);
 
-    /**
-     * Obtiene el valor a mostrar para cada opción
-     */
-    const getDisplayValue = useCallback(
-        (key: string, title: string): string => {
-            if (key === "public") {
-                return getValue(companyData, key) ? "Pública" : "Privada";
-            }
-
-            const value = getValue(companyData, key);
-            return value || title;
-        },
-        [companyData]
-    );
-
-    /**
-     * Navega a la pantalla de edición correspondiente
-     */
-    const navigateToEdit = useCallback(
-        (screenName: string) => {
-            navigation.navigate(screenName as never);
-        },
-        [navigation]
-    );
-
     return (
-        <ScrollView className="flex-1">
+        <ScrollView className="flex-1 px-2">
             <View className="flex flex-col flex-1">
                 {/* Sección de foto de perfil */}
-                <TouchableOpacity
+                <View className="flex flex-col items-center justify-center" style={{ gap: 32 }}>
+                    <View style={{ backgroundColor: Colors.principal[200], borderRadius: 12 }} className="w-full h-48 flex items-center justify-center">
+                        {/* Editar cover */}
+                        <TouchableOpacity style={{ position: "absolute", top: 12, right: 12, backgroundColor: "#fff", padding: 6, borderRadius: 9999 }} onPress={() => Alert.alert("Editar cover", "Funcionalidad de editar cover no implementada aún")}>
+                            <Entypo name="edit" size={18} color={Colors.principal.DEFAULT} />
+                        </TouchableOpacity>
+
+                        {/* Foto de perfil */}
+                        <TouchableOpacity onPress={handleImagePicker} style={{ width: 150, height: 150, borderRadius: 9999, overflow: "hidden", backgroundColor: "white" }} className="absolute -bottom-8 border-[#f2f2f2] border-4">
+                            {loadingImage ? (
+                                <SpinLoading
+                                    size={32}
+                                    color={Colors.principal.DEFAULT}
+                                />
+                            ) : (
+                                <Image
+                                    className="w-full h-full rounded-2xl"
+                                    source={{ uri: currentImage }}
+                                />
+                            )}
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity className="flex flex-row items-center" style={{ gap: 6 }} onPress={() => {
+                        router.push({
+                            pathname: "/(edit)/option",
+                            params: {
+                                key: OptionsKeyEnum.name,
+                                title: "Nombre",
+                            }
+                        })
+                    }}>
+                        <Text className="text-xl font-bold" style={{ color: Colors.principal.DEFAULT }}>
+                            {companyData.profile.name}
+                        </Text>
+                        <Entypo name="edit" size={18} color={Colors.principal.DEFAULT} />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Opciones de edición */}
+                <View className="flex flex-col">
+                    <Text className="text-sm font-bold text-dark mt-6 mb-2" style={{ color: Colors.principal.DEFAULT }}>
+                        Editar información
+                    </Text>
+
+                    {/* Opciones dinámicas de edición */}
+                    <View style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        {OptionsKey.map((v, k) => {
+                            return (
+                                <TouchableOpacity
+                                    key={k}
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: "/(edit)/option",
+                                            params: {
+                                                key: v.key,
+                                                title: v.title,
+                                            }
+                                        })
+                                    }}
+                                    activeOpacity={0.7}
+                                    style={{ borderWidth: 1, borderColor: Colors.principal.DEFAULT, borderRadius: 8, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 8, paddingHorizontal: 6 }}
+                                >
+                                    <Text style={{ color: Colors.principal.DEFAULT }} className="font-semibold text-base">
+                                        {v.title}
+                                    </Text>
+
+                                    {v.key === "public" ? (
+                                        <View style={{ gap: 4, marginLeft: 8, display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                            <AntDesign
+                                                name={getByPath(companyData, v.key) ? "eye" : "eye-invisible"}
+                                                size={18}
+                                                color={Colors.principal[300]}
+                                            />
+                                            <Text style={{ color: Colors.principal[300] }}>{getByPath(companyData, v.key) ? "Publica" : "Privada"}</Text>
+                                        </View>
+                                    ) : (
+                                        <Text style={{ color: Colors.principal[300] }} className="text-dark/90" numberOfLines={1}>
+                                            {getByPath(companyData, v.key) ? truncateText(getByPath(companyData, v.key)) : "Asigne su numero"}
+                                        </Text>
+                                    )}
+                                </TouchableOpacity>
+                            )
+                        })}
+
+                        {/* Horarios de atención */}
+                        <TouchableOpacity
+                            onPress={() => router.push("/(edit)/schedule")}
+                            activeOpacity={0.7}
+                            style={{ borderWidth: 1, borderColor: Colors.principal.DEFAULT, borderRadius: 8, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 8, paddingHorizontal: 6 }}
+                        >
+                            <Text style={{ color: Colors.principal.DEFAULT }} className="font-semibold text-base">
+                                Horarios de atención
+                            </Text>
+                            <Text style={{ color: Colors.principal[300] }} className="text-dark/90" numberOfLines={1}>
+                                Editar horarios
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* Onboarding */}
+                        <TouchableOpacity
+                            onPress={() => router.push("/(edit)/onboarding")}
+                            activeOpacity={0.7}
+                            style={{ borderWidth: 1, borderColor: Colors.principal.DEFAULT, borderRadius: 8, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 8, paddingHorizontal: 6 }}
+                        >
+                            <Text style={{ color: Colors.principal.DEFAULT }} className="font-semibold text-base">
+                                Onboarding
+                            </Text>
+                            <Text
+                                style={{
+                                    color: isOnboardingComplete ? Colors.green[600] : Colors.orange[600],
+                                }}
+                                className="font-medium"
+                                numberOfLines={1}
+                            >
+                                {isOnboardingComplete ? "✓ Completado" : "Incompleto"}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* <TouchableOpacity
                     onPress={handleImagePicker}
                     disabled={loadingImage}
                     className="flex flex-col items-center justify-center border-black/20 border-b py-4 space-y-3"
@@ -226,10 +312,10 @@ export default function Edit() {
                     <Text className="text-primary text-base font-medium">
                         Cambiar foto
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 {/* Opciones dinámicas de edición */}
-                {options && Object.entries(options).map(([index, { title, key }]) => {
+                {/* {options && Object.entries(options).map(([index, { title, key }]) => {
                     const value = getValue(companyData, key);
                     const hasValue = value !== "" && value !== null && value !== undefined;
 
@@ -252,10 +338,10 @@ export default function Edit() {
                             </Text>
                         </TouchableOpacity>
                     );
-                })}
+                })} */}
 
                 {/* Options */}
-                {OptionsKey.map((v, k) => {
+                {/* {OptionsKey.map((v, k) => {
                     return (
                         <TouchableOpacity
                             key={k}
@@ -278,15 +364,15 @@ export default function Edit() {
                                 {v?.type === "boolean" ? (
                                     getByPath(companyData, v.key) ? "Publico" : "Privada"
                                 ) : (
-                                    getByPath(companyData, v.key) ? getByPath(companyData, v.key) : "Asigen su red social."
+                                    getByPath(companyData, v.key) ? truncateText(getByPath(companyData, v.key)) : "Asigen su numero"
                                 )}
                             </Text>
                         </TouchableOpacity>
                     )
-                })}
+                })} */}
 
                 {/* Horarios de atención */}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     onPress={() => router.push("/(edit)/schedule")}
                     className="w-full py-3 px-2 flex flex-row items-center justify-between border-black/20 border-b"
                     activeOpacity={0.7}
@@ -297,10 +383,10 @@ export default function Edit() {
                     <Text className="text-dark/90" numberOfLines={1}>
                         Editar horarios
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 {/* Onboarding */}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     onPress={() => router.push("/(edit)/onboarding")}
                     className="w-full py-3 px-2 flex flex-row items-center justify-between border-black/20 border-b"
                     activeOpacity={0.7}
@@ -318,7 +404,7 @@ export default function Edit() {
                     >
                         {isOnboardingComplete ? "✓ Completado" : "Incompleto"}
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </ScrollView>
     );
