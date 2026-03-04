@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>642547837410-r335raqseongu2bi454t7m0bs0jcrill.apps.googleusercontent.com</string>
+	<string>642547837410-nhneruejr597j58c6p1v94bfunsivv0o.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.642547837410-r335raqseongu2bi454t7m0bs0jcrill</string>
+	<string>com.googleusercontent.apps.642547837410-nhneruejr597j58c6p1v94bfunsivv0o</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>642547837410-pe0af417r0qson1r4c7fntpbcdagg3d6.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.workly.workly</string>
+	<string>com.workly.services</string>
 	<key>PROJECT_ID</key>
 	<string>workitapp-92de2</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:642547837410:ios:9ae83e79d39a443c7d71bb</string>
+	<string>1:642547837410:ios:baa126e61e1af1757d71bb</string>
 </dict>
 </plist>

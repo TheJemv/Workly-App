@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "workly.app"
-               BlueprintName = "workly"
-               ReferencedContainer = "container:workly.xcodeproj">
+               BuildableName = "Workly.app"
+               BlueprintName = "Workly"
+               ReferencedContainer = "container:Workly.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "worklyTests.xctest"
-               BlueprintName = "worklyTests"
-               ReferencedContainer = "container:workly.xcodeproj">
+               BuildableName = "WorklyTests.xctest"
+               BlueprintName = "WorklyTests"
+               ReferencedContainer = "container:Workly.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "workly.app"
-            BlueprintName = "workly"
-            ReferencedContainer = "container:workly.xcodeproj">
+            BuildableName = "Workly.app"
+            BlueprintName = "Workly"
+            ReferencedContainer = "container:Workly.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "workly.app"
-            BlueprintName = "workly"
-            ReferencedContainer = "container:workly.xcodeproj">
+            BuildableName = "Workly.app"
+            BlueprintName = "Workly"
+            ReferencedContainer = "container:Workly.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
