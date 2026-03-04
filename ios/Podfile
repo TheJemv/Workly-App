@@ -3,6 +3,7 @@ require File.join(File.dirname(`node --print "require.resolve('react-native/pack
 
 require 'json'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
+$RNFirebaseAsStaticFramework = true
 
 def ccache_enabled?(podfile_properties)
   # Environment variable takes precedence
@@ -20,7 +21,7 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
 
 prepare_react_native_project!
 
-target 'workly' do
+target 'Workly' do
   use_expo_modules!
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
@@ -59,5 +60,14 @@ target 'workly' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
+
+    # Solo aplica a pods de Firebase/RNFB, no a todos
+    installer.pods_project.targets.each do |target|
+      if target.name.start_with?('RNFB', 'Firebase', 'RNFire')
+        target.build_configurations.each do |config|
+          config.build_settings['DEFINES_MODULE'] = 'NO'
+        end
+      end
+    end
   end
 end
