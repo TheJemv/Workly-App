@@ -1,16 +1,16 @@
 import { useEffect, useLayoutEffect } from "react";
-import { SafeAreaView, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { invoiceDataResolver, InvoiceData, defaultInvoiceData } from "./types";
-import { Header } from "./components/header";
 import { TextInput } from "./components/text-input";
 import { Button } from "./components/button";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
    navigation: any;
    route: any;
 };
-export function EditInvoiceScreen({ navigation, route }: Props): JSX.Element {
+export function EditInvoiceScreen({ navigation, route }: Props) {
    const data: InvoiceData = route.params.data;
 
    const { control, handleSubmit, reset } = useForm<InvoiceData>({

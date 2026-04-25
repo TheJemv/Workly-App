@@ -27,7 +27,6 @@ const ContainerBack = ({ children }: Props) => {
 };
 
 export default ContainerBack;
-
 const styles = StyleSheet.create({
    container: {
       backgroundColor: 'white',

@@ -1,5 +1,7 @@
-import { Text, ScrollView, View, Image, Alert } from "react-native";
+import { Text, ScrollView, View, Alert, Button } from "react-native";
 import { useEffect, useState } from "react";
+
+import { Image } from 'expo-image'
 import { HomeServicesData } from "data";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
@@ -17,21 +19,25 @@ const HomeScreen = () => {
     const [services, setServices] = useState([]);
 
     const { customer } = useGlobal();
-
     useEffect(() => {
+        console.log("🟡 fetchData ejecutándose...");
         const fetchData = async () => {
+            // Cambia temporalmente a una URL pública para probar
             try {
-                await trandingCustomer().then((data) => {
-                    setCompanies(data.companies);
-                    setServices(data.services);
-                });
+                const data = await trandingCustomer();
+                console.log("✅ data recibida:", data);
+                setCompanies(data.companies);
+                setServices(data.services);
             } catch (error) {
+                console.error("Error en el fetch de los trendings:", error);
                 Alert.alert("Error", "Error en el fetch de los trendings");
             }
         };
 
-        if (customer) fetchData()
-    }, [customer]);
+
+        fetchData()
+    }, []);
+
 
     return (
         <View style={{ flex: 1, backgroundColor: "#F7F7F9", marginBottom: 0 }}>
@@ -44,13 +50,10 @@ const HomeScreen = () => {
                     position: "absolute",
                     top: "-40%",
                     left: 0,
-                    transform: [
-                        {
-                            rotate: "180deg",
-                        },
-                    ],
+                    transform: [{ rotate: "180deg" }],
                 }}
-                resizeMode="cover"
+                contentFit="cover"
+                cachePolicy="memory-disk"
             />
 
             <BlurView intensity={100} style={{ flex: 1 }}>
@@ -77,7 +80,7 @@ const HomeScreen = () => {
                                 fontWeight: 600,
                             }}
                         >
-                            ¡Hola, {customer?.profile?.name}!
+                            ¡Hola, {customer ? customer.profile.name : "Invitado"}!
                         </Text>
                         <View
                             style={{
@@ -95,6 +98,7 @@ const HomeScreen = () => {
                                 gap: 16,
                             }}
                         >
+
                             {/* Categrias de los Servicios */}
                             <Categories data={HomeServicesData} />
 

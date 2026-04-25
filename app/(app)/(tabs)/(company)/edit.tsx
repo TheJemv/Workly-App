@@ -9,7 +9,6 @@ import {
     Text,
     Alert,
 } from "react-native";
-import getValue from "utils/getValue";
 import * as ImagePicker from "expo-image-picker";
 import RNFS from "react-native-fs";
 
@@ -285,126 +284,6 @@ export default function Edit() {
                         </TouchableOpacity>
                     </View>
                 </View>
-
-                {/* <TouchableOpacity
-                    onPress={handleImagePicker}
-                    disabled={loadingImage}
-                    className="flex flex-col items-center justify-center border-black/20 border-b py-4 space-y-3"
-                    activeOpacity={0.7}
-                >
-                    <View
-                        className="rounded-full overflow-hidden bg-gray-200 flex flex-col items-center justify-center"
-                        style={{ width: IMAGE_SIZE, height: IMAGE_SIZE }}
-                    >
-                        {loadingImage ? (
-                            <SpinLoading
-                                size={32}
-                                color={Colors.principal.DEFAULT}
-                            />
-                        ) : (
-                            <Image
-                                className="w-full h-full rounded-full"
-                                source={{ uri: currentImage }}
-                                resizeMode="cover"
-                            />
-                        )}
-                    </View>
-                    <Text className="text-primary text-base font-medium">
-                        Cambiar foto
-                    </Text>
-                </TouchableOpacity> */}
-
-                {/* Opciones dinámicas de edición */}
-                {/* {options && Object.entries(options).map(([index, { title, key }]) => {
-                    const value = getValue(companyData, key);
-                    const hasValue = value !== "" && value !== null && value !== undefined;
-
-                    return (
-                        <TouchableOpacity
-                            key={index}
-                            onPress={() => navigateToEdit(title)}
-                            className="w-full py-3 px-2 flex flex-row items-center justify-between border-black/20 border-b"
-                            activeOpacity={0.7}
-                        >
-                            <Text className="text-dark font-semibold text-base">
-                                {title}
-                            </Text>
-                            <Text
-                                className={hasValue ? "text-dark/90" : "text-text/60"}
-                                numberOfLines={1}
-                                style={{ flex: 1, textAlign: "right", marginLeft: 12 }}
-                            >
-                                {getDisplayValue(key, title)}
-                            </Text>
-                        </TouchableOpacity>
-                    );
-                })} */}
-
-                {/* Options */}
-                {/* {OptionsKey.map((v, k) => {
-                    return (
-                        <TouchableOpacity
-                            key={k}
-                            onPress={() => {
-                                router.push({
-                                    pathname: "/(edit)/option",
-                                    params: {
-                                        key: v.key,
-                                        title: v.title,
-                                    }
-                                })
-                            }}
-                            className="w-full py-3 px-2 flex flex-row items-center justify-between border-black/20 border-b"
-                            activeOpacity={0.7}
-                        >
-                            <Text className="text-dark font-semibold text-base">
-                                {v.title}
-                            </Text>
-                            <Text className="text-dark/90" numberOfLines={1}>
-                                {v?.type === "boolean" ? (
-                                    getByPath(companyData, v.key) ? "Publico" : "Privada"
-                                ) : (
-                                    getByPath(companyData, v.key) ? truncateText(getByPath(companyData, v.key)) : "Asigen su numero"
-                                )}
-                            </Text>
-                        </TouchableOpacity>
-                    )
-                })} */}
-
-                {/* Horarios de atención */}
-                {/* <TouchableOpacity
-                    onPress={() => router.push("/(edit)/schedule")}
-                    className="w-full py-3 px-2 flex flex-row items-center justify-between border-black/20 border-b"
-                    activeOpacity={0.7}
-                >
-                    <Text className="text-dark font-semibold text-base">
-                        Horarios de atención
-                    </Text>
-                    <Text className="text-dark/90" numberOfLines={1}>
-                        Editar horarios
-                    </Text>
-                </TouchableOpacity> */}
-
-                {/* Onboarding */}
-                {/* <TouchableOpacity
-                    onPress={() => router.push("/(edit)/onboarding")}
-                    className="w-full py-3 px-2 flex flex-row items-center justify-between border-black/20 border-b"
-                    activeOpacity={0.7}
-                >
-                    <Text className="text-dark font-semibold text-base">
-                        Onboarding
-                    </Text>
-                    <Text
-                        className={
-                            isOnboardingComplete
-                                ? "text-green-600 font-medium"
-                                : "text-orange-600 font-medium"
-                        }
-                        numberOfLines={1}
-                    >
-                        {isOnboardingComplete ? "✓ Completado" : "Incompleto"}
-                    </Text>
-                </TouchableOpacity> */}
             </View>
         </ScrollView>
     );

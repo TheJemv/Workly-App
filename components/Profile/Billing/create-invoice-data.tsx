@@ -1,5 +1,4 @@
 import {
-   SafeAreaView,
    ScrollView,
    View,
    KeyboardAvoidingView,
@@ -14,11 +13,12 @@ import { Button } from "./components/button";
 import { useLayoutEffect } from "react";
 import { postBilling } from "services/api/billing.api";
 import useGlobal from "core/globals";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
    navigation: any;
 };
-export function CreateInvoiceScreen({ navigation }: Props): JSX.Element {
+export function CreateInvoiceScreen({ navigation }: Props) {
    const { token } = useGlobal();
    const { control, handleSubmit } = useForm<InvoiceData>({
       resolver: invoiceDataResolver,
@@ -30,12 +30,8 @@ export function CreateInvoiceScreen({ navigation }: Props): JSX.Element {
    };
 
    const handleCreate = async (data: InvoiceData): Promise<void> => {
-      console.log("DATA: ", data);
       await postBilling(token, data)
          .then((data) => {
-            console.log({
-               "Data Server": data,
-            });
             handleBack();
          })
          .catch((error) => {

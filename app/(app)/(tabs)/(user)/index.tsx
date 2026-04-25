@@ -4,7 +4,6 @@ import {
     View,
     Text,
     TouchableOpacity,
-    StatusBar,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 
@@ -21,13 +20,14 @@ import { getPaymentParams } from "services/api/getPaymantParams";
 import useGlobal from "core/globals";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { STATUS_MARGIN_TOP } from "constants/index";
 
 const AccountScreen = () => {
-    const { token } = useGlobal()
     const customerUser = useGlobal(state => state.customer)
-
     const handleSingout = async () => {
-        await Singout().catch((e) => {
+        await Singout().then(() => {
+            router.replace('/(app)/(tabs)/(home)');
+        }).catch((e) => {
             Alert.alert("Error", e.message);
         });
     };
@@ -44,9 +44,10 @@ const AccountScreen = () => {
 
     const fetchPaymentSheetParams = async () => {
         try {
-            const { ephemeralKey, setupIntent } = await getPaymentParams(token).catch((error) => {
+            const { ephemeralKey, setupIntent } = await getPaymentParams().catch((error) => {
                 throw new Error(error.message)
             });
+            console.log("✅ Payment params recibidos:", { ephemeralKey, setupIntent });
             return { ephemeralKey, setupIntent };
         } catch (error) {
             Alert.alert('Error', error.message);
@@ -84,22 +85,13 @@ const AccountScreen = () => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
+        <SafeAreaView style={{ flex: 1, marginTop: STATUS_MARGIN_TOP }}>
             <ScrollView className="px-3 pt-3 w-full" style={{ flex: 1 }}>
                 <View style={{ gap: 12 }} className="flex flex-col">
                     <Text className="order-0 text-dark font-bold text-[22px]">
                         Configuracion
                     </Text>
                     <UserConfigButton onPress={() => router.push('/profile')} />
-
-                    <View className="rounded-lg overflow-hidden flex flex-col">
-                        <Option
-                            styles="bg-gray-600"
-                            icon={Feather}
-                            iconName="lock"
-                            label="Privacidad"
-                        />
-                    </View>
 
                     <View className="rounded-lg overflow-hidden flex flex-col">
                         <Option
@@ -144,6 +136,17 @@ const AccountScreen = () => {
                             label="Datos Bancarios"
                             disabled={isModalActivePayment}
                             loading={loadingPayments}
+                        />
+                    </View>
+
+                    <View className="rounded-lg overflow-hidden flex flex-col">
+                        {/* Boton de Borrar Cuenta */}
+                        <Option
+                            styles="bg-red-500"
+                            icon={Feather}
+                            iconName="trash-2"
+                            label="Borrar Cuenta"
+                            onPress={() => router.push('/delete-account')}
                         />
                     </View>
 

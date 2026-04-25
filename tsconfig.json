@@ -20,6 +20,9 @@
       "context/*": [
         "context/*"
       ],
+      "@data/*": [
+        "data/*"
+      ],
       "functions/*": [
         "functions/*"
       ],
@@ -47,7 +50,8 @@
       "@/assets/*": [
         "assets/*"
       ]
-    }
+    },
+    "jsx": "react-native"
   },
   "exclude": [
     "node_modules",

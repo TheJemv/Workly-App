@@ -15,6 +15,8 @@ import { Colors } from "lib";
 import { useLayoutEffect } from "react";
 import { Entypo } from "@expo/vector-icons";
 
+import { RegimeSelect } from "components/Profile/Billing/regime-select";
+
 export default function CreateInvoiceScreen() {
     const navigation = useNavigation()
     const { token } = useGlobal();
@@ -273,15 +275,13 @@ export default function CreateInvoiceScreen() {
                         />
                     </View>
 
-                    {/* Regimen Fiscal */}
                     <View>
                         <Controller
                             control={control}
                             name="tax_regime"
                             render={({ field, fieldState }) => (
-                                <TextInput
-                                    label="Regimen Fiscal"
-                                    placeholder="regimen fiscal"
+                                <RegimeSelect
+                                    label="Régimen Fiscal"
                                     value={field.value}
                                     onChange={field.onChange}
                                     error={fieldState.error?.message}

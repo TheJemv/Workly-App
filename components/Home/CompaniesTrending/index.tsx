@@ -1,4 +1,6 @@
-import { View, Text, FlatList, Image } from "react-native";
+import { View, Text, FlatList } from "react-native";
+import { Image } from "expo-image";
+
 import { CompanyType } from "./types";
 import { CompanyItem } from "./components";
 
@@ -47,7 +49,7 @@ const CompaniesTrending = ({ data }: { data: CompanyType[] }) => {
                <Image
                   source={require("assets/Empty/Company.png")}
                   className="w-[120px] h-[100px]"
-                  resizeMode="contain"
+                  contentFit="contain"
                />
                <Text className="text-gray-500 text-base text-center">
                   No hay empresas populares.

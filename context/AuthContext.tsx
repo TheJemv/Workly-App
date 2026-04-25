@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import useGlobal from "core/globals";
 import { customer as getCustomer } from "services/auth/customer";
 import { getApp } from "@react-native-firebase/app";
@@ -6,11 +6,25 @@ import {
    getAuth,
    getIdToken,
    onIdTokenChanged,
-   onAuthStateChanged
+   onAuthStateChanged,
+   FirebaseAuthTypes,
 } from "@react-native-firebase/auth";
+import {
+   getCrashlytics,
+   setUserId,
+   setAttributes,
+   recordError,
+   log,
+   setCrashlyticsCollectionEnabled,
+} from "@react-native-firebase/crashlytics";
+
+// Fuera del componente para evitar re-inicializaciones en cada render
+const app = getApp();
+const authInstance = getAuth(app);
+const cl = getCrashlytics();
 
 export const AuthContext = createContext<{
-   user: any;
+   user: FirebaseAuthTypes.User;
    token: string | null;
    customer: any;
    loading: boolean;
@@ -23,13 +37,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    const [user, setUser] = useState<any>(null);
    const [token, setToken] = useState<string | null>(null);
    const [customer, setCustomer] = useState<any>(null);
-   const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(true); // true = aún verificando, false = listo
    const isFetchingRef = useRef(false);
    const tokenRefreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-   // ✅ Obtener instancia de auth correctamente
-   const app = getApp();
-   const authInstance = getAuth(app);
 
    const refreshTokenInternal = async (currentUser: any) => {
       if (!currentUser) return null;
@@ -59,6 +69,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    };
 
    useEffect(() => {
+      // Dentro del useEffect para evitar llamadas en cada render
+      setCrashlyticsCollectionEnabled(cl, true);
+
       const unsubscribeIdToken = onIdTokenChanged(authInstance, async (u) => {
          if (!u) return;
          if (!isFetchingRef.current) {
@@ -73,7 +86,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       const unsubscribeAuth = onAuthStateChanged(authInstance, async (u) => {
-         setLoading(false);
          if (!u) {
             setUser(null);
             setToken(null);
@@ -81,7 +93,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setTokenGlobal(null);
             socketDisconnect?.();
             clearTokenRefreshInterval();
-            setLoading(true);
+            setUserId(cl, "");
+            setLoading(false); // listo, no hay usuario
             return;
          }
 
@@ -96,12 +109,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const c = await getCustomer(t);
             setCustomer(c);
             setupTokenRefresh(u);
-            setLoading(true);
+
+            setUserId(cl, u.uid);
+            setAttributes(cl, {
+               phone: u.phoneNumber ?? "sin teléfono",
+               name: c?.name ?? "sin nombre",
+            });
+            log(cl, "Usuario autenticado: " + u.uid);
          } catch (e) {
+            log(cl, "Error en autenticación del usuario");
+            recordError(cl, e as Error);
             console.error("❌ Error en autenticación:", e);
-            setLoading(true);
          } finally {
             isFetchingRef.current = false;
+            setLoading(false); // listo, con o sin error
          }
       });
 

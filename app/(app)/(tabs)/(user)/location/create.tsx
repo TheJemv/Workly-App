@@ -96,7 +96,6 @@ export default function LocationCreate() {
             setSuggestions(list);
             setShowSuggestions(true);
         } catch (e: any) {
-            console.log("Autocomplete(New) FAIL:", e?.message ?? e);
             setSuggestions([]);
             setShowSuggestions(false);
         }
@@ -175,31 +174,45 @@ export default function LocationCreate() {
                 return;
             }
 
-            const currentLocation = await Location.getCurrentPositionAsync({});
-            const userCoords = {
-                latitude: currentLocation.coords.latitude,
-                longitude: currentLocation.coords.longitude,
-            };
+            try {
+                // Intenta con alta precisión primero
+                const currentLocation = await Location.getCurrentPositionAsync({
+                    accuracy: Location.Accuracy.Balanced, // menos exigente que High
+                });
 
-            setUserLocation(userCoords);
-            setSelectedLocation(userCoords);
+                const userCoords = {
+                    latitude: currentLocation.coords.latitude,
+                    longitude: currentLocation.coords.longitude,
+                };
 
-            const getAddress = await getStreetName(userCoords.latitude, userCoords.longitude);
-            if (getAddress) {
-                setData((prev) => ({
-                    ...prev,
-                    country: getAddress.country || "",
-                    state: getAddress.state || "",
-                    city: getAddress.city || "",
-                    postalCode: getAddress.postalCode || "",
-                    neighborhood: getAddress.neighborhood || "",
-                    street: getAddress.street || "",
-                    streetNumber: getAddress.streetNumber || "",
-                }));
-                setSearchText(getAddress.formatted || "");
+                setUserLocation(userCoords);
+                setSelectedLocation(userCoords);
+
+                const getAddress = await getStreetName(userCoords.latitude, userCoords.longitude);
+                if (getAddress) {
+                    setData((prev) => ({ ...prev, ...getAddress }));
+                    setSearchText(getAddress.formatted || "");
+                }
+            } catch (error) {
+                // Si falla getCurrentPosition, usa la última ubicación conocida
+                const lastLocation = await Location.getLastKnownPositionAsync();
+                if (lastLocation) {
+                    const userCoords = {
+                        latitude: lastLocation.coords.latitude,
+                        longitude: lastLocation.coords.longitude,
+                    };
+                    setUserLocation(userCoords);
+                    setSelectedLocation(userCoords);
+                } else {
+                    // Fallback a coordenadas por defecto (ej: centro de México)
+                    const fallback = { latitude: 19.4326, longitude: -99.1332 };
+                    setUserLocation(fallback);
+                    setSelectedLocation(fallback);
+                    Alert.alert("Ubicación no disponible", "Activa el GPS para mayor precisión.");
+                }
+            } finally {
+                setLoading(false);
             }
-
-            setLoading(false);
         })();
     }, []);
 
@@ -264,7 +277,7 @@ export default function LocationCreate() {
                                 />
                             </View>
 
-                            <TouchableOpacity onPress={handleSubmit} style={styles.pillBtn} activeOpacity={0.75}>
+                            <TouchableOpacity disabled={loading} onPress={handleSubmit} style={styles.pillBtn} activeOpacity={0.75}>
                                 <Entypo name="save" size={18} color={Colors.principal.DEFAULT} />
                             </TouchableOpacity>
                         </View>
@@ -331,10 +344,9 @@ export default function LocationCreate() {
                 style={styles.map}
                 initialRegion={mapRegion}
                 showsMyLocationButton
-                // cuando hay dropdown, bloquea interacción
                 onPress={handleMapPress}
             >
-                <Marker coordinate={selectedLocation} pinColor={Colors.principal.DEFAULT} />
+                <Marker coordinate={selectedLocation} />
 
                 {userLocation.latitude !== selectedLocation.latitude ||
                     userLocation.longitude !== selectedLocation.longitude ? (
@@ -443,12 +455,7 @@ const styles = StyleSheet.create({
         paddingTop: 0,
         height: 40,
     },
-    headerAndroid: {
-        backgroundColor: "#ffffff",
-        borderBottomWidth: 1,
-        borderBottomColor: "#00000010",
-        elevation: 6,
-    },
+    headerAndroid: {},
     headerRow: {
         flexDirection: "row",
         alignItems: "center",

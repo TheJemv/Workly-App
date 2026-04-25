@@ -1,12 +1,8 @@
 import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
 
-export const getPaymentParams = async (token: string) => {
+export const getPaymentParams = async () => {
    try {
-      const response = await apiClient.get("/customer/payment", {
-         headers: {
-            Authorization: `Bearer ${token}`,
-         },
-      });
+      const response = await apiClient.get("/customer/payment");
 
       return response.data;
    } catch (error) {

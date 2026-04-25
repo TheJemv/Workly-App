@@ -3,9 +3,11 @@ import React from 'react'
 import { Stack } from 'expo-router'
 import useGlobal from 'core/globals'
 import CustomBackButton from 'components/Header/CustomBackButton'
+import { COLOR_BACKGROUND } from 'constants/index'
 
 export default function CompanyLayout() {
     const company = useGlobal(s => s.company)
+    console.log(company)
     return (
         <React.Fragment>
             <StatusBar style='auto' />
@@ -15,7 +17,7 @@ export default function CompanyLayout() {
                     headerShown: false,
                     headerShadowVisible: false,
                     headerStyle: {
-                        backgroundColor: "transparent",
+                        backgroundColor: COLOR_BACKGROUND,
                     }
                 }}
             >
@@ -28,6 +30,14 @@ export default function CompanyLayout() {
                             headerShown: true,
                             title: "Solicitud de Empresa",
                             headerTransparent: true
+                        }}
+                    />
+                    <Stack.Screen
+                        name='service-provider-contract'
+                        options={{
+                            presentation: "modal",
+                            headerShown: true,
+                            title: "Terminos de Empresas"
                         }}
                     />
                 </Stack.Protected>

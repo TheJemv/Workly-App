@@ -1,4 +1,6 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
+
 import { Order } from "@/types/Order";
 import OrderStatusEnum from "enum/OrderStatusEnum";
 
@@ -18,12 +20,7 @@ export function OrderCard({ order, onPress }: Props) {
                <Text className="text-base text-dark font-bold">
                   {order?.serviceName}
                </Text>
-               {/* <Text
-                  numberOfLines={1}
-                  className="text-text text-xs font-semibold"
-               >
-                  Order#: {order?.id}
-               </Text> */}
+
                <Text
                   className="text-xs text-text font-medium"
                   numberOfLines={3}
@@ -72,11 +69,6 @@ export function OrderCard({ order, onPress }: Props) {
                {order.status === OrderStatusEnum.FAILED && "Pedido fallido"}
             </Text>
          </View>
-
-         {/* <View></View>
-         <View className="flex flex-col flex-1">
-
-         </View> */}
       </TouchableOpacity>
    );
 }

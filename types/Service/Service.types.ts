@@ -15,6 +15,7 @@ interface Service {
     currency: string;
     unit_amount: number;
     indefinite: boolean;
+    requiresLocation: boolean;
 
     ordersCount: number;
     views: number

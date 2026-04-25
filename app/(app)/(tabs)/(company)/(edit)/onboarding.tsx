@@ -59,7 +59,7 @@ export default function Onboarding() {
                     <ComponentLabel
                         title="Estado de Verificacion"
                         value={
-                            companyData.activity.requirements.currently_due.length ===
+                            companyData.activity?.requirements.currently_due.length ===
                                 0 ? (
                                 "Verificada"
                             ) : (
@@ -74,10 +74,10 @@ export default function Onboarding() {
                     <ComponentLabel
                         title="Razon de deshabilitado"
                         value={
-                            companyData.activity.requirements.disabled_reason
+                            companyData.activity?.requirements.disabled_reason
                                 ? MapCurrentlyDue[
-                                companyData.activity.requirements.disabled_reason
-                                ] || companyData.activity.requirements.disabled_reason
+                                companyData.activity?.requirements.disabled_reason
+                                ] || companyData.activity?.requirements.disabled_reason
                                 : "Todo bien"
                         }
                     />
@@ -88,7 +88,7 @@ export default function Onboarding() {
                         title="Pagos con tarjeta"
                         value={
                             MapCurrentlyDue[
-                            companyData.activity.capabilities.card_payments
+                            companyData.activity?.capabilities.card_payments
                             ] || "Desactivado"
                         }
                     />
@@ -96,7 +96,7 @@ export default function Onboarding() {
                     <ComponentLabel
                         title="Transferencias"
                         value={
-                            MapCurrentlyDue[companyData.activity.capabilities.transfers] ||
+                            MapCurrentlyDue[companyData.activity?.capabilities.transfers] ||
                             "Desactivado"
                         }
                     />

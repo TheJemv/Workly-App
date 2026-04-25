@@ -1,81 +1,68 @@
-import type { ReactNode } from "react";
 import { View, Text } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 
 type Props = {
-   icon: "file-text" | "credit-card" | "check" | "dropbox" | "bus" | "times";
+   icon: "file-text" | "credit-card" | "check" | "dropbox" | "bus" | "times" | "clock-o" | "check-circle" | "times-circle";
    title: string;
    description: string;
-   stepProcess?: boolean;
-   stepSelected?: boolean;
+   completed?: boolean;
+   current?: boolean;
+   cancelled?: boolean;
 };
-export function StepTrack({
-   icon,
-   title,
-   description,
-   stepProcess,
-   stepSelected,
-}: Props): JSX.Element {
+
+export function StepTrack({ icon, title, description, completed, current, cancelled }: Props): JSX.Element {
+   const dotColor = cancelled
+      ? "bg-red-500"
+      : completed || current
+         ? "bg-dark"
+         : "bg-light";
+
+   const lineColor = cancelled
+      ? "bg-red-300"
+      : completed
+         ? "bg-dark"
+         : "bg-light/50";
+
+   const iconBg = cancelled
+      ? "bg-red-500"
+      : current
+         ? "bg-white border-2 border-dark"
+         : completed
+            ? "bg-dark"
+            : "bg-light/50";
+
+   const iconColor = cancelled
+      ? Colors.white
+      : current
+         ? Colors.principal.DEFAULT
+         : completed
+            ? Colors.white
+            : Colors.white;
+
+   const isActive = completed || current || cancelled;
+
    return (
       <View className="flex flex-row items-center space-x-4">
+         {/* Línea y punto */}
          <View className="flex flex-col items-center">
-            {stepProcess && (
-               <>
-                  <View className="w-3 h-3 rounded-full bg-white border-2 border-dark" />
-                  <View className="w-1 flex-1 bg-dark" />
-               </>
-            )}
-            {stepSelected && (
-               <>
-                  <View className="w-3 h-3 rounded-full bg-dark" />
-                  <View className="w-1 flex-1 bg-light/50" />
-               </>
-            )}
-            {!stepSelected && !stepProcess && (
-               <>
-                  <View className="w-3 h-3 rounded-full bg-light" />
-                  <View className="w-1 flex-1 bg-light/50" />
-               </>
-            )}
+            <View className={`w-3 h-3 rounded-full ${dotColor}`} />
+            <View className={`w-1 flex-1 min-h-[40px] ${lineColor}`} />
          </View>
-         {stepProcess && (
-            <View className="flex items-center justify-center w-10 h-10 rounded-full bg-white border-2 border-dark">
-               <FontAwesome
-                  name={icon}
-                  size={20}
-                  color={Colors.principal.DEFAULT}
-               />
-            </View>
-         )}
-         {stepSelected && (
-            <View className="flex items-center justify-center w-10 h-10 rounded-full bg-dark">
-               <FontAwesome name={icon} size={20} color={Colors.white} />
-            </View>
-         )}
-         {!stepSelected && !stepProcess && (
-            <View className="flex items-center justify-center w-10 h-10 rounded-full bg-light/50">
-               <FontAwesome name={icon} size={20} color={Colors.white} />
-            </View>
-         )}
+
+         {/* Ícono */}
+         <View className={`flex items-center justify-center w-10 h-10 rounded-full ${iconBg}`}>
+            <FontAwesome name={icon} size={20} color={iconColor} />
+         </View>
+
+         {/* Texto */}
          <View className="flex flex-1 flex-col space-y-0.5 pb-5">
-            {!stepSelected && !stepProcess ? (
-               <>
-                  <Text className="text-base text-dark/50 font-bold">
-                     {title}
-                  </Text>
-                  <Text className="text-sm text-text/50 font-medium">
-                     {description}
-                  </Text>
-               </>
-            ) : (
-               <>
-                  <Text className="text-base text-dark font-bold">{title}</Text>
-                  <Text className="text-sm text-text font-medium">
-                     {description}
-                  </Text>
-               </>
-            )}
+            <Text className={`text-base font-bold ${isActive ? (cancelled ? "text-red-500" : "text-dark") : "text-dark/50"}`}>
+               {title}
+            </Text>
+            <Text className={`text-sm font-medium ${isActive ? (cancelled ? "text-red-400" : "text-text") : "text-text/50"}`}>
+               {description}
+            </Text>
          </View>
       </View>
    );

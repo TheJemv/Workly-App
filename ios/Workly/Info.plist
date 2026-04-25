@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>0.6.3</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -60,23 +60,19 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your camera</string>
+    <string>Camera access is used to allow users to take or upload a profile photo for their account.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Allow Work It to use your location.</string>
+    <string>Location access is used to allow users to save their home address. This address will be used in future updates to automatically fill in the delivery address when requesting an at-home service.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>Necesitamos tu ubicación para proporcionar funcionalidades avanzadas incluso cuando la aplicación no esté en uso.</string>
+    <string>Location access is used to allow users to save their home address. This address will be used in future updates to automatically fill in the delivery address when requesting an at-home service.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Necesitamos tu ubicación para mostrar información relevante.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <string>Location access is used to allow users to save their home address. This address will be used in future updates to automatically fill in the delivery address when requesting an at-home service.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Work It, te pide permiso para acceder a tus fotos.</string>
+    <string>Photo library access is used to allow users to select a profile photo for their account.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
-    <key>NSUserTrackingUsageDescription</key>
-    <string>Esta app usa notificaciones para mantenerte informado.</string>
     <key>RCTNewArchEnabled</key>
     <true/>
     <key>UILaunchStoryboardName</key>

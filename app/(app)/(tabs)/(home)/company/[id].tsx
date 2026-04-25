@@ -6,11 +6,13 @@ import {
     Alert,
     ScrollView,
     TouchableOpacity,
+    Share,
+    Platform,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 
 import { CardService } from "components/Company";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { getByIdCompany } from "services/api/company.api";
 import { Company as CompanyType } from "@/types/Company";
 
@@ -28,6 +30,8 @@ import { Day, DayName } from "@/types/Schedule";
 import TextSchedule from "components/Schedule/TextSchedule";
 import DayView from "components/Schedule/DayView";
 import { Colors } from "lib";
+import ShareButton from "components/Header/ShareButton";
+import { getCompanyShareUrl } from "utils/shareLinks";
 
 
 const daysArray: DayName[] = [
@@ -48,6 +52,8 @@ const ProfileCompanyScreen = () => {
     const snapPoints = useMemo(() => ["85%"], []);
     const openSchedule = () => scheduleModalRef.current?.present();
     const closeSchedule = () => scheduleModalRef.current?.dismiss();
+
+    const navigation = useNavigation()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -83,6 +89,28 @@ const ProfileCompanyScreen = () => {
         []
     );
 
+    const handleShare = async () => {
+        try {
+            const url = getCompanyShareUrl(params.id as string)
+            const payload = Platform.select({
+                ios: { message: "¡Mira esta empresa en Workly!", url },
+                android: { message: `¡Mira este servicio en Workly!\n${url}` },
+                default: { message: `¡Mira este servicio en Workly!\n${url}` },
+            });
+
+            await Share.share(payload, {
+                subject: "Empresa en Workly",
+                dialogTitle: "Compartir empresa"
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    useLayoutEffect(() => {
+        navigation.setOptions({ headerRight: () => <ShareButton onPress={handleShare} /> });
+    }, []);
+
     if (loading || !company) {
         return (
             <View className="flex pb-[70px] h-full flex-col items-center justify-center">
@@ -93,68 +121,6 @@ const ProfileCompanyScreen = () => {
 
     return (
         <>
-            {/* <ScrollView className="flex-1 px-3 mb-0 space-y-5">
-                <View className="flex flex-col space-y-3">
-                    <View className="flex flex-row items-center space-x-3 w-full">
-                        <View className="w-14 h-14 rounded-full bg-light/25">
-                            <Image
-                                className="w-full h-full rounded-full"
-                                source={{ uri: company.profile.photo }}
-                            />
-                        </View>
-
-                        <View className="flex flex-col space-y-1">
-                            <View className="flex flex-row justify-between">
-                                <Text className="text-base text-dark font-semibold">
-                                    {company.profile.name}
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    <Text
-                        className="text-base text-text font-medium ml-4"
-                        numberOfLines={3}
-                        ellipsizeMode="tail"
-                    >
-                        {company.profile.description}
-                    </Text>
-
-                    <View className="pt-2 flex flex-col">
-                        <Text className="text-lg text-dark font-semibold">
-                            Detalles de la Empresa
-                        </Text>
-
-                        <View className="flex flex-col ml-2">
-                            <TouchableOpacity
-                                onPress={openSchedule}
-                                className="flex flex-row items-center gap-x-1 w-full py-1"
-                            >
-                                <MaterialIcons name="schedule" size={18} color="black" />
-                                <Text className="text-black">Horarios</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity className="flex flex-row items-center gap-x-1 w-full py-1">
-                                <Ionicons name="location-outline" size={18} color="black" />
-                                <Text className="text-black">Ubicacion</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-
-                <FlatList
-                    data={company.services}
-                    contentContainerStyle={{ gap: 8, paddingBottom: 16 }}
-                    ListHeaderComponent={() => (
-                        <Text className="text-lg text-dark font-semibold">
-                            Servicios de la Empresa
-                        </Text>
-                    )}
-                    renderItem={({ item }) => <CardService item={item} />}
-                    scrollEnabled={false}
-                />
-            </ScrollView> */}
-
             {/* Company */}
             <ScrollView className="flex-1 px-2">
                 <View style={{ display: "flex", flexDirection: "column", gap: 16 }}>

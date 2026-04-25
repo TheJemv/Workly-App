@@ -21,10 +21,10 @@ type Props = {
 
 export const TimesOpen = ({ businessHours }: Props) => {
    const [show, setShow] = useState<boolean>(false);
-
    const handleShow = (): void => {
       setShow(!show);
    };
+
    return (
       <View className="flex flex-col space-y-1">
          <View className="flex flex-row items-center space-x-2">

@@ -1,6 +1,7 @@
 import { Text, View } from "react-native"
 import { Day, DayName } from "@/types/Schedule"
 import { Colors } from "lib"
+
 interface PropsScheduleView {
     label: DayName
     data: Day
@@ -9,7 +10,9 @@ interface PropsScheduleView {
 
 export default function DayView({ label, data, daysArray }: PropsScheduleView) {
     const date = new Date()
-    const currentDay = daysArray[date.getDay() - 1]
+    const dayIndex = (date.getDay() + 6) % 7
+    const currentDay = daysArray[dayIndex]
+
     return (
         <View className="flex flex-row items-center justify-between py-3" style={{ borderBottomWidth: 1, borderBottomColor: "#c2c2c2" }}>
             <Text style={{ color: currentDay === label ? Colors.principal[400] : "#040404" }} className="text-lg font-semibold">{label}</Text>

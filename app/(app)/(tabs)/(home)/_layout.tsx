@@ -1,7 +1,9 @@
 import React from 'react'
 import { Stack } from 'expo-router'
 import CustomBackButton from 'components/Header/CustomBackButton';
+import { COLOR_BACKGROUND } from 'constants/index';
 
+export const unstable_settings = { initialRouteName: "index" };
 export default function LayoutHome() {
     return (
         <Stack
@@ -9,7 +11,7 @@ export default function LayoutHome() {
                 headerShown: false,
                 headerShadowVisible: false,
                 headerStyle: {
-                    backgroundColor: "transparent",
+                    backgroundColor: COLOR_BACKGROUND,
                 },
             }}
         >

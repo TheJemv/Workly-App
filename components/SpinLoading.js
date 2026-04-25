@@ -5,7 +5,6 @@ import { Animated, Easing } from 'react-native';
 
 export default function ({ color = Colors.principal.DEFAULT, size = 24 }) {
    const spinValue = new Animated.Value(0);
-
    Animated.loop(
       Animated.timing(spinValue, {
          toValue: 1,

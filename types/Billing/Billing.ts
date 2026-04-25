@@ -3,9 +3,9 @@ import { z } from "zod";
 import { InvoiceDataSchema } from "schemas/billing.schema"
 
 
-export type InvoiceData = z.infer<typeof InvoiceDataSchema>;
+export type Billing = z.infer<typeof InvoiceDataSchema>;
 export const invoiceDataResolver = zodResolver(InvoiceDataSchema);
-export const defaultInvoiceData: InvoiceData = {
+export const defaultInvoiceData: Billing = {
     id: "",
     name: "",
     street: "",

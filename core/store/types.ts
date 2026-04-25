@@ -1,55 +1,52 @@
-import { Profile } from "@/types/Company";
-import CompanyType from "@/types/Company/Company.types";
-import { User } from "@react-native-firebase/auth";
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import MessageType from "enum/MessageType";
+import { Customer } from "@/types/Customer";
+import { Service as ServiceData } from "@/types/Service";
+import { Company } from "@/types/Company";
+import { Order } from "@/types/Order";
 
 // WebSocket status
 export type SocketStatus = "disconnected" | "connecting" | "connected";
 
-// Customer types
-export interface Customer {
-    id: string;
-    name: string;
-    email?: string;
-    phone?: string;
-    // Agrega más campos según tu modelo
-}
-
-export interface Order {
-    id: string;
-    status: string;
-    total: number;
-    // Agrega más campos según tu modelo
-}
-
 export interface Chat {
     id: string;
-    room: string;
-    lastMessage?: string;
-    // Agrega más campos según tu modelo
+    customers: Customer[];
+    lastMessage: Message | null;
+    messages: Message[];        // 👈 mensajes del chat
+    messagesNext: string | null; // 👈 paginación
+    messagesLoaded: boolean;    // 👈 si ya cargó
 }
 
-// Message types
 export interface Message {
     id: string;
-    room: string;
+    tempId?: string | null;
+    room: { id: string };
     content: string;
-    timestamp: number;
-    userId: string;
-    // Agrega más campos según tu modelo
+    type: MessageType;
+    createdAt: string;
+    timestamp?: number;
+    customer?: {
+        id: string;
+        uid: string;
+        profile?: any;
+    } | null;
+    order?: any | null;
+    billing?: any | null;
+    location?: any | null;
 }
 
-export interface Service {
-    id: string;
-    name: string;
-    loaded?: boolean;
-    data?: Service[];
-    // Agrega más campos según tu modelo
+export interface PaginationMeta {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
 }
 
-export interface Sale {
-    id: string;
-    amount: number;
-    // Agrega más campos según tu modelo
+export interface PaginatedData<T> {
+    loaded: boolean;
+    data: T[];
+    meta: PaginationMeta | null;
 }
 
 // Estado principal del store
@@ -61,40 +58,29 @@ export interface GlobalState {
 
     // Socket reconnection
     connectInFlight: boolean;
-    autoRetryCount: number;
+    attempts: number;
     autoRetryEnabled: boolean;
     retryTimer: NodeJS.Timeout | null;
     socketStatus: SocketStatus;
-    silentRetryCount: number;
 
     // User
     token: string | null;
-    user: User | null;
-
+    user: FirebaseAuthTypes.User | null;
     // Customer
     customer: Customer | null;
-    orders: {
-        loaded: boolean;
-        data: Order[];
-    } | null;
-    chats: Chat[];
+    orders: PaginatedData<Order> | null;
 
     // Messages
-    messagesList: Message[];
-    messagesNext: string | null;
-    messagesUser: string | null;
-    messagesRoom: string | null;
+    chats: Chat[];
+    activeRoom: string | null;
 
     // Company
-    company: CompanyType | null;
+    company: Company | null;
     services: {
         loaded: boolean;
-        data: Service[];
+        data: ServiceData[];
     } | null;
-    sales: {
-        loaded: boolean;
-        data: Sale[];
-    } | null;
+    sales: PaginatedData<Order> | null;
 }
 
 // Actions del store
@@ -104,22 +90,20 @@ export interface GlobalActions {
     init: () => Promise<void>;
     setToken: (token: string | null) => void;
     serverPing: () => Promise<boolean>;
-
     // Socket
     clearRetryTimer: () => void;
     socketDisconnect: () => void;
-    socketConnect: (options?: { auto?: boolean }) => Promise<void>;
+    socketConnect: () => Promise<void>;
     handleRetrySocket: () => void;
     onAppForeground: () => void;
-
     // API calls via WebSocket
-    sendMessage: (room: string, message: string) => void;
+    sendMessage: (room: string, message: string, temp?: string | null, type?: MessageType) => void;
     messageList: (room: string, page?: number) => void;
     companyReload: () => void;
     getServices: () => void;
     removeTempService: (id: string) => void;
-    getOrders: () => void;
-    getSales: () => void;
+    getOrders: (page?: number) => void;   // 👈 page opcional
+    getSales: (page?: number) => void;    // 👈 page opcional
 }
 
 // Store completo
@@ -129,7 +113,6 @@ export type GlobalStore = GlobalState & GlobalActions;
 export type SetState = (
     partial: Partial<GlobalState> | ((state: GlobalState) => Partial<GlobalState>)
 ) => void;
-
 export type GetState = () => GlobalStore;
 
 // Tipos para respuestas WebSocket

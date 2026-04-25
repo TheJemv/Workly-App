@@ -1,4 +1,6 @@
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
+import { Image } from "expo-image";
+
 import { ServiceType } from "./types";
 import { ServiceItem } from "./components";
 
@@ -44,7 +46,7 @@ const ServicesTrending = ({ data }: { data?: ServiceType[] }) => {
                <Image
                   source={require("assets/Empty/ServicesEmptyTrending.png")}
                   className="w-[120px] h-[100px]"
-                  resizeMode="contain"
+                  contentFit="contain"
                />
                <Text className="text-gray-500 text-base text-center">
                   No hay servicios popular ahora.

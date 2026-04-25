@@ -1,11 +1,13 @@
-import { View, Text, Image } from "react-native";
+import { View, Text } from "react-native";
+import { Image } from "expo-image";
+
 import { Order } from "../../types";
 
 type Props = {
     order: Order;
 };
 
-export function OrderDetails({ order }: Props): JSX.Element {
+export function OrderDetails({ order }: Props) {
     return (
         <View className="flex flex-col space-y-5 p-4 border-b-2 border-b-light/25">
             <View className="flex flex-row items-start justify-between space-x-4">

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import useGlobal from "core/globals";
 import { Order } from "../../types";
-import OrderStatusEnum from "enum/OrderStatusEnum";
+
 import {
     acceptOrder,
     modifyDeliveryDate,
@@ -21,8 +21,8 @@ export const useOrderActions = (order: Order) => {
     const [loadingCancel, setLoadingCancel] = useState(false);
     const [showEditDate, setShowEditDate] = useState(false);
 
-    const isCompany = sales?.data?.find((o) => o.id === order.id);
-    const isCustomer = orders?.data?.find((o) => o.id === order.id);
+    const isCompany = order?.id ? sales?.data?.find((o) => o.id === order.id) : null
+    const isCustomer = order?.id ? orders?.data?.find((o) => o.id === order.id) : null
 
 
     // EMPRESA: Aceptar orden sin cambios

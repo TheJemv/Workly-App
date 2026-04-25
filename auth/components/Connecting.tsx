@@ -1,14 +1,15 @@
-import { Text, StatusBar, Image, View } from 'react-native'
+import { Text, Image, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from 'lib'
 import SpinLoading from 'components/SpinLoading'
+import { STATUS_MARGIN_TOP } from 'constants/index'
 
 export default function Connecting() {
     return (
         <SafeAreaView style={{
             flex: 1,
-            marginTop: StatusBar.currentHeight,
+            marginTop: STATUS_MARGIN_TOP,
             justifyContent: 'center',
             alignItems: 'center',
             paddingVertical: 24,
@@ -30,25 +31,6 @@ export default function Connecting() {
                     style={{ width: 160, height: 160 }}
                     resizeMode="cover"
                 />
-            </View>
-
-
-            <View style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 18,
-                marginTop: 24,
-                paddingBottom: 12
-            }}>
-                <SpinLoading size={32} />
-                <Text style={{
-                    textAlign: "center",
-                    fontSize: 20,
-                    fontWeight: 700,
-                    color: Colors.principal.DEFAULT
-                }}>Work It</Text>
             </View>
         </SafeAreaView>
     )

@@ -5,7 +5,6 @@ import { CompanyItem } from "components/Search";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Company as CompanyType } from "@/types/Company";
 import { useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ResultsScreen() {
     const params = useLocalSearchParams()
@@ -13,7 +12,6 @@ export default function ResultsScreen() {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [companies, setCompanies] = useState<CompanyType[] | null>(null);
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,7 +38,7 @@ export default function ResultsScreen() {
             <ScrollView className="h-full flex-1">
                 <FlatList
                     scrollEnabled={false}
-                    data={companies}
+                    data={(companies)}
                     renderItem={({ item }) => <CompanyItem item={item} />}
                     contentContainerStyle={{
                         paddingHorizontal: 12,

@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { TextInputComponent } from 'components'
 import { companyRequest } from 'services/api/company.api';
@@ -6,8 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller, useForm } from 'react-hook-form';
 import { defaultRequestData, RequestData, requestDataResolver } from '@/types/Request/Request';
 import { router } from 'expo-router';
+import { Colors } from 'lib';
+import Checkbox from 'expo-checkbox';
 
 export default function Request() {
+    const [terms, setTerms] = useState<boolean>(false)
     const { control, handleSubmit } = useForm<RequestData>({
         resolver: requestDataResolver,
         defaultValues: defaultRequestData,
@@ -15,6 +18,10 @@ export default function Request() {
 
     const handleSave = async (data) => {
         try {
+            if (!terms) {
+                alert("Tienes que aceptar los terminos y condiciones para empresas.")
+                return
+            }
             await companyRequest(data).then(e => {
                 if (router.canGoBack()) router.back()
             })
@@ -22,6 +29,9 @@ export default function Request() {
             alert((e as Error).message)
         }
     }
+
+
+    const handleTerms = () => router.push('/service-provider-contract');
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -135,6 +145,22 @@ export default function Request() {
                                 )}
                             />
 
+                            <View style={styles.termsContainer}>
+                                <Checkbox
+                                    value={terms}
+                                    onValueChange={() => setTerms(!terms)}
+                                    color={Colors.principal.DEFAULT}
+                                />
+                                <View style={styles.termsTextContainer}>
+                                    <Text>Acepto los </Text>
+                                    <TouchableOpacity onPress={handleTerms}>
+                                        <Text style={styles.termsLink}>
+                                            Terminos y Condiciones
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
 
                             <TouchableOpacity
                                 onPress={handleSubmit(handleSave)}
@@ -153,3 +179,19 @@ export default function Request() {
     );
 }
 
+
+const styles = StyleSheet.create({
+    termsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    termsTextContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    termsLink: {
+        color: '#040048',
+        fontWeight: '600',
+    },
+})

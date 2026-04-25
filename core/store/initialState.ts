@@ -6,30 +6,26 @@ export const initialState: GlobalState = {
     socket: null,
     serverUp: true,
 
-    // socket reconnection
+    // Socket reconnection
     connectInFlight: false,
-    autoRetryCount: 0,
+    attempts: 0,          // ✅ un solo contador de reintentos
     autoRetryEnabled: true,
     retryTimer: null,
     socketStatus: "disconnected",
-    silentRetryCount: 0,
 
-    // user
+    // User
     token: null,
     user: null,
 
-    // customer
+    // Customer
     customer: null,
     orders: null,
+
+    // Messages
     chats: [],
+    activeRoom: null,
 
-    // messages
-    messagesList: [],
-    messagesNext: null,
-    messagesUser: null,
-    messagesRoom: null,
-
-    // company
+    // Company
     company: null,
     services: null,
     sales: null,

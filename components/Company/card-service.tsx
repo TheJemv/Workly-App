@@ -1,8 +1,9 @@
 import { Colors } from "lib";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Service as ServiceType } from "@/types/Service";
 import formatterUnit from "utils/fomatterUnit";
 import { router } from "expo-router";
+import { Image } from 'expo-image'
 
 type Props = {
    item: ServiceType;
@@ -21,10 +22,9 @@ const CardService = ({ item }: Props) => {
          <View className="flex flex-row space-x-3">
             <View className="flex items-center justify-center overflow-hidden w-[56px] h-[56px] rounded-[6px] bg-light/10">
                <Image
-                  className="w-full h-full cover"
-                  source={{
-                     uri: item.photo,
-                  }}
+                  className="w-full h-full"
+                  source={{ uri: item.photo }}
+                  contentFit="cover"
                />
             </View>
 

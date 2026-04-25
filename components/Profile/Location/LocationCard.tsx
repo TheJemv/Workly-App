@@ -1,11 +1,10 @@
-import { View, Text, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, Platform } from 'react-native'
 import React from 'react'
-import MapView, { Marker } from 'react-native-maps'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5"
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"
 import { Colors } from 'lib'
-import { delLocation } from 'services/api/location.api'
 
 interface Location {
     id: string
@@ -22,6 +21,7 @@ interface Location {
     state: string
     postalCode: string
 }
+
 interface Props {
     location: Location,
     deleteLocation: (location: string) => Promise<void>
@@ -46,15 +46,19 @@ export default function LocationCard({ location, deleteLocation }: Props) {
         <View className='flex-1 flex flex-col gap-4 shadow-lg' key={location.id}>
             <View style={{ gap: 8 }} className='flex flex-row bg-white rounded-lg overflow-hidden'>
                 <MapView
+                    provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
                     style={{ width: 130, height: 90 }}
                     region={{
-                        latitude: location.latitude,
-                        longitude: location.longitude,
+                        latitude: parseFloat(location.latitude as any),
+                        longitude: parseFloat(location.longitude as any),
                         latitudeDelta: 0.002,
                         longitudeDelta: 0.002,
                     }}
                 >
-                    <Marker coordinate={{ latitude: location.latitude, longitude: location.longitude }} pinColor={Colors.principal.DEFAULT} />
+                    <Marker coordinate={{
+                        latitude: parseFloat(location.latitude as any),
+                        longitude: parseFloat(location.longitude as any)
+                    }} />
                 </MapView>
 
                 <View className='py-[0.5] flex-1 flex flex-row '>
