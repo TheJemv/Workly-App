@@ -19,14 +19,14 @@ export default function OrdersLayout() {
                     headerShown: false,
                 }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
                 name="order"
                 options={{
                     title: "Detalles de la Orden",
                     headerShown: true,
                     headerLeft: () => <CustomBackButton />
                 }}
-            />
+            /> */}
         </Stack>
     );
 }

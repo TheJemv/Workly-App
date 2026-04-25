@@ -16,14 +16,9 @@ export const postBilling = async (token: string, data: {}) => {
    }
 };
 
-export const getBillings = async (token: string) => {
+export const getBillings = async () => {
    try {
-      const response: any = await apiClient.get("/billing", {
-         headers: {
-            Authorization: `Bearer ${token}`,
-         },
-      });
-
+      const response: any = await apiClient.get("/billing");
       return response.data;
    } catch (error) {
       throw new Error((error as Error).message);
@@ -41,6 +36,19 @@ export const delBilling = async (token: string, id: string) => {
          },
       });
 
+      return response.data;
+   } catch (error) {
+      throw new Error((error as Error).message);
+   }
+};
+
+export const patchBilling = async (id: string, data: {}) => {
+   try {
+      const response: any = await apiClient.patch("/billing", data, {
+         params: {
+            id,
+         },
+      });
       return response.data;
    } catch (error) {
       throw new Error((error as Error).message);

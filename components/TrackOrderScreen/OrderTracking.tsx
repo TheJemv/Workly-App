@@ -4,24 +4,26 @@ import { Colors } from "lib";
 import { Order } from "@/types/Order";
 import { StepTrack } from "components/TrackOrderScreen/step-track";
 import { getTrackingSteps } from "utils/orderHelpers";
+import OrderStatusEnum from "enum/OrderStatusEnum";
 
 type Props = {
     order: Order;
 };
 
-export function OrderTracking({ order }: Props): JSX.Element {
+export function OrderTracking({ order }: Props) {
     const steps = getTrackingSteps(order.status);
+    const isCancelled = order.status === OrderStatusEnum.CANCELLED;
 
     return (
         <View className="flex flex-col space-y-6 p-4">
             <View className="flex flex-row items-center justify-between space-x-3">
-                <Text className="text-sm text-dark font-semibold">
-                    Seguimiento de Orden
+                <Text className={`text-sm font-semibold ${isCancelled ? "text-red-500" : "text-dark"}`}>
+                    {isCancelled ? "Orden Cancelada" : "Seguimiento de Orden"}
                 </Text>
                 <FontAwesome
                     name="chevron-up"
                     size={16}
-                    color={Colors.principal.DEFAULT}
+                    color={isCancelled ? Colors.red : Colors.principal.DEFAULT}
                 />
             </View>
 
@@ -32,7 +34,9 @@ export function OrderTracking({ order }: Props): JSX.Element {
                         icon={step.icon}
                         title={step.title}
                         description={step.description}
-                        stepProcess={step.active}
+                        completed={step.completed}
+                        current={step.current}
+                        cancelled={step.cancelled}
                     />
                 ))}
             </View>

@@ -5,19 +5,18 @@ import {
     ScrollView,
     TouchableOpacity,
     StyleSheet,
-    Image,
     Alert,
     Platform
 } from 'react-native'
+import { Image } from "expo-image"
 import { TextInput } from "components/Profile/Billing/components/text-input"
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import useGlobal from 'core/globals'
 import { Service } from '@/types/Company'
 import { Colors } from 'lib'
 import { Controller, useForm } from 'react-hook-form'
 import { defaultServiceData, ServiceData, serviceDataResolver } from '@/types/Service/EditService.types'
-import { Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import RNFS from "react-native-fs";
 import SpinLoading from "components/SpinLoading";
@@ -26,6 +25,7 @@ import ServiceCategoryEnum from 'enum/ServiceCategoryEnum'
 import { MoneyTextInput } from '@alexzunik/react-native-money-input';
 import getChangedProperties from 'utils/CompareObjects'
 import { patchService } from 'services/api/services.api'
+import SaveButton from 'components/Header/SaveButton'
 
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -37,9 +37,10 @@ export default function EditService() {
     const service = services.data.find((s: Service) => s.id === params.id)
 
     const [hasChanges, setHasChanges] = useState(false);
-    const [currentImage, setCurrentImage] = useState(service?.photo);
+    const [currentImage, setCurrentImage] = useState<string>(service.photo);
     const [loadingImage, setLoadingImage] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const submitRef = useRef<() => void>(() => { })
 
     const { control, handleSubmit, reset, watch, setValue, getValues } = useForm<ServiceData>({
         resolver: serviceDataResolver,
@@ -135,10 +136,11 @@ export default function EditService() {
     /**
      * Maneja la actualización del servicio
      */
-    const handleUpdate = async (data: ServiceData) => {
+    const handleUpdate = useCallback(async (data: ServiceData) => {
         setIsSubmitting(true);
         try {
             const newData = getChangedProperties(service, data);
+            console.log(data)
             await patchService(service.id, newData).catch((e) => {
                 console.error("Error: ", e)
             });
@@ -147,35 +149,17 @@ export default function EditService() {
             }
         } catch (error) {
             console.error("Error al actualizar el servicio:", error);
-            Alert.alert(
-                "Error",
-                error?.message || "No se pudo actualizar el servicio. Intenta de nuevo."
-            );
+            Alert.alert("Error", error?.message || "No se pudo actualizar el servicio. Intenta de nuevo.");
         } finally {
             setIsSubmitting(false);
         }
-    };
+    }, [service]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerRight: () => hasChanges ? (
-                <TouchableOpacity
-                    className='flex ml-1.5'
-                    onPress={handleSubmit(handleUpdate)}
-                    disabled={isSubmitting}
-                    style={{ height: '100%' }}
-                >
-                    {isSubmitting ? (
-                        <SpinLoading size={24} color={Colors.principal.DEFAULT} />
-                    ) : (
-                        <Entypo
-                            color={Colors.principal.DEFAULT}
-                            name="save"
-                            size={24}
-                        />
-                    )}
-                </TouchableOpacity>
-            ) : null
+            headerRight: () => hasChanges
+                ? <SaveButton onPress={() => submitRef.current()} isSubmitting={isSubmitting} />
+                : null
         })
     }, [hasChanges, isSubmitting])
 
@@ -186,7 +170,7 @@ export default function EditService() {
                 <Image
                     source={require("assets/Empty/ServiceNotFound.png")}
                     style={{ width: 200, height: 200 }}
-                    resizeMode="contain"
+                    contentFit="contain"
                 />
                 <View className="mt-2">
                     <Text className="text-gray-800 text-xl font-semibold text-center mb-2">
@@ -199,6 +183,13 @@ export default function EditService() {
             </View>
         )
     }
+
+    useEffect(() => {
+        submitRef.current = handleSubmit(
+            handleUpdate,
+            (errors) => console.log('VALIDATION ERRORS:', JSON.stringify(errors, null, 2))
+        )
+    }, [handleSubmit, handleUpdate])
 
     return (
         <KeyboardAvoidingView
@@ -360,6 +351,37 @@ export default function EditService() {
                             )}
                         />
                     )}
+
+                    {/* ¿Solicitar ubicación? */}
+                    <View style={styles.inputWrapper}>
+                        <Controller
+                            control={control}
+                            name='requiresLocation'
+                            render={({ field }) => (
+                                <View>
+                                    <Text style={styles.textDropdown}>¿Solicitar ubicación?</Text>
+                                    <Dropdown
+                                        style={styles.dropdown}
+                                        selectedTextStyle={{ color: "#050505", fontSize: 14 }}
+                                        labelField="label"
+                                        valueField="value"
+                                        placeholder="¿Requiere ubicación?"
+                                        placeholderStyle={{ color: "#92929D", fontSize: 14 }}
+                                        itemContainerStyle={{ backgroundColor: Colors.white, borderRadius: 8 }}
+                                        containerStyle={{ borderRadius: 8, borderWidth: 1 }}
+                                        dropdownPosition="top"
+                                        data={[
+                                            { label: "No", value: false },
+                                            { label: "Sí", value: true },
+                                        ]}
+                                        value={field.value}
+                                        onChange={(item) => field.onChange(item.value)}
+                                    />
+                                </View>
+                            )}
+                        />
+                    </View>
+
 
                     {/* Categoría */}
                     <View style={styles.inputWrapper}>

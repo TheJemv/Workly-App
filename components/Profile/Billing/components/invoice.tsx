@@ -3,10 +3,11 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 import { ButtonOption } from "./button-option";
 import { DetailInfo } from "./detail-info";
-import { useNavigation } from "@react-navigation/native";
 import { delBilling } from "services/api/billing.api";
 import useGlobal from "core/globals";
 import { router } from "expo-router";
+
+import regimenes from "../../../../data/RegimenFiscales.json"
 
 const Invoice = ({ data }) => {
    const { token } = useGlobal();
@@ -44,7 +45,7 @@ const Invoice = ({ data }) => {
 
    return (
       <View className="flex flex-col space-y-5 bg-[#00000010] overflow-hidden rounded-lg">
-         <View className="flex flex-col space-y-5 px-3 py-3">
+         <View className="flex flex-col space-y-5 px-3 py-3 w-full">
             <View className="flex flex-row items-center space-x-3">
                <FontAwesome
                   name="user"
@@ -61,40 +62,36 @@ const Invoice = ({ data }) => {
                   size={20}
                   color={Colors.principal.DEFAULT}
                />
-               <View className="flex flex-col">
+               <View className="flex flex-row items-center space-x-3">
                   <DetailInfo title="RFC:">{data.rfc}</DetailInfo>
                </View>
             </View>
-            <View className="flex flex-row items-baseline space-x-3">
+
+            <View className="flex flex-row items-baseline space-x-3 w-full">
                <FontAwesome
                   name="home"
                   size={20}
                   color={Colors.principal.DEFAULT}
                />
-               <View className="flex flex-col">
+               <View className="flex flex-col flex-1">
                   <DetailInfo title="Calle:">{data.street}</DetailInfo>
-                  <DetailInfo title="Colonia o Fraccionamiento:">
-                     {data.division}
-                  </DetailInfo>
-                  <DetailInfo title="No. Exterior:">
-                     {data.number_ext}
-                  </DetailInfo>
-                  <DetailInfo title="No. Interior:">
-                     {data.number_int}
-                  </DetailInfo>
+                  <DetailInfo title="Colonia:">{data.division}</DetailInfo>
+                  <DetailInfo title="No. Exterior:">{data.number_ext}</DetailInfo>
+                  <DetailInfo title="No. Interior:">{data.number_int}</DetailInfo>
                   <DetailInfo title="C.P.">{data.cp}</DetailInfo>
                   <DetailInfo title="Pais:">{data.country}</DetailInfo>
                   <DetailInfo title="Estado:">{data.state}</DetailInfo>
                   <DetailInfo title="Ciudad:">{data.city}</DetailInfo>
                </View>
             </View>
+
             <View className="flex flex-row items-center space-x-3">
                <FontAwesome
                   name="phone"
                   size={20}
                   color={Colors.principal.DEFAULT}
                />
-               <View className="flex flex-col space-y-1">
+               <View className="flex flex-row items-center space-x-3">
                   <DetailInfo title="Tel.">{data.phone}</DetailInfo>
                </View>
             </View>
@@ -104,9 +101,9 @@ const Invoice = ({ data }) => {
                   size={20}
                   color={Colors.principal.DEFAULT}
                />
-               <View className="flex flex-col">
+               <View className="flex flex-row items-center space-x-3">
                   <DetailInfo title="Regimen fiscal:">
-                     {data.tax_regime}
+                     {regimenes[data.tax_regime]}
                   </DetailInfo>
                </View>
             </View>

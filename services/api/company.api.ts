@@ -80,9 +80,9 @@ export const companyRequest = async (data: RequestData) => {
 
 export const getByIdCompany = async (id: string) => {
    try {
-      const response = await apiClient.get("/company", {
+      const response = await apiClient.get("/company/company", {
          params: {
-            company: id,
+            id,
          },
       });
       return response.data;

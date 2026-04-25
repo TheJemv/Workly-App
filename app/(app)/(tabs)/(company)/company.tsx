@@ -1,7 +1,8 @@
-import { View, Text, ScrollView, Image, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useNavigation } from 'expo-router';
+
+import { Image } from 'expo-image'
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -12,10 +13,11 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Colors from "lib/Colors"
 import useGlobal from 'core/globals';
 
-import CardService from "components/MyCompany/card-service";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import TextSchedule from 'components/Schedule/TextSchedule';
 import { Day, DayName } from '@/types/Schedule';
+
+import CardService from "components/MyCompany/card-service";
+import TextSchedule from 'components/Schedule/TextSchedule';
 import DayView from 'components/Schedule/DayView';
 
 const daysArray: DayName[] = [
@@ -75,8 +77,14 @@ export default function Company() {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <TouchableOpacity onPress={handleEditPress}>
-                    <Entypo name="edit" size={20} color={Colors.principal.DEFAULT} />
+                <TouchableOpacity onPress={handleEditPress} style={{
+                    marginLeft: 7
+                }}>
+                    <Entypo
+                        name="edit"
+                        size={20}
+                        color={Colors.principal.DEFAULT}
+                    />
                 </TouchableOpacity>
             )
         })
@@ -104,9 +112,8 @@ export default function Company() {
                             >
                                 <Image
                                     className="w-full h-full"
-                                    source={{
-                                        uri: companyData?.profile?.photo,
-                                    }}
+                                    source={{ uri: companyData?.profile?.photo }}
+                                    contentFit="cover"
                                 />
                             </View>
                         </View>
@@ -222,7 +229,7 @@ export default function Company() {
                     <View className="px-2 flex-1 pt-4 pb-16" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
                         <View style={{ display: "flex", alignItems: "center", width: "100%", gap: 6 }}>
                             <Text className="text-2xl text-dark font-bold">Horarios de la empresa</Text>
-                            <Text className="text-text">{TextSchedule(companyData.businessHours, daysArray)}</Text>
+                            <Text className="text-text">{TextSchedule(companyData?.businessHours, daysArray)}</Text>
                         </View>
 
                         <View className="px-4 flex flex-col">

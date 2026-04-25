@@ -1,10 +1,18 @@
-import { DataDays, Day, DayName } from "@/types/Schedule";
-import timeToMinutes from "utils/TimeToMinuts";
+import { DataDays, Day, DayName } from "@/types/Schedule"
+import timeToMinutes from "utils/TimeToMinuts"
+
 const TextSchedule = (dataDays: DataDays[], daysArray: DayName[]) => {
     const date = new Date()
-    const currentDay = daysArray[date.getDay() - 1]
+
+    // (getDay() + 6) % 7 convierte el índice de JS al tuyo:
+    // Domingo (0) → 6, Lunes (1) → 0, Sábado (6) → 5
+    const dayIndex = (date.getDay() + 6) % 7
+    const currentDay = daysArray[dayIndex]
     const currentDaySchedule: Day = dataDays[currentDay]
-    const currentMinutes = date.getHours() * 60 + date.getMinutes();
+
+    if (!currentDaySchedule) return "Horario no disponible"
+
+    const currentMinutes = date.getHours() * 60 + date.getMinutes()
 
     if (currentDaySchedule.open === false) return "Cerrado"
     if (currentMinutes < timeToMinutes(currentDaySchedule.intervals.start)) return `Abre a las ${currentDaySchedule.intervals.start}`

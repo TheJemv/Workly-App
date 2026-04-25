@@ -20,7 +20,6 @@ export const getStreetName = async (
 ): Promise<ReverseGeocodeResult | null> => {
    try {
       const apiKey = GOOGLE_API_MAP;
-      console.log(apiKey)
       if (!apiKey) throw new Error("Falta GOOGLE_API_MAP");
 
       const url =

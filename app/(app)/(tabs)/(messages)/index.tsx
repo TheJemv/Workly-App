@@ -1,33 +1,40 @@
-import { FlatList, Image, ScrollView, Text, View } from 'react-native'
-import React from 'react'
+import { FlatList, Text, View, RefreshControl } from 'react-native'
+import { Image } from 'expo-image'
+import React, { useState, useCallback } from 'react'
 import useGlobal from 'core/globals'
 import ChatItem from 'components/ChatItem'
 import NotFoundScreen from 'components/NotFoundScreen'
 
-const SalesOrdersEmpty = require("assets/Empty/InboxEmpty.png")
 export default function MessagesIndex() {
     const chats = useGlobal(s => s.chats)
+    const getChats = useGlobal(s => s.getChats) // la función que recarga los chats
+    const [refreshing, setRefreshing] = useState(false)
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true)
+        await getChats()
+        setRefreshing(false)
+    }, [getChats])
 
     if (!chats) return <NotFoundScreen />
+
     return chats.length !== 0 ? (
-        <ScrollView className='flex-1'>
-            <FlatList
-                data={chats}
-                scrollEnabled={false}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => <ChatItem data={item} />}
-            />
-        </ScrollView>
+        <FlatList
+            className='flex-1'
+            data={chats}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => <ChatItem data={item} />}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        />
     ) : (
         <View className='flex-1 items-center justify-center px-6'>
-            <View>
-                <Image
-                    source={SalesOrdersEmpty}
-                    style={{ width: 200, height: 200 }}
-                    resizeMode='contain'
-                />
-            </View>
-
+            <Image
+                source={require("assets/Empty/InboxEmpty.png")}
+                style={{ width: 200, height: 200 }}
+                contentFit='contain'
+            />
             <View className="mt-8">
                 <Text className="text-gray-800 text-xl font-semibold text-center mb-1">
                     Espera tu primer mensaje.

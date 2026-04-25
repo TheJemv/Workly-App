@@ -27,6 +27,14 @@ import apiClient from "./apiClient";
 // };
 
 
+export const getOrder = async (id: string) => {
+   try {
+      const response = await apiClient.post(`/orders/${id}`);
+      return response.data;
+   } catch (error) {
+      throw new Error((error as Error).message);
+   }
+}
 
 
 // Orders
@@ -51,16 +59,6 @@ export const modifyDeliveryDate = async (id: string, newDeliveryDate: string) =>
       throw new Error((error as Error).message);
    }
 };
-
-// Historial de Ordenes
-export const ordersHistory = async () => {
-   try {
-      const response = await apiClient.get("/orders/history")
-      return response.data
-   } catch (error) {
-      throw new Error((error as Error).message);
-   }
-}
 
 // ===== CLIENTE: Aprueba cambio de fecha =====
 export const approveDateChange = async (id: string) => {
@@ -95,9 +93,22 @@ export const confirmDelivery = async (id: string) => {
 // ===== AMBOS: Cancela orden =====
 export const cancelOrder = async (id: string) => {
    try {
-      const response = await apiClient.post(`/orders/cancel/${id}`);
+      const response = await apiClient.post(`/orders/cancel-order/${id}`);
+      return response.data;
+   } catch (error) {
+      console.error(error)
+      throw new Error((error as Error).message);
+   }
+};
+
+// Historial de Ordenes
+export const ordersHistory = async (page: number = 1, limit: number = 10) => {
+   try {
+      const response = await apiClient.get("/orders/history", {
+         params: { page, limit }
+      });
       return response.data;
    } catch (error) {
       throw new Error((error as Error).message);
    }
-};
+}

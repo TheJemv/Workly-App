@@ -60,10 +60,8 @@ target 'Workly' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
-
-    # Solo aplica a pods de Firebase/RNFB, no a todos
     installer.pods_project.targets.each do |target|
-      if target.name.start_with?('RNFB', 'Firebase', 'RNFire')
+      if target.name.start_with?('RNFB', 'RNFire')
         target.build_configurations.each do |config|
           config.build_settings['DEFINES_MODULE'] = 'NO'
         end

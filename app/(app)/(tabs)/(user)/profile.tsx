@@ -5,11 +5,10 @@ import {
     Alert,
     Text,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SpinLoading, TextInputUser, ThumnailEdit } from "components";
 import { Colors } from "lib";
-import { getStreetName } from "services/api/google.api";
 import { Entypo } from "@expo/vector-icons";
 import useGlobal from "core/globals";
 import isEqual from "lodash/isEqual";
@@ -17,10 +16,31 @@ import getChangedProperties from "utils/CompareObjects";
 import { updatedCustomer } from "services/api/customer.api";
 
 import DatePicker from "react-native-date-picker"
+import { router } from "expo-router";
+import { AuthContext } from "context/AuthContext";
+
+const formatMXPhoneReverse = (phone: string) => {
+    if (!phone) return phone;
+
+    const cleaned = phone.replace(/\D/g, "");
+
+    // Esperamos formato 52 + 10 dígitos
+    if (cleaned.length < 12) return phone;
+
+    const country = cleaned.slice(0, 2);
+    const number = cleaned.slice(2);
+
+    const last4 = number.slice(-4);
+    const mid3 = number.slice(-7, -4);
+    const first3 = number.slice(0, -7);
+
+    return `+${country} ${first3} ${mid3} ${last4}`;
+};
 
 const Profile = () => {
     // Globals Variables
     const customer = useGlobal((state) => state.customer);
+    const { user } = useContext(AuthContext)
 
     // Variables
     const navigation = useNavigation();
@@ -29,11 +49,6 @@ const Profile = () => {
     const [loading, setLoading] = useState(false);
     const [thumbnail, setThumbnail] = useState(customer?.profile?.photo || null);
     const [valueDataEdit, setValueDataEdit] = useState(customer);
-    const [markerCoordinate, setMarkerCoordinate] = useState({
-        latitude: customer?.address?.latitude || 0,
-        longitude: customer?.address?.longitude || 0,
-    });
-    const [markerDirection, setMarkerDirection] = useState(null);
 
     // Nuevo estado para el DatePicker
     const [openDatePicker, setOpenDatePicker] = useState(false);
@@ -96,27 +111,6 @@ const Profile = () => {
         });
     }, [navigation, valueDataEdit, customer, loading]);
 
-    useEffect(() => {
-        const updateAddress = async () => {
-            if (!markerCoordinate.latitude && !markerCoordinate.longitude) return;
-
-            handleValue("address.latitude", markerCoordinate.latitude);
-            handleValue("address.longitude", markerCoordinate.longitude);
-            await getStreetName(
-                markerCoordinate.latitude,
-                markerCoordinate.longitude,
-            )
-                .then((res) => {
-                    setMarkerDirection(res);
-                })
-                .catch((e) => {
-                    Alert.alert("Error", "Error al obtener la ubicacion...");
-                });
-        };
-
-        updateAddress();
-    }, [markerCoordinate, markerDirection]);
-
     // Return
     return loading ? (
         <View
@@ -149,12 +143,23 @@ const Profile = () => {
                         value={valueDataEdit?.profile?.lastName || ""}
                         setValue={(e) => handleValue("profile.lastName", e)}
                     />
-                    <TextInputUser
+                    {/* <TextInputUser
                         label="Telefono"
                         placeholder="telefono"
                         value={valueDataEdit?.profile?.phone || ""}
                         setValue={(e) => handleValue("profile.phone", e)}
-                    />
+                    /> */}
+
+                    <View className="flex flex-col" style={{ gap: 4 }}>
+                        <Text style={{
+                            color: Colors.principal.DEFAULT,
+                            fontSize: 14,
+                            fontWeight: 700,
+                        }}>Telefono</Text>
+                        <TouchableOpacity className="py-2 px-2 rounded-lg border border-dark/10" onPress={() => router.push("/verify-phone")}>
+                            <Text style={{ color: user.phoneNumber ? "#000000" : "#92929D" }}>{formatMXPhoneReverse(user.phoneNumber ? user.phoneNumber : "+520000000000")}</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     {/* Campo de fecha de nacimiento con DatePicker */}
                     <View className="flex flex-col" style={{ gap: 4 }}>

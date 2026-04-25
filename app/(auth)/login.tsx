@@ -16,10 +16,11 @@ import {
     ContainerBack,
     SpinLoading,
     TextInputComponent,
-    LoginFacebook,
-    LoginGoogle
 } from 'components';
 import { Singin } from 'services/firebase/Singin';
+
+import LoginApple from 'auth/buttons/LoginApple';
+import LoginGoogle from 'auth/buttons/LoginGoogle';
 
 
 const LoginScreen = () => {
@@ -28,14 +29,13 @@ const LoginScreen = () => {
     const [user, setUser] = useState({ email: '', password: '' });
 
     const handleRegister = () => router.push('/register');
-
     const handleLoginUser = async () => {
         setLoading(true);
         await Singin(user).catch(e => {
-            Alert.alert("Error", e.message);
+            Alert.alert("Error", e.message); // 👈 "Correo o contraseña incorrectos."
         }).finally(() => {
-            setLoading(false);
-        });
+            setLoading(false)
+        })
     };
 
     const handleInput = (key, value) => {
@@ -76,7 +76,7 @@ const LoginScreen = () => {
                         autoComplete="password"
                     />
 
-                    <TouchableOpacity style={styles.forgotPassword}>
+                    <TouchableOpacity style={styles.forgotPassword} onPress={() => router.push("/forgot-password")}>
                         <Text style={styles.forgotPasswordText}>
                             Olvidaste la contraseña?
                         </Text>
@@ -106,7 +106,8 @@ const LoginScreen = () => {
 
                 <View style={styles.socialMedia}>
                     <LoginGoogle />
-                    <LoginFacebook />
+                    <LoginApple />
+                    {/* <LoginFacebook /> */}
                 </View>
             </View>
 

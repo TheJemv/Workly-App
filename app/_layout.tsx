@@ -1,58 +1,42 @@
-import { useContext, useEffect, useRef, useState } from 'react';
-import { AppState, View, StyleSheet } from 'react-native';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { useContext, useEffect, useState } from 'react';
+import { View, StyleSheet, AppRegistry } from 'react-native';
+import { Stack } from 'expo-router';
+import { Asset, useAssets } from 'expo-asset';
 import { StripeProvider } from "@stripe/stripe-react-native";
-import { AuthProvider, AuthContext } from "../context/AuthContext";
-import useGlobal from "../core/globals";
-import { Background, Connecting, Disconnected } from "../components/Auth";
+import { AuthProvider, AuthContext } from "context/AuthContext";
+import useGlobal from "core/globals";
+import { Connecting, Disconnected } from "../components/Auth";
 import { PUBLISHABLE_KEY } from "@env";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { usePushTokenSync } from 'services/auth/notifications';
+import { LogBox } from 'react-native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { HomeServicesData } from '@data/index';
 
-const SwitchAuth = () => {
-    const router = useRouter();
-    const segments = useSegments();
-    const { token, loading } = useContext(AuthContext);
+AppRegistry.registerHeadlessTask('StripeKeepJsAwakeTask', () => async () => { });
+LogBox.ignoreLogs(['SafeAreaView has been deprecated'])
 
-    const socketStatus = useGlobal((s) => s.socketStatus);
-    const onAppForeground = useGlobal((s) => s.onAppForeground);
+GoogleSignin.configure({
+    webClientId: "642547837410-p4il9usad2705bbhf6c9g97ib1109d6d.apps.googleusercontent.com",
+    iosClientId: "642547837410-nhneruejr597j58c6p1v94bfunsivv0o.apps.googleusercontent.com",
+});
 
-    const [appState, setAppState] = useState(AppState.currentState);
-    const appStateRef = useRef(AppState.currentState);
+const iconAssets = HomeServicesData.map((item) => item.Icon);
 
-    useEffect(() => {
-        const sub = AppState.addEventListener("change", (nextAppState) => {
-            const previousAppState = appStateRef.current;
-            appStateRef.current = nextAppState;
-            setAppState(nextAppState);
-            if (
-                nextAppState === "active" &&
-                (previousAppState === "background" || previousAppState === "inactive")
-            ) {
-                console.log("📱 App volvió a foreground, reconectando...");
-                onAppForeground();
-            }
-        });
-        return () => sub.remove();
-    }, [onAppForeground]);
+const SwitchAuth = ({ children }: { children: React.ReactNode }) => {
+    usePushTokenSync();
+    const { token, loading, customer } = useContext(AuthContext)!;
+    const socketStatus = useGlobal((s) => s.socketStatus);  // ← sin onAppForeground
 
-    // Navegación basada en auth
-    useEffect(() => {
-        if (!loading) return; // Esperar a que auth esté lista
-        const inAuthGroup = segments[0] === '(auth)';
-        const inAppGroup = segments[0] === '(app)';
-        if (!token && !inAuthGroup) {
-            router.replace('/(auth)');
-        } else if (token && socketStatus === "connected" && !inAppGroup) {
-            router.replace('/(app)/(home)');
-        }
-    }, [token, loading, socketStatus, segments]);
 
-    // Determinar qué mostrar
+    const [assetsLoaded] = useAssets([
+        require('assets/adaptive-icon.png'),
+        ...iconAssets,
+    ])
+
     let showOverlay = null;
-    if (appState === "background" || appState === "inactive") {
-        showOverlay = <Background />;
-    } else if (!loading) {
+    if (loading || (token && !customer) || !assetsLoaded) {
         showOverlay = <Connecting />;
     } else if (token && socketStatus === "disconnected") {
         showOverlay = <Disconnected />;
@@ -61,33 +45,40 @@ const SwitchAuth = () => {
     }
 
     return (
-        <>
-            <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Protected guard={!token && socketStatus == "disconnected"}>
-                    <Stack.Screen options={{ animation: "none" }} name="(auth)" />
-                </Stack.Protected>
-
-                <Stack.Protected guard={!!token && socketStatus == "connected"}>
-                    <Stack.Screen options={{ animation: "none" }} name="(app)" />
-                </Stack.Protected>
-            </Stack>
-
-            {showOverlay && (
-                <View style={StyleSheet.absoluteFill}>
-                    {showOverlay}
-                </View>
-            )}
-        </>
+        showOverlay ? (
+            <View style={StyleSheet.absoluteFill}>
+                {showOverlay}
+            </View>
+        ) : children
     );
 };
 
+
+
 function RootLayout() {
+    const [assetsReady, setAssetsReady] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let mounted = true;
+        Promise.all([
+            Asset.fromModule(require('assets/LoginImage.jpg')).downloadAsync(),
+            Asset.fromModule(require('assets/BackgroundHome.jpg')).downloadAsync(),
+        ]).finally(() => mounted && setAssetsReady(true));
+        return () => { mounted = false; };
+    }, []);
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <BottomSheetModalProvider>
-                <StripeProvider publishableKey={PUBLISHABLE_KEY}>
+                <StripeProvider publishableKey={PUBLISHABLE_KEY} merchantIdentifier='merchant.com.workly.services' urlScheme="workly">
                     <AuthProvider>
-                        <SwitchAuth />
+                        <SwitchAuth>
+                            <Stack screenOptions={{ headerShown: false }} initialRouteName='(app)'>
+                                <Stack.Screen options={{ animation: "none" }} name='(app)' />
+                                <Stack.Screen options={{ animation: "none" }} name='(auth)' />
+                            </Stack>
+                        </SwitchAuth>
                     </AuthProvider>
                 </StripeProvider>
             </BottomSheetModalProvider>

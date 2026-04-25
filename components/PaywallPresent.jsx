@@ -136,10 +136,9 @@ const PaywallPresent = () => {
                </Text>
 
                <Text className="text-text mt-2 flex-1">
-                  Al convertirte en nuestro socio accedes a herramientas
-                  avanzadas, soporte prioritario y funciones diseñadas para
-                  ahorrar tiempo, aumentar tu productividad y escalar tu negocio
-                  con inteligencia.
+                  Únete a Workly y lleva tu negocio al siguiente nivel.
+                  Digitaliza tus servicios, gestiona tus pedidos y
+                  conecta con miles de clientes desde un solo lugar.
                </Text>
             </View>
          ) : !ready ? (
@@ -148,10 +147,9 @@ const PaywallPresent = () => {
                   Conviertete en nuestro Socio
                </Text>
                <Text className="text-text mt-2 flex-1">
-                  Al convertirte en nuestro socio desbloqueas beneficios
-                  exclusivos, soporte prioritario y funcionalidades que te
-                  permiten optimizar tu tiempo, mejorar tus resultados y hacer
-                  crecer tu negocio de manera inteligente.
+                  Únete a Workly y lleva tu negocio al siguiente nivel.
+                  Digitaliza tus servicios, gestiona tus pedidos y
+                  conecta con miles de clientes desde un solo lugar.
                </Text>
 
                <TouchableOpacity

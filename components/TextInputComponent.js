@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-   StyleSheet,
-   Text,
-   View,
-   TextInput,
-   TouchableOpacity,
-} from 'react-native';
-
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 
 const TextInputComponent = ({
@@ -16,49 +9,49 @@ const TextInputComponent = ({
    autoComplete = '',
    keyboardType = '',
    hide = false,
+   label = '',           // 👈
+   autoCapitalize = 'none', // 👈
 }) => {
    const [viewPassword, setViewPassword] = useState(true);
+
    return (
-      <View style={styles.container}>
-         <View
-            style={{
-               display: 'flex',
-               flexDirection: 'row',
-            }}
-         >
-            <TextInput
-               keyboardType={keyboardType}
-               autoCapitalize="none"
-               autoComplete={autoComplete}
-               placeholder={placeholder}
-               style={styles.input}
-               value={value}
-               onChangeText={onChangeText}
-               secureTextEntry={hide && viewPassword}
-            />
-            {hide && (
-               <TouchableOpacity onPress={() => setViewPassword(!viewPassword)}>
-                  {viewPassword ? (
+      <View>
+         {label ? <Text style={styles.label}>{label}</Text> : null}
+         <View style={styles.container}>
+            <View style={{ flexDirection: 'row' }}>
+               <TextInput
+                  keyboardType={keyboardType}
+                  autoCapitalize={autoCapitalize}
+                  autoComplete={autoComplete}
+                  placeholder={placeholder}
+                  style={styles.input}
+                  value={value}
+                  onChangeText={onChangeText}
+                  secureTextEntry={hide && viewPassword}
+               />
+               {hide && (
+                  <TouchableOpacity onPress={() => setViewPassword(!viewPassword)}>
                      <Feather
                         size={18}
                         style={{ marginVertical: 'auto' }}
-                        name="eye-off"
+                        name={viewPassword ? 'eye-off' : 'eye'}
                      />
-                  ) : (
-                     <Feather
-                        size={18}
-                        style={{ marginVertical: 'auto' }}
-                        name="eye"
-                     />
-                  )}
-               </TouchableOpacity>
-            )}
+                  </TouchableOpacity>
+               )}
+            </View>
          </View>
       </View>
    );
 };
 
 const styles = StyleSheet.create({
+   label: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: '#1E232C',
+      marginBottom: 4,
+      marginLeft: 2,
+   },
    input: {
       paddingVertical: 8,
       flex: 1,

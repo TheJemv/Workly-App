@@ -1,4 +1,5 @@
 import OrderStatusEnum from "enum/OrderStatusEnum";
+import { Location } from "@/types/Location";
 
 export default interface Order {
     numberOrder: number;
@@ -19,4 +20,6 @@ export default interface Order {
 
     notes: string;
     dateRequest: string;
+
+    location?: Location
 };

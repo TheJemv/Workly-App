@@ -6,12 +6,9 @@ import { getServices } from "services/api/services.api";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
+import { ServiceType as Service } from "components/Home/ServicesTrending/types";
 
-type Service = {
-    id: string;
-    // agrega aquí lo que uses en ServiceItem si quieres tipado fuerte
-    [key: string]: any;
-};
+
 
 type ListItem = Service | { _type: "empty"; id: string };
 
@@ -39,18 +36,12 @@ export default function ServicesCategory() {
 
     const fetchData = useCallback(async () => {
         try {
-            if (!token) return;
-
             setLoading(true);
-
-            const res = await getServices(token, nameParam);
+            const res = await getServices(nameParam);
             const list: ListItem[] = (res?.services ?? []) as Service[];
-
-            // si es impar, agregamos un item vacío para completar el grid
             if (list.length % 2 !== 0) {
                 list.push({ _type: "empty", id: "empty-0" });
             }
-
             setServices(list);
         } catch (error: any) {
             Alert.alert("Error", error?.message ?? "Ocurrió un error al cargar los servicios.");
@@ -101,7 +92,6 @@ export default function ServicesCategory() {
                     </View>
                 )
             }
-            // opcional: mejora performance si hay muchos items
             initialNumToRender={8}
             windowSize={7}
             removeClippedSubviews

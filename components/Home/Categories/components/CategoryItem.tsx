@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Image, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, Image } from "react-native";
 
 const CategoryItem = ({ item }: { item: any }) => {
    const handleCategory = () => {
@@ -42,6 +42,7 @@ const CategoryItem = ({ item }: { item: any }) => {
                width: 110,
                height: 38,
             }}
+            fadeDuration={0}
          />
          <Text numberOfLines={1} className="capitalize text-text">
             {item.label}

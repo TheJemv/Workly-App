@@ -13,7 +13,7 @@ const SalesOrdersEmpty = require("assets/Empty/SalesEmpty.png")
 export default function SalesPage() {
     const handleSale = (data) => {
         router.push({
-            pathname: "/(orders)/order",
+            pathname: "/(app)/order",
             params: {
                 ...data
             }

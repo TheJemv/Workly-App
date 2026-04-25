@@ -50,20 +50,22 @@ export default function TimePickerModal({
                     <View style={styles.pickersRow}>
                         {/* Hora */}
                         <View style={styles.pickerColumn}>
-                            <Picker
-                                selectedValue={selectedHour}
-                                onValueChange={onHourChange}
-                                style={styles.picker}
-                                itemStyle={styles.pickerItem}
-                            >
-                                {hours.map((hour) => (
-                                    <Picker.Item
-                                        key={hour}
-                                        label={hour.toString()}
-                                        value={hour}
-                                    />
-                                ))}
-                            </Picker>
+                            {hours.length > 0 && (
+                                <Picker
+                                    selectedValue={selectedHour}
+                                    onValueChange={onHourChange}
+                                    style={styles.picker}
+                                    itemStyle={styles.pickerItem}
+                                >
+                                    {hours.map((hour) => (
+                                        <Picker.Item
+                                            key={hour}
+                                            label={hour.toString()}
+                                            value={hour}
+                                        />
+                                    ))}
+                                </Picker>
+                            )}
                         </View>
 
                         {/* Minutos */}

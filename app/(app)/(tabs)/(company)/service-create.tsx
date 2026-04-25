@@ -26,8 +26,6 @@ import { MoneyTextInput } from '@alexzunik/react-native-money-input';
 import { setService } from 'services/api/services.api'
 import LoadingScreen from 'components/LoadingScreen'
 
-
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 export default function ServiceCreate() {
     const navigation = useNavigation()
@@ -112,7 +110,7 @@ export default function ServiceCreate() {
         try {
             setIsSubmitting(true)
             await setService(data)
-            await companyReload()
+            companyReload()
             if (router.canGoBack()) {
                 router.back()
             }
@@ -238,7 +236,7 @@ export default function ServiceCreate() {
                         <Controller
                             control={control}
                             name='indefinite'
-                            render={({ field, fieldState }) => (
+                            render={({ field }) => (
                                 <View>
                                     <Text style={styles.textDropdown}>Precio Fijo</Text>
                                     <Dropdown
@@ -275,6 +273,35 @@ export default function ServiceCreate() {
                         />
                     </View>
 
+                    {/* ¿Solicitar ubicación? */}
+                    <View style={styles.inputWrapper}>
+                        <Controller
+                            control={control}
+                            name='requiresLocation'
+                            render={({ field }) => (
+                                <View>
+                                    <Text style={styles.textDropdown}>¿Solicitar ubicación?</Text>
+                                    <Dropdown
+                                        style={styles.dropdown}
+                                        selectedTextStyle={{ color: "#050505", fontSize: 14 }}
+                                        labelField="label"
+                                        valueField="value"
+                                        placeholder="¿Requiere ubicación?"
+                                        placeholderStyle={{ color: "#92929D", fontSize: 14 }}
+                                        itemContainerStyle={{ backgroundColor: Colors.white, borderRadius: 8 }}
+                                        containerStyle={{ borderRadius: 8, borderWidth: 1 }}
+                                        dropdownPosition="top"
+                                        data={[
+                                            { label: "No", value: false },
+                                            { label: "Sí", value: true },
+                                        ]}
+                                        value={field.value}
+                                        onChange={(item) => field.onChange(item.value)}
+                                    />
+                                </View>
+                            )}
+                        />
+                    </View>
 
                     {/* Precio con formato */}
                     {!getValues().indefinite && (

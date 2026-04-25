@@ -1,19 +1,19 @@
 import React from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { Stack } from 'expo-router'
-import CustomBackButton from 'components/Header/CustomBackButton'
+import { Colors } from 'lib'
 
 export default function LayoutMessages() {
     return (
         <React.Fragment>
             <StatusBar style='auto' />
-
             <Stack
                 screenOptions={{
                     headerShadowVisible: false,
                     headerStyle: {
                         backgroundColor: "transparent",
                     },
+                    headerTintColor: Colors.principal.DEFAULT
                 }}
             >
                 <Stack.Screen name='index'

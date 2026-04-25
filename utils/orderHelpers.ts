@@ -2,14 +2,16 @@ import { Order } from "../../types";
 import OrderStatusEnum from "enum/OrderStatusEnum";
 
 export function getOrderFromState(
-    paramOrder: Order,
+    paramOrder: any, // params de expo-router
     orders: any,
     sales: any
 ): Order {
-    if (orders?.data?.find((o: Order) => o.id === paramOrder.id)) {
-        return orders.data.find((o: Order) => o.id === paramOrder.id);
-    } else if (sales?.data?.find((o: Order) => o.id === paramOrder.id)) {
-        return sales.data.find((o: Order) => o.id === paramOrder.id);
+    const id = paramOrder?.orderId ?? paramOrder?.id  // ✅ soporta ambos
+
+    if (orders?.data?.find((o: Order) => o.id === id)) {
+        return orders.data.find((o: Order) => o.id === id);
+    } else if (sales?.data?.find((o: Order) => o.id === id)) {
+        return sales.data.find((o: Order) => o.id === id);
     }
     return paramOrder;
 }
@@ -20,21 +22,19 @@ export function canConfirmDelivery(deliveryDate: string): boolean {
     return now >= minConfirmTime;
 }
 export function getTrackingSteps(status: OrderStatusEnum) {
+    const isCancelled = status === OrderStatusEnum.CANCELLED;
+
     const steps = [
         {
-            icon: "file-text",
+            icon: "file-text" as const,
             title: "Pedido Realizado",
             description: "El pedido ha sido creado",
-            active: [
-                OrderStatusEnum.PENDING,
-                OrderStatusEnum.DATE_MODIFIED,
-                OrderStatusEnum.CONFIRMED,
-                OrderStatusEnum.DELIVERED,
-                OrderStatusEnum.CANCELLED,
-            ].includes(status),
+            completed: true,
+            current: !isCancelled && status === OrderStatusEnum.PENDING, // 👈 no marcar como current si está cancelado
+            cancelled: false,
         },
         {
-            icon: "clock-o",
+            icon: "clock-o" as const,
             title: "Esperando Confirmación",
             description:
                 status === OrderStatusEnum.PENDING
@@ -42,38 +42,45 @@ export function getTrackingSteps(status: OrderStatusEnum) {
                     : status === OrderStatusEnum.DATE_MODIFIED
                         ? "Cliente revisando nueva fecha"
                         : "Confirmado",
-            active: [
-                OrderStatusEnum.PENDING,
-                OrderStatusEnum.DATE_MODIFIED,
+            completed: [
                 OrderStatusEnum.CONFIRMED,
                 OrderStatusEnum.DELIVERED,
             ].includes(status),
+            current: [OrderStatusEnum.PENDING, OrderStatusEnum.DATE_MODIFIED].includes(status),
+            cancelled: false,
         },
         {
-            icon: "check-circle",
+            icon: "check-circle" as const,
             title: "Pedido Confirmado",
             description: "Ambas partes están de acuerdo",
-            active: [
-                OrderStatusEnum.CONFIRMED,
-                OrderStatusEnum.DELIVERED,
-            ].includes(status),
+            completed: status === OrderStatusEnum.DELIVERED,
+            current: status === OrderStatusEnum.CONFIRMED,
+            cancelled: false,
         },
     ];
-    // Agregar paso final según el estado
-    if (status === OrderStatusEnum.CANCELLED) {
-        steps.push({
-            icon: "times-circle",
-            title: "Pedido Cancelado",
-            description: "El pedido ha sido cancelado",
-            active: true,
-        });
+
+    if (isCancelled) {
+        return [
+            steps[0], // solo "Pedido Realizado"
+            {
+                icon: "times" as const,
+                title: "Pedido Cancelado",
+                description: "El pedido ha sido cancelado",
+                completed: false,
+                current: false,
+                cancelled: true,
+            }
+        ];
     } else {
         steps.push({
-            icon: "check",
+            icon: "check" as const,
             title: "Pedido Entregado",
             description: "El pedido ha sido completado",
-            active: status === OrderStatusEnum.DELIVERED,
+            completed: status === OrderStatusEnum.DELIVERED,
+            current: status === OrderStatusEnum.DELIVERED,
+            cancelled: false,
         });
     }
+
     return steps;
 }

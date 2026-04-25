@@ -46,13 +46,9 @@ export const patchService = async (id: string, obj: object) => {
    }
 };
 
-export const getServices = async (token: string, category: string) => {
+export const getServices = async (category: string) => {
    try {
-      const response = await apiClient.get(`/service?category=${category}`, {
-         headers: {
-            Authorization: `Bearer ${token}`,
-         },
-      });
+      const response = await apiClient.get(`/service?category=${category}`);
 
       return response.data;
    } catch (error) {
@@ -60,12 +56,12 @@ export const getServices = async (token: string, category: string) => {
    }
 };
 
-export const getService = async (token: string, id: string) => {
+export const getService = async (id: string) => {
    try {
-      const response = await apiClient.get(`/service/${id}`, {
-         headers: {
-            Authorization: `Bearer ${token}`,
-         },
+      const response = await apiClient.get(`/service/service`, {
+         params: {
+            id
+         }
       });
 
       return response.data;

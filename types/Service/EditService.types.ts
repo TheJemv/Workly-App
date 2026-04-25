@@ -12,4 +12,6 @@ export const defaultServiceData: ServiceData = {
     category: "",
     indefinite: false,
     unit_amount: 5000,
+    requiresLocation: false,
+    photo: ""
 }

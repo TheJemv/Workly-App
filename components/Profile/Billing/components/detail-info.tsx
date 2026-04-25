@@ -5,18 +5,17 @@ type Props = {
    title?: string;
    children?: ReactNode;
 };
-export function DetailInfo({ title, children }: Props): JSX.Element {
+
+export function DetailInfo({ title, children }: Props) {
    return (
-      <View className="flex flex-row items-center space-x-1 py-0.5">
-         <Text
-            style={{ fontWeight: 600 }}
-            className="text-base text-primary font-semibold"
-         >
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 2, flex: 1 }}>
+         <Text style={{ fontWeight: '600', fontSize: 16, color: '#364670' }}>
             {title}
          </Text>
          <Text
-            style={{ fontWeight: 400 }}
-            className="text-base text-text font-medium"
+            style={{ fontWeight: '400', fontSize: 16, flex: 1, marginLeft: 4 }}
+            numberOfLines={1}
+            ellipsizeMode="tail"
          >
             {children}
          </Text>

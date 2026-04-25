@@ -1,5 +1,4 @@
 import {
-    ScrollView,
     View,
     Linking,
     Alert,
@@ -7,6 +6,7 @@ import {
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 import { ButtonLink } from "components/Profile/Support";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function Support() {
     const handleSendEmail = async (): Promise<void> => {

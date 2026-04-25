@@ -8,22 +8,22 @@ import {
     Image
 } from "react-native";
 import { Colors } from "lib";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import Invoice from "components/Profile/Billing/components/invoice";
 import { getBillings } from "services/api/billing.api";
 import useGlobal from "core/globals";
-import { router, useNavigation } from "expo-router";
+import { router, useFocusEffect, useNavigation } from "expo-router";
 import Feather from "@expo/vector-icons/Feather"
 import { LoadingScreen } from "components/Home";
 
 export default function Billing() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { token } = useGlobal();
     const navigation = useNavigation()
 
-    useEffect(() => {
-        getBillings(token)
+    const fetchBillings = useCallback(() => {
+        setLoading(true)
+        getBillings()
             .then((data) => {
                 setData(data.data);
             })
@@ -33,8 +33,9 @@ export default function Billing() {
             .finally(() => {
                 setLoading(false);
             });
-    }, []);
+    }, [])
 
+    useFocusEffect(fetchBillings)
     useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (

@@ -3,6 +3,7 @@ import { initialState } from "./store/initialState";
 import { createSocketHandlers } from "./store/socketHandlers";
 import { createAuthHandlers } from "./store/authHandlers";
 import { GlobalStore } from "./store/types";
+import MessageType from "enum/MessageType";
 
 const useGlobal = create<GlobalStore>((set, get) => ({
     ...initialState,
@@ -14,7 +15,7 @@ const useGlobal = create<GlobalStore>((set, get) => ({
     ...createSocketHandlers(set, get),
 
     // API Handlers (inline)
-    sendMessage: (room: string, message: string) => {
+    sendMessage: (room: string, message: string, temp: string | null, type = MessageType.TEXT) => {
         const { socket } = get();
         if (!socket) {
             console.warn("[API] No hay socket conectado");
@@ -26,37 +27,23 @@ const useGlobal = create<GlobalStore>((set, get) => ({
                 source: "message.send",
                 room,
                 message,
+                tempId: temp,
+                type
             })
         );
     },
 
     messageList: (room: string, page: number = 0) => {
-        if (page === 0) {
-            set({
-                messagesList: [],
-                messagesNext: null,
-                messagesUser: null,
-                messagesRoom: null,
-            });
-        } else {
-            set({
-                messagesNext: null,
-            });
-        }
-
-        const { socket } = get();
-        if (!socket) {
-            console.warn("[API] No hay socket conectado");
+        const { socket, chats } = get();
+        const chat = chats.find(c => c.id === room);
+        if (page === 0 && chat?.messagesLoaded) {
+            set({ activeRoom: room });
             return;
         }
 
-        socket.send(
-            JSON.stringify({
-                source: "message.list",
-                room,
-                page,
-            })
-        );
+        set({ activeRoom: room });
+        if (!socket) return;
+        socket.send(JSON.stringify({ source: "message.list", room, page }));
     },
 
     companyReload: () => {
@@ -105,11 +92,14 @@ const useGlobal = create<GlobalStore>((set, get) => ({
         }));
     },
 
-    getOrders: () => {
+    getOrders: (page: number = 1) => {
+        console.log("📋 getOrders llamado con página:", page);
+
         set((state) => ({
             orders: {
                 loaded: false,
-                data: state.orders?.data || [],
+                data: page === 1 ? (state.orders?.data ?? []) : (state.orders?.data ?? []), // 👈 mantén data existente
+                meta: state.orders?.meta ?? null,
             },
         }));
 
@@ -119,11 +109,11 @@ const useGlobal = create<GlobalStore>((set, get) => ({
             return;
         }
 
-        socket.send(
-            JSON.stringify({
-                source: "orders.list",
-            })
-        );
+        socket.send(JSON.stringify({
+            source: "orders.list",
+            page,
+            limit: 10,
+        }));
     },
 
     getSales: () => {
@@ -131,6 +121,7 @@ const useGlobal = create<GlobalStore>((set, get) => ({
             sales: {
                 loaded: false,
                 data: state.sales?.data || [],
+                meta: null,
             },
         }));
 

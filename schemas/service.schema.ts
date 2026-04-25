@@ -13,7 +13,8 @@ export const ServiceDataSchema = z.object({
     indefinite: z.boolean().default(false),
 
     // 👇 ahora es opcional
-    unit_amount: z.number().min(5000, "El precio debe ser mayor a $50.00 pesos.").optional(),
+    unit_amount: z.number().nullable().optional(),
+    requiresLocation: z.boolean().default(false),
 }).superRefine((data, ctx) => {
     if (!data.indefinite && data.unit_amount === undefined) {
         ctx.addIssue({
@@ -22,4 +23,20 @@ export const ServiceDataSchema = z.object({
             code: z.ZodIssueCode.custom,
         });
     }
-});
+}).superRefine((data, ctx) => {
+    if (!data.indefinite) {
+        if (data.unit_amount === undefined || data.unit_amount === null) {
+            ctx.addIssue({
+                path: ["unit_amount"],
+                message: "El precio es obligatorio si el servicio no es indefinido.",
+                code: z.ZodIssueCode.custom,
+            })
+        } else if (data.unit_amount < 5000) {
+            ctx.addIssue({
+                path: ["unit_amount"],
+                message: "El precio debe ser mayor a $50.00 pesos.",
+                code: z.ZodIssueCode.custom,
+            })
+        }
+    }
+})

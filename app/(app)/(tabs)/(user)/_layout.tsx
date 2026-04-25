@@ -2,20 +2,19 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import CustomBackButton from "components/Header/CustomBackButton"
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { COLOR_BACKGROUND } from "constants/index";
 
 
 export default function UserLayout() {
     return (
         <React.Fragment>
             <StatusBar style="auto" />
-
             <Stack
                 screenOptions={{
                     headerShown: false,
                     headerShadowVisible: false,
                     headerStyle: {
-                        backgroundColor: "transparent",
+                        backgroundColor: COLOR_BACKGROUND,
                     }
                 }}
             >
@@ -35,6 +34,18 @@ export default function UserLayout() {
                 <Stack.Screen name="history" options={{
                     headerShown: true,
                     headerTitle: "Historial de Ordenes",
+                    headerLeft: () => <CustomBackButton />,
+                }} />
+
+                <Stack.Screen name="verify-phone" options={{
+                    headerShown: true,
+                    headerTitle: "Verificar Telefono",
+                    headerLeft: () => <CustomBackButton />,
+                }} />
+
+                <Stack.Screen name="verify-code" options={{
+                    headerShown: true,
+                    headerTitle: "Verificar Telefono",
                     headerLeft: () => <CustomBackButton />,
                 }} />
 
@@ -69,6 +80,13 @@ export default function UserLayout() {
                     headerShown: true,
                     headerTitle: "Seleccionar Ubicacion",
                     headerTransparent: true,
+                    headerLeft: () => <CustomBackButton />,
+                }} />
+
+                {/* Delete Account */}
+                <Stack.Screen name="delete-account" options={{
+                    headerShown: true,
+                    headerTitle: "Borrar Cuenta",
                     headerLeft: () => <CustomBackButton />,
                 }} />
             </Stack>

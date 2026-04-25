@@ -11,23 +11,17 @@ import {
 import { Checkbox } from "expo-checkbox"
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { Colors } from '../../lib';
+import { Colors } from 'lib';
 import {
     TextInputComponent,
     ContainerBack,
     SpinLoading,
-} from '../../components';
-import { Register } from "../../services/firebase/Register";
-import { registerSchema } from "../../schemas/auth.schema";
+} from 'components';
+import { Register } from "services/firebase/Register";
 
 const RegisterScreen = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
-
-    const handleLogin = () => router.push('/login');
-    const handleTerms = () => router.push('/terms');
-
     const [user, setUser] = useState({
         email: '',
         password: '',
@@ -35,63 +29,21 @@ const RegisterScreen = () => {
         terms: false,
     });
 
-    const handleInput = (key, value) => {
-        if (key === 'terms') {
-            setUser(prevUser => ({
-                ...prevUser,
-                [key]: value,
-            }));
-            return;
-        }
+    const handleLogin = () => router.push('/login');
+    const handleTerms = () => router.push('/terms');
 
-        let trimmedValue = value.trim();
-        if (key === 'email') {
-            trimmedValue = trimmedValue.toLowerCase();
-        }
-
-        setUser(prevUser => ({
-            ...prevUser,
-            [key]: trimmedValue,
+    const handleInput = (key: string, value: string | boolean) => {
+        setUser(prev => ({
+            ...prev,
+            [key]: typeof value === 'string'
+                ? key === 'email' ? value.trim().toLowerCase() : value.trim()
+                : value,
         }));
-
-        // Limpiar error del campo cuando el usuario empieza a escribir
-        if (errors[key]) {
-            setErrors(prev => ({
-                ...prev,
-                [key]: undefined
-            }));
-        }
-    };
-
-    const validateForm = () => {
-        try {
-            registerSchema.parse(user);
-            setErrors({});
-            return true;
-        } catch (error) {
-            if (error.errors) {
-                const formattedErrors = {};
-                error.errors.forEach(err => {
-                    formattedErrors[err.path[0]] = err.message;
-                });
-                setErrors(formattedErrors);
-            }
-            return false;
-        }
     };
 
     const handleRegisterUser = async () => {
-        // Cerrar teclado
         Keyboard.dismiss();
 
-        // Validar formulario
-        if (!validateForm()) {
-            const firstError = Object.values(errors)[0];
-            Alert.alert("Error de validación", firstError || "Por favor corrige los errores");
-            return;
-        }
-
-        // Validar aceptación de términos
         if (!user.terms) {
             Alert.alert("Error", "Debes aceptar los términos y condiciones para continuar.");
             return;
@@ -99,18 +51,13 @@ const RegisterScreen = () => {
 
         setLoading(true);
         await Register(user)
-            .catch((e) => {
-                Alert.alert("Error", e.message);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            .catch(e => Alert.alert("Error", e.message))
+            .finally(() => setLoading(false));
     };
 
     return (
         <ContainerBack>
             <View style={styles.container}>
-                {/* Titulo... */}
                 <View style={styles.top}>
                     <Text style={styles.topTitle}>
                         Bienvenido de nuevo!, Tus Servicios al instante...
@@ -123,61 +70,42 @@ const RegisterScreen = () => {
                     keyboardVerticalOffset={110}
                 >
                     <View style={styles.inputsContainer}>
-                        <View>
-                            <TextInputComponent
-                                value={user.email}
-                                onChangeText={e => handleInput('email', e)}
-                                label="Email"
-                                placeholder="email@hotmail.com"
-                                autoComplete="email"
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
-                            {errors.email && (
-                                <Text style={styles.errorText}>{errors.email}</Text>
-                            )}
-                        </View>
+                        <TextInputComponent
+                            value={user.email}
+                            onChangeText={e => handleInput('email', e)}
+                            label="Email"
+                            placeholder="email@hotmail.com"
+                            autoComplete="email"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
 
-                        <View>
-                            <TextInputComponent
-                                hide
-                                value={user.password}
-                                onChangeText={e => handleInput('password', e)}
-                                label="Password"
-                                placeholder="password"
-                                autoComplete="password"
-                                autoCapitalize="none"
-                            />
-                            {errors.password && (
-                                <Text style={styles.errorText}>{errors.password}</Text>
-                            )}
-                        </View>
+                        <TextInputComponent
+                            hide
+                            value={user.password}
+                            onChangeText={e => handleInput('password', e)}
+                            label="Password"
+                            placeholder="password"
+                            autoComplete="password"
+                            autoCapitalize="none"
+                        />
 
-                        <View>
-                            <TextInputComponent
-                                hide
-                                value={user.confirmPassword}
-                                onChangeText={e => handleInput('confirmPassword', e)}
-                                label="Confirm Password"
-                                placeholder="password"
-                                autoComplete="password"
-                                autoCapitalize="none"
-                            />
-                            {errors.confirmPassword && (
-                                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-                            )}
-                        </View>
+                        <TextInputComponent
+                            hide
+                            value={user.confirmPassword}
+                            onChangeText={e => handleInput('confirmPassword', e)}
+                            label="Confirm Password"
+                            placeholder="password"
+                            autoComplete="password"
+                            autoCapitalize="none"
+                        />
 
-                        {/* Check point */}
                         <View style={styles.termsContainer}>
                             <Checkbox
                                 value={user.terms}
-                                onValueChange={(val) => {
-                                    handleInput('terms', val);
-                                }}
+                                onValueChange={val => handleInput('terms', val)}
                                 color={Colors.principal.DEFAULT}
                             />
-
                             <View style={styles.termsTextContainer}>
                                 <Text>Acepto los </Text>
                                 <TouchableOpacity onPress={handleTerms}>
@@ -190,28 +118,22 @@ const RegisterScreen = () => {
                     </View>
 
                     <View style={styles.bottomContainer}>
-                        <View style={styles.bottom}>
-                            <TouchableOpacity
-                                onPress={handleRegisterUser}
-                                style={styles.button}
-                                disabled={loading}
-                            >
-                                {!loading ? (
-                                    <Text style={styles.buttonText}>Sign Up</Text>
-                                ) : (
-                                    <SpinLoading />
-                                )}
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity
+                            onPress={handleRegisterUser}
+                            style={styles.button}
+                            disabled={loading}
+                        >
+                            {!loading ? (
+                                <Text style={styles.buttonText}>Sign Up</Text>
+                            ) : (
+                                <SpinLoading color='#ffffff' />
+                            )}
+                        </TouchableOpacity>
 
                         <View style={styles.login}>
-                            <Text style={styles.loginText}>
-                                Ya tienes cuenta?
-                            </Text>
+                            <Text style={styles.loginText}>Ya tienes cuenta?</Text>
                             <TouchableOpacity onPress={handleLogin}>
-                                <Text style={styles.loginLink}>
-                                    Inicia Sesion
-                                </Text>
+                                <Text style={styles.loginLink}>Inicia Sesion</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -223,18 +145,14 @@ const RegisterScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
         flex: 1,
-        display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         width: '100%',
-        marginHorizontal: 'auto',
         height: '100%',
         marginVertical: 32,
     },
     top: {
-        display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
     },
@@ -244,43 +162,29 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     fills: {
-        display: 'flex',
         flexDirection: 'column',
         gap: 24,
     },
     inputsContainer: {
-        display: "flex",
         flexDirection: "column",
-        gap: 12
-    },
-    errorText: {
-        color: '#EF4444',
-        fontSize: 12,
-        marginTop: 4,
-        marginLeft: 4,
+        gap: 12,
     },
     termsContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8
+        gap: 8,
     },
     termsTextContainer: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     termsLink: {
         color: '#040048',
-        fontWeight: '600'
+        fontWeight: '600',
     },
     bottomContainer: {
-        display: 'flex',
         flexDirection: 'column',
-        gap: 8,
-    },
-    bottom: {
-        width: '100%',
-        marginHorizontal: 'auto',
-        gap: 24,
+        gap: 16,
     },
     button: {
         width: '100%',
@@ -297,18 +201,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     login: {
-        display: 'flex',
         flexDirection: 'row',
         gap: 4,
         marginHorizontal: 'auto',
     },
     loginText: {
-        color: Colors.secondary.DEFAULT
+        color: Colors.secondary.DEFAULT,
     },
     loginLink: {
         color: '#040048',
-        fontWeight: '600'
-    }
+        fontWeight: '600',
+    },
 });
 
 export default RegisterScreen;

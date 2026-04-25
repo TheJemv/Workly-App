@@ -1,4 +1,4 @@
-const authRoutes = {
+export const authRoutes = {
    HOME: 'Home',
    LOGIN: 'Login',
    SIGNUP: 'SignUp',
@@ -6,11 +6,11 @@ const authRoutes = {
    TERMS: 'TermsAndConditions',
 };
 
-const mainRoutes = {
+export const mainRoutes = {
    Home: 'StackHome',
    Chat: "StackChat",
    Package: "Pedidos",
    Account: 'Account',
 };
 
-export { authRoutes, mainRoutes };
+export const ROOT_ROUTE = "(tabs)";

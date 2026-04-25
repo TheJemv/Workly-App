@@ -5,9 +5,7 @@ import { Colors } from 'lib'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { delLocation, getLocations } from 'services/api/location.api';
 import { LoadingScreen } from 'components/Home';
-import MapView, { Marker } from 'react-native-maps';
 
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import LocationCard from 'components/Profile/Location/LocationCard';
 
 export default function Location() {
