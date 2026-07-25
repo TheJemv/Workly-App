@@ -3,7 +3,8 @@ import {
     View,
     KeyboardAvoidingView,
     Alert,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { invoiceDataResolver, InvoiceData, defaultInvoiceData } from "@/types/Billing/Billing";
@@ -66,10 +67,17 @@ export default function CreateInvoiceScreen() {
             style={{
                 flex: 1,
             }}
-            behavior="padding"
-            keyboardVerticalOffset={0}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            // Offset dinámico para compensar el header superior de Expo Router en iOS
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
-            <ScrollView className="flex-1">
+            <ScrollView
+                className="flex-1"
+                contentContainerStyle={{
+                    paddingBottom: 120, // Espacio extra para que el último input suba holgadamente
+                }}
+                showsVerticalScrollIndicator={false}
+            >
                 <View className="flex flex-col space-y-4 px-3 py-5 ">
                     <View>
                         {/* Razon Social */}
@@ -104,23 +112,6 @@ export default function CreateInvoiceScreen() {
                             )}
                         />
                     </View>
-
-                    {/* Regimen Fiscal */}
-                    {/* <View>
-                     <Controller
-                        control={control}
-                        name="calle"
-                        render={({ field, fieldState }) => (
-                           <TextInput
-                              label="Calle"
-                              placeholder="Calle"
-                              value={field.value}
-                              onChange={field.onChange}
-                              error={fieldState.error?.message}
-                           />
-                        )}
-                     />
-                  </View> */}
 
                     {/* No. Exterior */}
                     <View>

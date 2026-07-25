@@ -73,7 +73,7 @@ export const createSocketHandlers = (
         get().clearRetryTimer();
         set({ connectInFlight: true });
 
-        const ws = new WebSocket(`wss://${API_WEBHOOK}/ws?token=${token}`)
+        const ws = new WebSocket(`${API_WEBHOOK}/ws?token=${token}`)
 
         set({ socket: ws });
 

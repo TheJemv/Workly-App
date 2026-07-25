@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Workly</string>
+    <string>Workly (Dev)</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -34,7 +34,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.googleusercontent.apps.642547837410-nhneruejr597j58c6p1v94bfunsivv0o</string>
+          <string>app-1-888960792796-ios-7824d3aba7a6165afbdc19</string>
         </array>
       </dict>
     </array>
@@ -60,15 +60,17 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Camera access is used to allow users to take or upload a profile photo for their account.</string>
+    <string>Allow $(PRODUCT_NAME) to access your camera</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Location access is used to allow users to save their home address. This address will be used in future updates to automatically fill in the delivery address when requesting an at-home service.</string>
+    <string>Allow Work It to use your location.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>Location access is used to allow users to save their home address. This address will be used in future updates to automatically fill in the delivery address when requesting an at-home service.</string>
+    <string>Necesitamos tu ubicación para proporcionar funcionalidades avanzadas incluso cuando la aplicación no esté en uso.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Location access is used to allow users to save their home address. This address will be used in future updates to automatically fill in the delivery address when requesting an at-home service.</string>
+    <string>Necesitamos tu ubicación para mostrar información relevante.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Photo library access is used to allow users to select a profile photo for their account.</string>
+    <string>Work It, te pide permiso para acceder a tus fotos.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

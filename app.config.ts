@@ -1,9 +1,13 @@
 import { ExpoConfig, ConfigContext } from "expo/config";
 
+// 1. Detectamos el entorno basándonos en APP_ENV
+const IS_DEV = process.env.APP_ENV === "development";
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
    ...config,
-   name: "Workly",
-   slug: "Workly",
+   // 2. Nombre dinámico para distinguirla en tu pantalla de inicio
+   name: IS_DEV ? "Workly (Dev)" : "Workly",
+   slug: "workly-services",
    version: "0.6.3",
    orientation: "portrait",
    icon: "./assets/icon.png",
@@ -14,16 +18,21 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#ffffff",
    },
    ios: {
-      icon: "./assets/ios-icon.png",
+      icon: IS_DEV ? "./icons/icon-dev.png" : "./icons/icon-prod.png",
       supportsTablet: false,
       bundleIdentifier: "com.workly.services",
-      googleServicesFile: "./GoogleService-Info.plist",
+      // 🔥 3. Ruta dinámica para el archivo de iOS
+      googleServicesFile: IS_DEV
+         ? "./firebase/dev/GoogleService-Info.plist"
+         : "./firebase/production/GoogleService-Info.plist",
       config: {
          googleSignIn: {
             reservedClientId: "com.googleusercontent.apps.642547837410-ua5umahbh07furo9f5vtvhfceejqghqk"
          },
       },
-
+      cocoapods: {
+         "post_install": "(installer) => {\n  installer.pods_project.targets.each do |target|\n    target.build_configurations.each do |config|\n      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'\n    end\n  end\n}"
+      },
       infoPlist: {
          NSLocationWhenInUseUsageDescription:
             "Necesitamos tu ubicación para mostrar información relevante.",
@@ -50,7 +59,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ],
       softwareKeyboardLayoutMode: "pan",
       package: "com.workly.services",
-      googleServicesFile: "./google-services.json",
+      // 🔥 4. Ruta dinámica para el archivo de Android
+      googleServicesFile: IS_DEV
+         ? "./firebase/dev/google-services.json"
+         : "./firebase/production/google-services.json",
       versionCode: 5,
       config: {
          googleMaps: {
@@ -63,13 +75,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
    },
    extra: {
       eas: {
-         projectId: "14c850df-3d61-4681-8232-0e24c3c02710",
+         projectId: "574c91cf-ca27-44d9-bc2b-6d83ee820da3",
       },
       router: {
          origin: false,
       },
    },
-   owner: "jemv05",
+   owner: "workly-services",
    scheme: "workly",
    plugins: [
       "expo-notifications",
@@ -106,6 +118,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             ios: {
                useFrameworks: "static",
                deploymentTarget: "15.3",
+               forceStaticLinking: [
+                  "RNFBApp",
+                  "RNFBAuth",
+                  "RNFBCrashlytics",
+                  "RNFBMessaging"
+               ]
             },
          },
       ],
