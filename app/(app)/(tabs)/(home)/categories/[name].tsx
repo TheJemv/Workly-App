@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { View, FlatList, Alert } from "react-native";
+import { View, FlatList, Alert, Text } from "react-native"; // 👈 Añadido Text
 import { ServiceItem } from "components/Home/ServicesTrending/components";
 import useGlobal from "core/globals";
 import { getServices } from "services/api/services.api";
@@ -7,8 +7,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { ServiceType as Service } from "components/Home/ServicesTrending/types";
-
-
 
 type ListItem = Service | { _type: "empty"; id: string };
 
@@ -39,21 +37,24 @@ export default function ServicesCategory() {
             setLoading(true);
             const res = await getServices(nameParam);
             const list: ListItem[] = (res?.services ?? []) as Service[];
-            if (list.length % 2 !== 0) {
+
+            if (list.length > 0 && list.length % 2 !== 0) {
                 list.push({ _type: "empty", id: "empty-0" });
             }
+
             setServices(list);
         } catch (error: any) {
             Alert.alert("Error", error?.message ?? "Ocurrió un error al cargar los servicios.");
         } finally {
             setLoading(false);
         }
-    }, [token, nameParam]);
+    }, [nameParam]); // Removí 'token' del array de dependencias si no lo usas en getServices
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
+    // 1. Estado de carga
     if (loading) {
         return (
             <View className="flex pb-[70px] h-full flex-col items-center justify-center">
@@ -62,6 +63,19 @@ export default function ServicesCategory() {
         );
     }
 
+    // 2. Estado vacío (Sin servicios)
+    if (!loading && services.length === 0) {
+        return (
+            <View className="flex pb-[70px] h-full flex-col items-center justify-center px-6">
+                <FontAwesome name="inbox" color={"#B1B1B4"} size={52} />
+                <Text className="text-[#B1B1B4] text-center font-medium mt-4 text-base">
+                    Por el momento no hay ningún servicio disponible en esta categoría.
+                </Text>
+            </View>
+        );
+    }
+
+    // 3. Estado con datos
     return (
         <FlatList
             data={services}
@@ -83,7 +97,7 @@ export default function ServicesCategory() {
                 ) : (
                     <View style={{
                         flex: 1,
-                        marginBottom: 16, // 👈 ESTO es el padding en Y real
+                        marginBottom: 16,
                         alignItems: "center",
                         justifyContent: "center",
                         borderRadius: 8,
