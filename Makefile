@@ -23,8 +23,11 @@ open-dev:
 	open -a "Xcode" ios/WorklyDev.xcworkspace
 
 # Compila e instala en el simulador desde la terminal
-run-dev:
+run-dev-ios:
 	APP_ENV=development npx expo run:ios
+
+run-dev-android:
+	APP_ENV=development npx expo run:android
 
 # Inicia el servidor de Expo (Metro) para desarrollo
 start-dev:

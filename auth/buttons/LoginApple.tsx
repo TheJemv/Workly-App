@@ -7,7 +7,7 @@ import { AppleAuthProvider, getAuth, signInWithCredential } from '@react-native-
 const LoginApple = () => {
    if (!appleAuth.isSupported) return null;
 
-   const AppleIcon = require('@/assets/Icons/appleIcon.png');
+   const AppleIcon = require('./../../assets/Icons/appleIcon.png');
    async function onAppleButtonPress() {
       const appleAuthRequestResponse = await appleAuth.performRequest({
          requestedOperation: appleAuth.Operation.LOGIN,
