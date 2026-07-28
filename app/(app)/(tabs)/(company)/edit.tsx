@@ -188,11 +188,12 @@ export default function Edit() {
     }
 
     return (
-        <ScrollView className="flex-1 bg-surface">
+        <ScrollView className="flex-1 bg-surface" scrollEnabled={true}>
             {/* Banner + Avatar */}
             <View className="relative">
                 <View className="h-32 bg-brand-banner relative bg-primary" style={cardShadow}>
-                    <TouchableOpacity
+                    {/* Boton para cambiar el cover de la imagen */}
+                    {/* <TouchableOpacity
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 items-center justify-center shadow-sm"
                         onPress={() =>
                             Alert.alert(
@@ -202,7 +203,7 @@ export default function Edit() {
                         }
                     >
                         <Feather name="camera" size={15} color={Colors.principal.DEFAULT} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 {/* Avatar */}
