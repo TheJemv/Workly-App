@@ -12,6 +12,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 import Colors from "lib/Colors"
 import useGlobal from 'core/globals';
+import { CardContent } from "components/CardInfo"
 
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Day, DayName } from '@/types/Schedule';
@@ -123,7 +124,7 @@ export default function Company() {
                         </Text>
 
                         {/* Dirección debajo del nombre si existe */}
-                        {companyData?.profile?.address && (
+                        {/* {companyData?.profile?.address && (
                             <View className="flex flex-row items-center space-x-1 -mt-6">
                                 <FontAwesome
                                     name="map-marker"
@@ -134,7 +135,7 @@ export default function Company() {
                                     {companyData.profile.address}
                                 </Text>
                             </View>
-                        )}
+                        )} */}
                     </View>
 
                     {/* Description */}
@@ -148,9 +149,14 @@ export default function Company() {
                             </View>
 
                             {companyData?.profile?.description && (
-                                <Text style={{ color: Colors.principal.DEFAULT }}>
-                                    {companyData.profile.description}
-                                </Text>
+                                <CardContent divided={false}>
+                                    <Text
+                                        className="text-sm px-4 py-3.5"
+                                        style={{ color: Colors.principal.DEFAULT }}
+                                    >
+                                        {companyData.profile.description}
+                                    </Text>
+                                </CardContent>
                             )}
                         </View>
 

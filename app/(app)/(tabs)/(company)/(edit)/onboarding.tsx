@@ -1,23 +1,20 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
-
+import { Container, CardInfo, CardContent, Row } from "components/CardInfo"
 import {
-    ComponentLabel,
-    ComponentGroup,
     ComponentChipActive,
     ComponentChipInactive,
     ComponentOnboardingButton
 } from "components/Onboarding"
-
 import useGlobal from 'core/globals'
 import { router } from 'expo-router'
 import MapCurrentlyDue from 'constants/MapCurrentlyDue'
-
 import GetStatus from 'functions/GetStatus'
 import checkcompany from 'functions/CheckCompany'
 
 export default function Onboarding() {
     const companyData = useGlobal(state => state.company)
+
     const handleInformation = () => {
         router.push({
             pathname: "/onboarding-information",
@@ -27,81 +24,95 @@ export default function Onboarding() {
         })
     }
 
+    const currentlyDue = companyData?.activity?.requirements?.currently_due ?? [];
+    const disabledReason = companyData?.activity?.requirements?.disabled_reason;
+    const cardPayments = companyData?.activity?.capabilities?.card_payments;
+    const transfers = companyData?.activity?.capabilities?.transfers;
+    const isVerified = currentlyDue.length === 0;
+
     return (
-        <View className="px-2 py-3" style={{ rowGap: 24 }}>
-            <View className="flex flex-row items-center justify-between">
-                <Text className="text-[14px] text-[#6B6C69]">
-                    <Text className="font-semibold text-dark">Cuenta:</Text>{" "}
-                    {companyData?.account}
-                </Text>
+        <View className="flex-1 bg-surface px-4 pt-4 pb-6" style={{ rowGap: 16 }}>
+            {/* Cuenta */}
+            <CardContent divided={false}>
+                <View className="px-4 py-3 flex-row items-center justify-between gap-3">
+                    <View className="flex-shrink">
+                        <Text className="text-xs font-semibold text-text-light mb-0.5">Cuenta</Text>
+                        <Text className="text-sm text-text-default" numberOfLines={1}>
+                            {companyData?.account}
+                        </Text>
+                    </View>
+                    {checkcompany(companyData) ? <ComponentChipActive /> : <ComponentChipInactive />}
+                </View>
+            </CardContent>
 
-                {checkcompany(companyData) ? (
-                    <ComponentChipActive />
-                ) : (
-                    <ComponentChipInactive />
-                )}
-            </View>
-
-            <View className="flex flex-col" style={{ rowGap: 22 }}>
-                <ComponentGroup title="Metodos de Pago">
-                    <ComponentLabel
-                        title="Cobros"
+            {/* Métodos de pago */}
+            <Container>
+                <CardInfo title="Métodos de Pago" />
+                <CardContent>
+                    <Row
+                        icon="credit-card"
+                        label="Cobros"
                         value={GetStatus(companyData?.activity?.charges_enabled)}
+                        tone={companyData?.activity?.charges_enabled ? "success" : "muted"}
                     />
-
-                    <ComponentLabel
-                        title="Depositos"
+                    <Row
+                        icon="credit-card"
+                        label="Depósitos"
                         value={GetStatus(companyData?.activity?.payouts_enabled)}
+                        tone={companyData?.activity?.payouts_enabled ? "success" : "muted"}
                     />
-                </ComponentGroup>
+                </CardContent>
+            </Container>
 
-                <ComponentGroup title="Verificacion de la Cuenta">
-                    <ComponentLabel
-                        title="Estado de Verificacion"
+            {/* Verificación */}
+            <Container>
+                <CardInfo title="Verificación de la Cuenta" />
+                <CardContent>
+                    <Row
+                        icon="shield"
+                        label="Estado de Verificación"
                         value={
-                            companyData.activity?.requirements.currently_due.length ===
-                                0 ? (
+                            isVerified ? (
                                 "Verificada"
                             ) : (
                                 <TouchableOpacity onPress={handleInformation}>
-                                    <Text className="text-blue-500 text-[15px] underline">
-                                        Ver
-                                    </Text>
+                                    <Text className="text-sm font-semibold text-brand underline">Ver</Text>
                                 </TouchableOpacity>
                             )
                         }
+                        tone={isVerified ? "success" : "default"}
                     />
-                    <ComponentLabel
-                        title="Razon de deshabilitado"
+                    <Row
+                        icon="shield"
+                        label="Razón de deshabilitado"
                         value={
-                            companyData.activity?.requirements.disabled_reason
-                                ? MapCurrentlyDue[
-                                companyData.activity?.requirements.disabled_reason
-                                ] || companyData.activity?.requirements.disabled_reason
+                            disabledReason
+                                ? MapCurrentlyDue[disabledReason] || disabledReason
                                 : "Todo bien"
                         }
+                        tone="default"
                     />
-                </ComponentGroup>
+                </CardContent>
+            </Container>
 
-                <ComponentGroup title="Capacidades">
-                    <ComponentLabel
-                        title="Pagos con tarjeta"
-                        value={
-                            MapCurrentlyDue[
-                            companyData.activity?.capabilities.card_payments
-                            ] || "Desactivado"
-                        }
+            {/* Capacidades */}
+            <Container>
+                <CardInfo title="Capacidades" />
+                <CardContent>
+                    <Row
+                        icon="zap"
+                        label="Pagos con tarjeta"
+                        value={MapCurrentlyDue[cardPayments] || "Desactivado"}
+                        tone={MapCurrentlyDue[cardPayments] ? "success" : "muted"}
                     />
-
-                    <ComponentLabel
-                        title="Transferencias"
-                        value={
-                            MapCurrentlyDue[companyData.activity?.capabilities.transfers] ||
-                            "Desactivado"
-                        }
+                    <Row
+                        icon="zap"
+                        label="Transferencias"
+                        value={MapCurrentlyDue[transfers] || "Desactivado"}
+                        tone={MapCurrentlyDue[transfers] ? "success" : "muted"}
                     />
-                </ComponentGroup>
-            </View>
+                </CardContent>
+            </Container>
 
             <ComponentOnboardingButton />
         </View>

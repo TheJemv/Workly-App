@@ -32,6 +32,7 @@ import DayView from "components/Schedule/DayView";
 import { Colors } from "lib";
 import ShareButton from "components/Header/ShareButton";
 import { getCompanyShareUrl } from "utils/shareLinks";
+import { CardContent, CardInfo, Container, Row } from "components/CardInfo";
 
 
 const daysArray: DayName[] = [
@@ -122,74 +123,78 @@ const ProfileCompanyScreen = () => {
     return (
         <>
             {/* Company */}
-            <ScrollView className="flex-1 px-2">
+            <ScrollView className="flex-1 px-0">
                 <View style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                     {/* TopSide */}
-                    <View className="flex flex-col items-center justify-center" style={{ gap: 32 }}>
-                        <View style={{ backgroundColor: Colors.principal[200], borderRadius: 12 }} className="w-full h-48 flex items-center justify-center">
-                            <View style={{ width: 150, height: 150, borderRadius: 9999, overflow: "hidden", backgroundColor: Colors.principal[400] }} className="absolute -bottom-8 border-[#f2f2f2] border-4">
-                                <Image
-                                    className="w-full h-full rounded-2xl"
-                                    source={{ uri: company.profile.photo }}
-                                />
+                    <View className="flex-1 overflow-y-auto" style={{ gap: 32 }}>
+                        <View className="relative">
+                            <View className="h-28 bg-brand-light" />
+
+                            <View className="absolute left-1/2 -translate-x-1/2 -ml-10 -bottom-10 z-10">
+                                <View className="w-20 h-20 rounded-full bg-white border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
+                                    <Image
+                                        className="w-full h-full rounded-2xl"
+                                        source={{ uri: company.profile.photo }}
+                                    />
+                                </View>
                             </View>
                         </View>
 
-                        <Text className="text-xl font-bold" style={{ color: Colors.principal.DEFAULT }}>
-                            {company.profile.name}
-                        </Text>
+                        <View className="mt-4 px-4 pb-4 flex flex-col items-center">
+                            <Text className="text-xl font-bold text-text-dark font-heading text-balance text-center">Plometo Don Pepe 2</Text>
+                        </View>
+
+
+                        {/* <div className="mt-12 px-4 pb-4 flex flex-col items-center">
+                            <h2 className="text-xl font-bold text-text-dark font-heading text-balance text-center">
+                                Plomero Don Pepe 2
+                            </h2>
+                            <div className="flex items-center gap-3 mt-1.5">
+                                <span className="flex items-center gap-1 text-xs text-text-light">
+                                    <MapPin size={11} />
+                                    Hermosillo, Sonora
+                                </span>
+                                <span className="w-1 h-1 rounded-full bg-border-soft" />
+                                <span className="flex items-center gap-1 text-xs text-success font-medium">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
+                                    Disponible
+                                </span>
+                            </div>
+                        </div> */}
                     </View>
 
-                    {/* Description */}
-                    <View className="flex flex-col" style={{ gap: 18 }}>
-                        <View className="flex flex-col" style={{ gap: 6 }}>
-                            <View className="flex flex-row items-center">
-                                <Text style={{ color: Colors.principal.DEFAULT, fontWeight: "600" }} className="text-base">
-                                    Detalles de la Empresa
-                                </Text>
-                                <Entypo name="chevron-down" size={24} color={Colors.principal.DEFAULT} />
-                            </View>
-                            <Text style={{ color: Colors.principal.DEFAULT }}>
-                                {company.profile.description}
-                            </Text>
-                        </View>
 
-                        <View className="flex flex-row justify-between items-center" style={{ gap: 8 }}>
-                            <TouchableOpacity
-                                onPress={openSchedule}
-                                className="flex-1 flex flex-row items-center justify-center py-3 px-4 rounded-full"
-                                style={{ backgroundColor: Colors.principal.DEFAULT, gap: 6 }}
-                            >
-                                <MaterialIcons name="schedule" size={18} color="white" />
-                                <Text className="text-white font-medium">Horarios</Text>
-                            </TouchableOpacity>
+                    {/* Detalles */}
+                    <View className="px-3 flex gap-y-3">
+                        <Container>
+                            <CardInfo title="Detalles de la Empresa" variant="heading" />
+                            <CardContent>
+                                <View className="p-4">
+                                    <Text className="text-sm text-text-default leading-relaxed">
+                                        {company.profile.description}
+                                    </Text>
+                                </View>
+                            </CardContent>
+                        </Container>
 
-                            {company.location && (
-                                <TouchableOpacity
-                                    className="flex-1 flex flex-row items-center justify-center py-3 px-4 rounded-full"
-                                    style={{ backgroundColor: Colors.principal.DEFAULT, gap: 6 }}
-                                >
-                                    <Ionicons name="location-outline" size={18} color="white" />
-                                    <Text className="text-white font-medium">Ubicación</Text>
-                                </TouchableOpacity>
-                            )}
-                        </View>
-                    </View>
 
-                    {/* Services */}
-                    <View className="flex flex-col" style={{ gap: 6 }}>
-                        <View className="flex flex-row items-center">
-                            <Text style={{ color: Colors.principal.DEFAULT, fontWeight: "600" }} className="text-base">
-                                Servicios de la Empresa
-                            </Text>
-                            <Entypo name="chevron-down" size={24} color={Colors.principal.DEFAULT} />
-                        </View>
+                        <TouchableOpacity
+                            onPress={openSchedule}
+                            className="flex-1 flex flex-row items-center justify-center py-3 px-4 rounded-xl mb-1"
+                            style={{ backgroundColor: Colors.principal.DEFAULT, gap: 6 }}
+                        >
+                            <MaterialIcons name="schedule" size={18} color="white" />
+                            <Text className="text-white font-medium">Horarios</Text>
+                        </TouchableOpacity>
 
-                        <View style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                            {company.services.map((service, k) => (
-                                <CardService item={service} key={k} />
-                            ))}
-                        </View>
+                        <Container>
+                            <CardInfo title="Servicios" variant="heading" />
+                            <CardContent>
+                                {company.services.map((s, k) => (
+                                    <CardService item={s} key={k} />
+                                ))}
+                            </CardContent>
+                        </Container>
                     </View>
                 </View>
             </ScrollView>
