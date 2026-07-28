@@ -11,6 +11,9 @@ module.exports = {
     extend: {
       colors: {
         text: themes.colors.default.text_color.default,
+        "text-light": "#717171",
+        "border-soft": "#eaeaea",
+        "brand-light": "#9fa8c9",
         light: themes.colors.default.text_color.light,
         dark: themes.colors.default.text_color.dark,
         primary: "#3a3770",
@@ -19,6 +22,7 @@ module.exports = {
         border: themes.colors.default.theme_color.border,
         "theme-light": themes.colors.default.theme_color.theme_light,
         "theme-dark": themes.colors.default.theme_color.theme_dark,
+
         darkmode: {
           text: themes.colors.darkmode.text_color.default,
           light: themes.colors.darkmode.text_color.light,

@@ -72,11 +72,19 @@ export default function Edit() {
 
     return (
         <KeyboardAvoidingView
-            className="flex-1"
-            behavior="padding"
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+            style={{
+                flex: 1,
+            }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
         >
-            <ScrollView className="flex-1">
+            <ScrollView
+                className="flex-1"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: 20
+                }}
+            >
                 <View className="flex flex-col space-y-5 px-3 py-5 mb-2">
                     <View>
                         <Controller

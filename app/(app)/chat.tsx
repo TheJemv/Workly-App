@@ -370,7 +370,6 @@ export default function Chat() {
                         onEndReached={handleLoadMore}
                         onEndReachedThreshold={0.2}
                         contentContainerStyle={{ flexGrow: 1, paddingTop: 10 }}
-                        automaticallyAdjustKeyboardInsets
                         keyboardShouldPersistTaps="handled"
                         onScrollBeginDrag={closeMenu}
                         // Con inverted, ListFooterComponent aparece ARRIBA (spinner de carga de más viejos)

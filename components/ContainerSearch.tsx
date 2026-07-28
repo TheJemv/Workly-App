@@ -1,11 +1,10 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import React from 'react'
 import { router } from 'expo-router'
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { TextInput } from 'react-native-gesture-handler';
 
 interface Props {
     loading: boolean,
