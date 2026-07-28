@@ -2,12 +2,12 @@ import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacit
 import React, { useState } from 'react'
 import { TextInputComponent } from 'components'
 import { companyRequest } from 'services/api/company.api';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller, useForm } from 'react-hook-form';
 import { defaultRequestData, RequestData, requestDataResolver } from '@/types/Request/Request';
 import { router } from 'expo-router';
 import { Colors } from 'lib';
 import Checkbox from 'expo-checkbox';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Request() {
     const [terms, setTerms] = useState<boolean>(false)

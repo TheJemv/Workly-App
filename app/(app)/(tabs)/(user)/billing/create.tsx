@@ -73,10 +73,10 @@ export default function CreateInvoiceScreen() {
         >
             <ScrollView
                 className="flex-1"
-                contentContainerStyle={{
-                    paddingBottom: 120, // Espacio extra para que el último input suba holgadamente
-                }}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: 20, // Espacio extra para que el último input suba holgadamente
+                }}
             >
                 <View className="flex flex-col space-y-4 px-3 py-5 ">
                     <View>

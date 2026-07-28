@@ -18,7 +18,7 @@ import * as Location from "expo-location";
 import LoadingScreen from "components/LoadingScreen";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Colors } from "lib";
-import { useKeyboard } from "@react-native-community/hooks";
+// import { useKeyboard } from "@react-native-community/hooks";
 import { Entypo } from "@expo/vector-icons";
 
 import { getStreetName } from "services/api/google.api";
@@ -60,7 +60,7 @@ export default function LocationCreate() {
     const bottomSheetRef = useRef<BottomSheet>(null);
     const mapRef = useRef<MapView>(null);
 
-    const keyboard = useKeyboard();
+    // const keyboard = useKeyboard();
     const snapPoints = useMemo(() => ["35%", "80%"], []);
 
     const handleSubmit = async () => {
@@ -160,10 +160,10 @@ export default function LocationCreate() {
         }
     };
 
-    useEffect(() => {
-        if (keyboard.keyboardShown) bottomSheetRef.current?.snapToIndex(1);
-        else bottomSheetRef.current?.snapToIndex(0);
-    }, [keyboard.keyboardShown]);
+    // useEffect(() => {
+    //     if (keyboard.keyboardShown) bottomSheetRef.current?.snapToIndex(1);
+    //     else bottomSheetRef.current?.snapToIndex(0);
+    // }, [keyboard.keyboardShown]);
 
     useEffect(() => {
         (async () => {
@@ -382,6 +382,7 @@ export default function LocationCreate() {
                                 value={data.name}
                                 onChangeText={(e) => setData({ ...data, name: e })}
                                 onFocus={() => bottomSheetRef.current?.snapToIndex(1)}
+                                onBlur={() => bottomSheetRef.current?.snapToIndex(0)}
                             />
                         </View>
 

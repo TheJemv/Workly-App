@@ -1,24 +1,35 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, Platform } from 'react-native'
 import React, { useLayoutEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 
 import useGlobal from 'core/globals'
 
-import CountryCodeMap from "constants/countryCodeMap.json";
-
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 
 import { Colors } from 'lib'
-import getValue from 'utils/getValue'
 import PhoneInput from 'react-native-phone-number-input'
 
-import DataOptions from 'components/DataOptions'
 import SpinLoading from 'components/SpinLoading'
 
 import OptionsKeyEnum from 'enum/OptionsKeyEnum';
 import { updateCompany } from 'services/api/company.api';
+
+const DESCRIPTION_MAX_LENGTH = 130;
+
+// shadow-sm de NativeWind no funciona en Android (falta elevation),
+// y en iOS se corta si el contenedor tiene overflow-hidden.
+const cardShadow = Platform.select({
+    ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.08,
+        shadowRadius: 3,
+    },
+    android: {
+        elevation: 2,
+    },
+});
 
 function buildByPath(path: string, value: any) {
     const keys = path.split(".");
@@ -104,76 +115,128 @@ export default function OptionScreen() {
         inputRef.current?.focus();
     }, [navigation, value, getByPath(companyData, params.key as string), loading]);
 
-    return (
-        <View className="flex flex-col flex-1">
-            {loading ? (
-                <View className="h-1/2 items-center justify-center">
-                    <SpinLoading size={52} color={Colors.principal.DEFAULT} />
-                </View>
-            ) : params.key !== OptionsKeyEnum.description &&
-                params.key !== OptionsKeyEnum.phone &&
-                params.key !== OptionsKeyEnum.public ? (
-                <View className="flex flex-col px-2 flex-1 py-3">
-                    <View className="py-1 px-2 rounded-lg flex items-center flex-row border border-dark">
-                        <View className="flex flex-col flex-1" style={{ gap: 0 }}>
-                            <Text style={{ fontSize: 12 }} className="text-text">
-                                {params?.title}
-                            </Text>
-                            <TextInput
-                                ref={inputRef}
-                                value={value as string}
-                                onChangeText={(e) => setValue(e)}
-                                placeholder={(params?.title as string).toLowerCase()}
-                                className="pl-0"
-                                style={{ fontSize: 15 }}
-                                autoCapitalize="none"
-                            // keyboardType={
-                            //     params?.key === "phone" && "phone-pad"
-                            // }
-                            />
-                        </View>
+    const helperText = params?.description as string | undefined;
 
-                        <TouchableOpacity onPress={clearValue} className="py-full">
-                            <AntDesign color={"black"} size={16} name="close-circle" />
+    if (loading) {
+        return (
+            <View className="flex-1 items-center justify-center bg-surface">
+                <SpinLoading size={52} color={Colors.principal.DEFAULT} />
+            </View>
+        )
+    }
+
+    // ---- Teléfono ----
+    if (params.key === OptionsKeyEnum.phone) {
+        return (
+            <View className="flex-1 bg-surface p-4">
+                <View className="rounded-xl bg-white" style={cardShadow}>
+                    <View className="rounded-xl border border-border-soft p-4">
+                        <Text className="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">
+                            Número de teléfono
+                        </Text>
+
+                        <PhoneInput
+                            ref={phoneInput}
+                            value={(value as string).slice(-10)}
+                            defaultCode={"MX"}
+                            layout="second"
+                            onChangeFormattedText={(text) => {
+                                setValue(text);
+                            }}
+                            autoFocus
+                            containerStyle={{
+                                width: "100%",
+                                backgroundColor: "transparent",
+                                paddingTop: 0,
+                            }}
+                            textContainerStyle={{
+                                backgroundColor: "transparent",
+                                paddingLeft: 0,
+                            }}
+                            textInputStyle={{
+                                fontSize: 14,
+                                color: Colors.principal.DEFAULT,
+                            }}
+                            codeTextStyle={{ fontSize: 14 }}
+                        />
+                    </View>
+                </View>
+
+                {helperText && (
+                    <Text className="text-xs text-text-light mt-3 px-1 leading-relaxed">
+                        {helperText}
+                    </Text>
+                )}
+            </View>
+        )
+    }
+
+    // ---- Descripción ----
+    if (params.key === OptionsKeyEnum.description) {
+        const currentLength = (value as string)?.length || 0;
+        return (
+            <View className="flex-1 bg-surface p-4">
+                <View className="rounded-xl bg-white" style={cardShadow}>
+                    <View className="rounded-xl border border-border-soft p-4">
+                        <Text className="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">
+                            Descripción de la empresa
+                        </Text>
+                        <TextInput
+                            ref={inputRef}
+                            value={value as string}
+                            onChangeText={(e) => setValue(e)}
+                            placeholder={(params.title as string).toLowerCase()}
+                            className="text-sm text-text-default leading-relaxed"
+                            style={{ minHeight: 120, textAlignVertical: "top" }}
+                            multiline
+                            maxLength={DESCRIPTION_MAX_LENGTH}
+                            autoFocus
+                        />
+                        <View className="flex-row justify-end pt-2 border-t border-border-soft mt-2">
+                            <Text className="text-xs text-text-light">
+                                {currentLength}/{DESCRIPTION_MAX_LENGTH}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+
+                {helperText && (
+                    <Text className="text-xs text-text-light mt-3 px-1 leading-relaxed">
+                        {helperText}
+                    </Text>
+                )}
+            </View>
+        )
+    }
+
+    // ---- Campo genérico (ej. Nombre) ----
+    return (
+        <View className="flex-1 bg-surface p-4">
+            <View className="rounded-xl bg-white" style={cardShadow}>
+                <View className="rounded-xl border border-border-soft p-4">
+                    <Text className="text-xs font-semibold text-text-light uppercase tracking-wide mb-2">
+                        {params?.title}
+                    </Text>
+                    <View className="flex-row items-center">
+                        <TextInput
+                            ref={inputRef}
+                            value={value as string}
+                            onChangeText={(e) => setValue(e)}
+                            placeholder={(params?.title as string).toLowerCase()}
+                            className="flex-1 text-sm text-text-default"
+                            autoCapitalize="none"
+                        />
+                        <TouchableOpacity onPress={clearValue}>
+                            <AntDesign color={Colors.principal[300]} size={16} name="close-circle" />
                         </TouchableOpacity>
                     </View>
                 </View>
-            ) : params.key === OptionsKeyEnum.phone ? (
-                <PhoneInput
-                    ref={phoneInput}
-                    value={(value as string).slice(-10)}
-                    defaultCode={"MX"}
-                    layout="second"
-                    onChangeFormattedText={(text) => {
-                        setValue(text);
-                    }}
-                    withDarkTheme
-                    autoFocus
-                    containerStyle={{
-                        width: "100%",
-                        paddingTop: 12,
-                    }}
-                />
-            ) : params.key === OptionsKeyEnum.description ? (
-                <View className="border-black/20 border-b pb-2 px-1 py-2">
-                    <TextInput
-                        ref={inputRef}
-                        value={value as string}
-                        onChangeText={(e) => setValue(e)}
-                        placeholder={(params.title as string).toLowerCase()}
-                        style={{ fontSize: 16 }}
-                        multiline
-                        maxLength={130}
-                    />
-                </View>
-            ) : (
-                params.key === "public" && (
-                    <DataOptions
-                        setValue={(e) => setValue(e === "publica" ? true : false)}
-                        value={value ? "publica" : "privada"}
-                        data={["publica", "privada"]}
-                    />
-                )
+            </View>
+
+            {helperText && (
+                <Text className="text-xs text-text-light mt-3 px-1 leading-relaxed">
+                    {helperText}
+                </Text>
             )}
         </View>
     )

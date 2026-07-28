@@ -1,6 +1,5 @@
-import { View, TouchableOpacity, Animated } from 'react-native'
+import { View, TouchableOpacity, Animated, TextInput } from 'react-native'
 import { memo, useRef, useEffect, useCallback } from 'react'
-import { TextInput } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome"
 import Feather from "@expo/vector-icons/Feather"

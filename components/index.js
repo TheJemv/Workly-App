@@ -1,7 +1,6 @@
 import SpinLoading from "./SpinLoading"
 import TextInputComponent from "./TextInputComponent"
 import ContainerBack from "./ContainerBack"
-import Header from "./Header"
 import TabItem from "./TabItem"
 import Option from "./Option"
 import SkeletonChatItem from "./SkeletonChatItem"
@@ -12,7 +11,6 @@ import ContainerScreenApp from "./ContainerScreenApp"
 import LoginFacebook from "./LoginFacebook"
 import LoginGoogle from "../auth/buttons/LoginGoogle"
 import ItemPriceOrderDetails from "./ItemPriceOrderDetails"
-import Grid from "./Grid"
 import ContainerScreen from "./ContainerScreen"
 import ItemCreditCard from "./ItemCreditCard"
 import DataOptions from "./DataOptions"
@@ -20,11 +18,12 @@ import ServiceItem from "./ServiceItem"
 import TextInputUser from "./TextInput.component"
 import ThumnailEdit from "./ThumbnailEdit.component"
 import DropdownInput from "./DropdownInput.component"
+import Grid from "./Grid"
 
 
 export {
    SpinLoading, TextInputComponent, ContainerBack,
-   Header, TabItem, Option, SkeletonChatItem,
+   TabItem, Option, SkeletonChatItem,
    ChatItem, ChatItemSearch, UserConfigButton,
    ContainerScreenApp, LoginFacebook, LoginGoogle,
    ItemPriceOrderDetails, Grid, ContainerScreen,
