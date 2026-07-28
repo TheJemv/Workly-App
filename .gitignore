@@ -97,6 +97,5 @@ google-services.json
 GoogleService-Info.plist
 
 
-icons/
 ios/Images.xcassets/
 android/app/src/main/res/mipmap-*
