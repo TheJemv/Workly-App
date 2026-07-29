@@ -93,9 +93,6 @@ web-build/.env
 *.cer
 *.certSigningRequest
 *.p12
-google-services.json
-GoogleService-Info.plist
-
 
 ios/Images.xcassets/
 android/app/src/main/res/mipmap-*
