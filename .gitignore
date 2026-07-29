@@ -99,3 +99,6 @@ GoogleService-Info.plist
 
 ios/Images.xcassets/
 android/app/src/main/res/mipmap-*
+
+/icons/
+!/assets/icons/
