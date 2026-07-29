@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "642547837410",
+    "project_id": "workitapp-92de2",
+    "storage_bucket": "workitapp-92de2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642547837410:android:0a212646486e49a07d71bb",
+        "android_client_info": {
+          "package_name": "com.workly.services"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642547837410-4lkt4sv6jcmi28ld9lrjf74kpbdgh4tl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.workly.services",
+            "certificate_hash": "11390471093f7a580677b41f580693a2abf4c773"
+          }
+        },
+        {
+          "client_id": "642547837410-esckgklgi175d72kmhmkbqvjid5lensk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.workly.services",
+            "certificate_hash": "b9131ca8acd8ceff06e4e235a5cb47eaea3ce6f7"
+          }
+        },
+        {
+          "client_id": "642547837410-pe0af417r0qson1r4c7fntpbcdagg3d6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.workly.services",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "642547837410-p4il9usad2705bbhf6c9g97ib1109d6d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmQcT2KGznXm_e7qXdBqN3AJW8NqCWKN8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642547837410-p4il9usad2705bbhf6c9g97ib1109d6d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "642547837410-9o9pbupnjh5aq05ta5rj1gnt6jh44kap.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.WorkIt"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
