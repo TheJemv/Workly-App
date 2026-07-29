@@ -100,12 +100,11 @@ GoogleService-Info.plist
 ios/Images.xcassets/
 android/app/src/main/res/mipmap-*
 
-<<<<<<< HEAD
 /icons/
-=======
-/icons/*
->>>>>>> 326e398 (fix: icons de appstore y googleplay)
 !/assets/icons/
 
 !/icons/icon-dev.png
 !/icons/icon-prod.png
+
+ios/
+android/

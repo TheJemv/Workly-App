@@ -1,3 +1,4 @@
+# Dependencias y compilaciones locales
 node_modules/
 android/
 ios/
@@ -5,3 +6,16 @@ ios/
 dist/
 build/
 *.tsbuildinfo
+
+# Ignorar la carpeta raíz de iconos general, pero permitir los dos específicos
+/icons/
+!/icons/
+/icons/*
+!/icons/icon-dev.png
+!/icons/icon-prod.png
+
+# Mantener protegido assets/icons (este sí se sube completo)
+!/assets/icons/
+
+ios/
+android/
