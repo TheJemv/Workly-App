@@ -18,6 +18,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#ffffff",
    },
    ios: {
+      name: "Workly",
+      bundleDisplayName: IS_DEV ? "Workly (Dev)" : "Workly",
       icon: IS_DEV ? "./icons/icon-dev.png" : "./icons/icon-prod.png",
       supportsTablet: false,
       bundleIdentifier: "com.workly.services",
