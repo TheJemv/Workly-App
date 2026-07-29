@@ -102,3 +102,6 @@ android/app/src/main/res/mipmap-*
 
 /icons/
 !/assets/icons/
+
+!/icons/icon-dev.png
+!/icons/icon-prod.png
