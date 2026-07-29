@@ -11,11 +11,14 @@ build/
 /icons/
 !/icons/
 /icons/*
-!/icons/icon-dev.png
 !/icons/icon-prod.png
+!/icons/icon-dev.png
 
 # Mantener protegido assets/icons (este sí se sube completo)
 !/assets/icons/
 
 ios/
 android/
+
+.DS_Store
+.vscode/
