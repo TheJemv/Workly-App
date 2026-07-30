@@ -128,3 +128,5 @@ build/
 .vscode/*
 !.vscode/extensions.jsongoogle-services.json
 GoogleService-Info.plist
+google-services.json
+GoogleService-Info.plist
