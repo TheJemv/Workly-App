@@ -112,8 +112,6 @@ android/
 !.env.example
 
 # Firebase / credenciales de servicio
-google-services.json
-GoogleService-Info.plist
 firebase-adminsdk*.json
 serviceAccountKey.json
 *.pem
