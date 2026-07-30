@@ -126,4 +126,5 @@ build/
 # macOS / editor
 .DS_Store
 .vscode/*
-!.vscode/extensions.json
+!.vscode/extensions.jsongoogle-services.json
+GoogleService-Info.plist
