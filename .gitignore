@@ -105,3 +105,27 @@ android/app/src/main/res/mipmap-*
 
 ios/
 android/
+
+# Env files (todas las variantes, no solo .env)
+.env
+.env.*
+!.env.example
+
+# Firebase / credenciales de servicio
+google-services.json
+GoogleService-Info.plist
+firebase-adminsdk*.json
+serviceAccountKey.json
+*.pem
+*.p8
+*.key
+
+# Builds y logs
+*.log
+.eas/
+build/
+
+# macOS / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
