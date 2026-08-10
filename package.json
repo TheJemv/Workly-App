@@ -25,7 +25,7 @@
     "@react-navigation/material-top-tabs": "^7.4.13",
     "@react-navigation/native": "^7.1.8",
     "@react-navigation/native-stack": "^7.3.16",
-    "@stripe/stripe-react-native": "^0.71.0",
+    "@stripe/stripe-react-native": "0.50.3",
     "@types/chalk": "^0.4.31",
     "@types/react": "~19.1.10",
     "axios": "1.7.2",
@@ -95,7 +95,10 @@
       "exclude": [
         "expo-dev-launcher",
         "expo-dev-menu",
-        "expo-dev-menu-interface"
+        "expo-dev-menu-interface",
+        "react-native-fs",
+        "@alexzunik/react-native-money-input",
+        "react-native-vector-icons"
       ]
     }
   },

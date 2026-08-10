@@ -1,4 +1,4 @@
-.PHONY: clean-ios prebuild-dev open-dev run-dev start-dev prebuild-prod open-prod build-eas-dev build-eas-prod
+cd .PHONY: clean-ios prebuild-dev open-dev run-dev start-dev prebuild-prod open-prod build-eas-dev build-eas-prod
 
 # ==========================================
 # 🧹 LIMPIEZA
