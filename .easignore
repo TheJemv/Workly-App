@@ -1,31 +1,35 @@
-# Dependencias y compilaciones locales
+# EAS Build no combina esto con .gitignore: si este archivo existe, EAS
+# usa SOLO estas reglas para decidir qué subir. Lo que no esté aquí se sube.
+
+# Dependencias y compilaciones locales (EAS las reinstala/regenera)
 node_modules/
-android/
 ios/
+android/
 .expo/
 dist/
 build/
 *.tsbuildinfo
 
-# Ignorar la carpeta raíz de iconos general, pero permitir los dos específicos
-/icons/
-!/icons/
+# icons/ guarda exports de diseño pesados; solo suben los dos íconos
+# que usa app.config.ts para iOS (icon-dev.png / icon-prod.png)
 /icons/*
-!/icons/icon-prod.png
 !/icons/icon-dev.png
+!/icons/icon-prod.png
 
-# Mantener protegido assets/icons (este sí se sube completo)
+# assets/icons sí se sube completo (íconos usados en la app)
 !/assets/icons/
 
-ios/
-android/
-
+# macOS / editor
 .DS_Store
 .vscode/
 
+# Tests y config que el build no necesita
 test/
-
-.env
-.env.*
 .gitignore
 Makefile
+
+# Variables de entorno locales (no las credenciales de Firebase:
+# esas SÍ deben subir porque app.config.ts las necesita para el build)
+.env
+.env.*
+!.env.example
