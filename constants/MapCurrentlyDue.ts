@@ -1,5 +1,5 @@
 export default {
-    external_account: "Falta agregar o verificar la cuenta bancaria.",
+    "external_account": "Falta agregar o verificar la cuenta bancaria.",
     "company.tax_id": "Hace falta agregar un RFC/Tax ID.",
     "company.directors_provided": "Falta agregar los directores de la compañía.",
     "company.verification.document":

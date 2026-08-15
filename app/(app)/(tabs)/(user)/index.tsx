@@ -15,7 +15,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-import { useAccountPaymentSheet } from "hooks/useAccountPaymentSheet";
+import { useAccountPaymentSheet } from "hooks/stripe/useAccountPaymentSheet";
 import useGlobal from "core/globals";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
