@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Alert } from "react-native";
+
 import useGlobal from "core/globals";
-import { Order } from "../../types";
+import { Order } from "@/types/Order";
 
 import {
     acceptOrder,

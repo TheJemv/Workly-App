@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import DatePicker from "react-native-date-picker";
 import formatDateService from "functions/formatDateService";
-import { router, useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { StatsComponent } from "components/Services";
 import { getService, getServicePayment } from "services/api/services.api";
 import LoadingScreen from "components/LoadingScreen";
@@ -26,7 +26,7 @@ import { Container, CardInfo, CardContent, Row, cardShadow } from "components/Ca
 import { getServiceShareUrl } from "utils/shareLinks"
 import { Feather } from "@expo/vector-icons";
 
-import { useServicePaymentSheet } from "hooks/useServicePaymentSheet";
+import { useServicePaymentSheet } from "hooks/stripe/useServicePaymentSheet";
 
 // Orden para validar contra Date.getDay() (0 = Domingo) - NO reordenar, es índice real
 const daysArray: DayName[] = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
