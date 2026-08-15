@@ -1,4 +1,3 @@
-import { usePaymentSheet } from "@stripe/stripe-react-native";
 import { AuthContext } from "context/AuthContext";
 import { Colors } from "lib";
 import { useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
@@ -27,6 +26,8 @@ import { Container, CardInfo, CardContent, Row, cardShadow } from "components/Ca
 import { getServiceShareUrl } from "utils/shareLinks"
 import { Feather } from "@expo/vector-icons";
 
+import { useServicePaymentSheet } from "hooks/useServicePaymentSheet";
+
 // Orden para validar contra Date.getDay() (0 = Domingo) - NO reordenar, es índice real
 const daysArray: DayName[] = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -37,9 +38,9 @@ const FALLBACK_PHOTO_URL = "https://1.bp.blogspot.com/-CLJH1C9LCj8/U_qBzC3WCII/A
 
 const ServiceHire = () => {
     const params = useLocalSearchParams();
-    const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
     const navigation = useNavigation();
     const { token, customer } = useContext(AuthContext);
+    const { pay } = useServicePaymentSheet();
 
     const [infoUserNote, setInfoUserNote] = useState("");
     const [dataService, setDataService] = useState<ServiceType | null>(null);
@@ -103,11 +104,20 @@ const ServiceHire = () => {
             return;
         }
 
+        if (!token) {
+            router.replace("/(auth)");
+            setEnableButton(false);
+            return;
+        }
+
+        const customerId = customer?.customer?.customerId;
+        if (!customerId) {
+            Alert.alert("Error", "No se pudo obtener tu información de cliente.");
+            setEnableButton(false);
+            return;
+        }
+
         try {
-            if (!token) {
-                router.replace("/(auth)");
-                return
-            }
             const { paymentintent, ephemeralKey } = await getServicePayment(
                 token,
                 dataService?.id,
@@ -119,32 +129,25 @@ const ServiceHire = () => {
                 },
             );
 
-            await initializePaymentSheet(paymentintent, ephemeralKey);
+            const { success, error } = await pay({
+                paymentIntentClientSecret: paymentintent,
+                ephemeralKey,
+                customerId,
+                merchantDisplayName: dataService?.name ?? "Workly",
+                merchantCountryCode: "MX",
+            });
 
-            const { error: payError } = await presentPaymentSheet();
-            if (payError) return;
+            if (!success) {
+                if (error) Alert.alert("Error", error);
+                return;
+            }
 
             if (router.canGoBack()) router.back();
-        } catch (error) {
-            Alert.alert("Error", error?.message);
+        } catch (error: any) {
+            Alert.alert("Error", error?.message ?? "Ocurrió un error al procesar el pago.");
         } finally {
             setEnableButton(false);
         }
-    };
-
-    const initializePaymentSheet = async (payment: string, key: string) => {
-        const { error } = await initPaymentSheet({
-            customerEphemeralKeySecret: key,
-            merchantDisplayName: dataService?.name,
-            allowsDelayedPaymentMethods: true,
-            returnURL: "workly://stripe-return",
-            paymentIntentClientSecret: payment,
-            customerId: customer?.customer?.customerId,
-            applePay: {
-                merchantCountryCode: "MX",
-            },
-        });
-        if (error) throw new Error(error.message);
     };
 
     const OpenCompany = () => {

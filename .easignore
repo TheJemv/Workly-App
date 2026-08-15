@@ -24,3 +24,8 @@ android/
 .vscode/
 
 test/
+
+.env
+.env.*
+.gitignore
+Makefile

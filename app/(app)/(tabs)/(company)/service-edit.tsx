@@ -18,7 +18,6 @@ import { Colors } from 'lib'
 import { Controller, useForm } from 'react-hook-form'
 import { defaultServiceData, ServiceData, serviceDataResolver } from '@/types/Service/EditService.types'
 import * as ImagePicker from "expo-image-picker";
-import RNFS from "react-native-fs";
 import SpinLoading from "components/SpinLoading";
 import { Dropdown } from 'react-native-element-dropdown'
 import ServiceCategoryEnum from 'enum/ServiceCategoryEnum'
@@ -27,8 +26,26 @@ import getChangedProperties from 'utils/CompareObjects'
 import { patchService } from 'services/api/services.api'
 import SaveButton from 'components/Header/SaveButton'
 
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+// Función auxiliar nativa para convertir URI a Base64 puro
+async function uriToBase64(uri: string): Promise<string> {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64String = reader.result as string;
+            const base64Data = base64String.includes(",")
+                ? base64String.split(",")[1]
+                : base64String;
+            resolve(base64Data);
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(blob);
+    });
+}
+
 export default function EditService() {
     const params = useLocalSearchParams()
     const navigation = useNavigation()
@@ -37,7 +54,7 @@ export default function EditService() {
     const service = services.data.find((s: Service) => s.id === params.id)
 
     const [hasChanges, setHasChanges] = useState(false);
-    const [currentImage, setCurrentImage] = useState<string>(service.photo);
+    const [currentImage, setCurrentImage] = useState<string>(service?.photo || "");
     const [loadingImage, setLoadingImage] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const submitRef = useRef<() => void>(() => { })
@@ -114,15 +131,15 @@ export default function EditService() {
                 return;
             }
 
-            // Convertir a base64
-            const base64 = await RNFS.readFile(imageUri, "base64");
+            // Reemplazo de RNFS por la función pura basada en JS
+            const base64 = await uriToBase64(imageUri);
             setValue('photo', base64, {
                 shouldDirty: true,
                 shouldValidate: true
             });
             setCurrentImage(`data:image/jpeg;base64,${base64}`);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error al actualizar la foto:", error);
             Alert.alert(
                 "Error",
@@ -147,7 +164,7 @@ export default function EditService() {
             if (router.canGoBack()) {
                 router.back()
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error al actualizar el servicio:", error);
             Alert.alert("Error", error?.message || "No se pudo actualizar el servicio. Intenta de nuevo.");
         } finally {
@@ -283,7 +300,7 @@ export default function EditService() {
                         <Controller
                             control={control}
                             name='indefinite'
-                            render={({ field, fieldState }) => (
+                            render={({ field }) => (
                                 <View>
                                     <Text style={styles.textDropdown}>Precio Fijo</Text>
                                     <Dropdown
@@ -320,13 +337,12 @@ export default function EditService() {
                         />
                     </View>
 
-
                     {/* Precio con formato */}
                     {!getValues().indefinite && (
                         <Controller
                             control={control}
                             name='unit_amount'
-                            render={({ field, fieldState }) => (
+                            render={({ field }) => (
                                 <View style={styles.inputWrapper}>
                                     <Text style={styles.textDropdown}>Precio</Text>
                                     <MoneyTextInput
@@ -381,7 +397,6 @@ export default function EditService() {
                             )}
                         />
                     </View>
-
 
                     {/* Categoría */}
                     <View style={styles.inputWrapper}>

@@ -130,3 +130,6 @@ build/
 GoogleService-Info.plist
 google-services.json
 GoogleService-Info.plist
+
+.expo/
+README.md
