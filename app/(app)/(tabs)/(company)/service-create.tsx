@@ -18,7 +18,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { defaultServiceData, ServiceData, serviceDataResolver } from '@/types/Service/EditService.types'
 import { Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import RNFS from "react-native-fs";
 import SpinLoading from "components/SpinLoading";
 import { Dropdown } from 'react-native-element-dropdown'
 import ServiceCategoryEnum from 'enum/ServiceCategoryEnum'
@@ -27,6 +26,25 @@ import { setService } from 'services/api/services.api'
 import LoadingScreen from 'components/LoadingScreen'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+// Función auxiliar para convertir URI a base64 puro usando JS nativo
+async function uriToBase64(uri: string): Promise<string> {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64String = reader.result as string;
+            const base64Data = base64String.includes(",")
+                ? base64String.split(",")[1]
+                : base64String;
+            resolve(base64Data);
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(blob);
+    });
+}
+
 export default function ServiceCreate() {
     const navigation = useNavigation()
     const [loading, setLoading] = useState(false)
@@ -39,7 +57,6 @@ export default function ServiceCreate() {
         defaultValues: defaultServiceData,
     });
     watch();
-
 
     const getFileSize = async (uri: string): Promise<number> => {
         try {
@@ -86,15 +103,15 @@ export default function ServiceCreate() {
                 return;
             }
 
-            // Convertir a base64
-            const base64 = await RNFS.readFile(imageUri, "base64");
+            // Reemplazo de RNFS por la función pura basada en JS
+            const base64 = await uriToBase64(imageUri);
             setValue('photo', base64, {
                 shouldDirty: true,
                 shouldValidate: true
             });
             setCurrentImage(`data:image/jpeg;base64,${base64}`);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error al actualizar la foto:", error);
             Alert.alert(
                 "Error",
@@ -114,7 +131,7 @@ export default function ServiceCreate() {
             if (router.canGoBack()) {
                 router.back()
             }
-        } catch (e) {
+        } catch (e: any) {
             alert(e.message)
         } finally {
             setIsSubmitting(false)
@@ -140,7 +157,6 @@ export default function ServiceCreate() {
             )
         })
     }, [isSubmitting])
-
 
     return loading ? (
         <LoadingScreen />
@@ -308,7 +324,7 @@ export default function ServiceCreate() {
                         <Controller
                             control={control}
                             name='unit_amount'
-                            render={({ field, fieldState }) => (
+                            render={({ field }) => (
                                 <View style={styles.inputWrapper}>
                                     <Text style={styles.textDropdown}>Precio</Text>
                                     <MoneyTextInput

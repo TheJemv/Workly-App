@@ -8,7 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
    // 2. Nombre dinámico para distinguirla en tu pantalla de inicio
    name: IS_DEV ? "Workly (Dev)" : "Workly",
    slug: "workly-services",
-   version: "0.6.4",
+   version: "0.6.8",
    orientation: "portrait",
    icon: "./assets/icon.png",
    userInterfaceStyle: "light",

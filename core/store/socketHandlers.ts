@@ -107,7 +107,9 @@ export const createSocketHandlers = (
         };
 
         ws.onerror = () => {
-            try { ws.close(); } catch { }
+            try { ws.close(); } catch (e) {
+                console.error(e)
+            }
         };
 
         ws.onclose = () => {

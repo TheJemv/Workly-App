@@ -9,7 +9,6 @@ import {
     Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import RNFS from "react-native-fs";
 import { Feather } from "@expo/vector-icons";
 
 import { updateCompany } from "services/api/company.api";
@@ -78,6 +77,24 @@ function buildByPath(path: string, value: any) {
     });
 
     return result;
+}
+
+// Función auxiliar nativa para convertir la URI de la imagen a Base64 puro
+async function uriToBase64(uri: string): Promise<string> {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64String = reader.result as string;
+            const base64Data = base64String.includes(",")
+                ? base64String.split(",")[1]
+                : base64String;
+            resolve(base64Data);
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(blob);
+    });
 }
 
 export default function Edit() {
@@ -149,7 +166,7 @@ export default function Edit() {
                 return;
             }
 
-            const base64 = await RNFS.readFile(imageUri, "base64");
+            const base64 = await uriToBase64(imageUri);
 
             const data = await updateCompany({
                 photo: base64,
@@ -172,13 +189,12 @@ export default function Edit() {
     }, [token, getFileSize, reloadCompany]);
 
     const [loadingPublicButton, setLoadingPublicButton] = useState<boolean>(false)
-    const handleSaveData = async (key: any, value) => {
+    const handleSaveData = async (key: any, value: any) => {
         try {
             setLoadingPublicButton(true)
             const data = buildByPath(key as string, value)
             await updateCompany(data).then(async () => {
                 await reloadCompany();
-                // if (router.canGoBack()) router.back()
                 setLoadingPublicButton(false)
             })
         } catch (error) {
@@ -192,18 +208,6 @@ export default function Edit() {
             {/* Banner + Avatar */}
             <View className="relative">
                 <View className="h-32 bg-brand-banner relative bg-primary" style={cardShadow}>
-                    {/* Boton para cambiar el cover de la imagen */}
-                    {/* <TouchableOpacity
-                        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 items-center justify-center shadow-sm"
-                        onPress={() =>
-                            Alert.alert(
-                                "Editar cover",
-                                "Funcionalidad de editar cover no implementada aún"
-                            )
-                        }
-                    >
-                        <Feather name="camera" size={15} color={Colors.principal.DEFAULT} />
-                    </TouchableOpacity> */}
                 </View>
 
                 {/* Avatar */}
@@ -322,7 +326,6 @@ export default function Edit() {
                                         <Feather name="chevron-right" size={16} color={Colors.principal[300]} />
                                     </TouchableOpacity>
 
-                                    {/* Separador manual - solo si NO es el último elemento */}
                                     {k < OptionsKey.length - 1 && (
                                         <View className="h-[1px] bg-border-soft ml-[0px]" />
                                     )}
@@ -341,19 +344,6 @@ export default function Edit() {
 
                 <View className="rounded-xl bg-white" style={cardShadow}>
                     <View className="bg-white rounded-xl overflow-hidden shadow-sm border border-border-soft">
-                        {/* <TouchableOpacity
-                            onPress={() =>
-                                router.push({
-                                    pathname: "/(edit)/option",
-                                    params: {
-                                        key: OptionsKeyEnum.public,
-                                        title: "Privacidad",
-                                    },
-                                })
-                            }
-                            activeOpacity={0.7}
-                            className="flex-row items-center gap-3 px-4 py-3.5"
-                        > */}
                         <View className="flex-row items-center gap-3 px-4 py-3.5">
                             <View className="w-8 h-8 rounded-lg bg-brand-light/50 items-center justify-center">
                                 <Feather
@@ -385,10 +375,7 @@ export default function Edit() {
                                     <SpinLoading size={14} />
                                 </View>
                             )}
-
-                            {/* <Feather name="chevron-right" size={16} color={Colors.principal[300]} /> */}
                         </View>
-                        {/* </TouchableOpacity> */}
                     </View>
                 </View>
             </View>
@@ -398,7 +385,6 @@ export default function Edit() {
                 <Text className="text-xs font-semibold text-text-light uppercase tracking-widest mb-2 px-1">
                     Horarios y disponibilidad
                 </Text>
-
 
                 <View className="rounded-xl bg-white" style={cardShadow}>
                     <View className="bg-white rounded-xl overflow-hidden shadow-sm border border-border-soft">

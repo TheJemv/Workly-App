@@ -1,11 +1,11 @@
 import {
-    Alert,
     ScrollView,
     View,
     Text,
     TouchableOpacity,
+    Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { Singout } from "services/firebase/Singout";
 import { UserConfigButton, Option } from "components";
@@ -15,73 +15,35 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-import { usePaymentSheet } from "@stripe/stripe-react-native";
-import { getPaymentParams } from "services/api/getPaymantParams";
+import { useAccountPaymentSheet } from "hooks/useAccountPaymentSheet";
 import useGlobal from "core/globals";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { STATUS_MARGIN_TOP } from "constants/index";
+import type { Customer } from "@/types/Customer";
 
-const AccountScreen = () => {
-    const customerUser = useGlobal(state => state.customer)
-    const handleSingout = async () => {
-        await Singout().then(() => {
-            router.replace('/(app)/(tabs)/(home)');
-        }).catch((e) => {
-            Alert.alert("Error", e.message);
-        });
-    };
+const AccountScreen: React.FC = () => {
+    const customerUser = useGlobal((s) => s.customer) as Customer | null | undefined;
 
-    // Datos Bancarios
-    const { initPaymentSheet, presentPaymentSheet } = usePaymentSheet();
-    const [loadingPayments, setLoadingPayments] = useState(false);
-    const [isModalActivePayment, setIsModalActivePayment] = useState(false);
-
+    const {
+        loadingPayments,
+        isModalActivePayment,
+        initializePaymentSheet,
+        handleNewCard,
+    } = useAccountPaymentSheet(customerUser);
 
     useEffect(() => {
         initializePaymentSheet();
-    }, []);
+    }, [initializePaymentSheet]);
 
-    const fetchPaymentSheetParams = async () => {
-        try {
-            const { ephemeralKey, setupIntent } = await getPaymentParams().catch((error) => {
-                throw new Error(error.message)
+    const handleSingout = async (): Promise<void> => {
+        await Singout()
+            .then(() => {
+                router.replace('/(app)/(tabs)/(home)');
+            })
+            .catch((e: Error) => {
+                Alert.alert("Error", e.message);
             });
-            console.log("✅ Payment params recibidos:", { ephemeralKey, setupIntent });
-            return { ephemeralKey, setupIntent };
-        } catch (error) {
-            Alert.alert('Error', error.message);
-        }
-    };
-
-    const initializePaymentSheet = async () => {
-        setLoadingPayments(false);
-        const { ephemeralKey, setupIntent } = await fetchPaymentSheetParams();
-
-        if (ephemeralKey && setupIntent) {
-            const { error } = await initPaymentSheet({
-                customerEphemeralKeySecret: ephemeralKey,
-                merchantDisplayName: "User",
-                allowsDelayedPaymentMethods: true,
-                returnURL: 'workit://stripe-return',
-                setupIntentClientSecret: setupIntent,
-                customerId: customerUser.customerId,
-            });
-
-            if (error) {
-                Alert.alert('Error', error.message);
-            } else {
-                setLoadingPayments(true);
-            }
-        }
-    };
-
-    const handleNewCard = async () => {
-        if (!loadingPayments) return;
-        setIsModalActivePayment(true);
-        await initializePaymentSheet();
-        await presentPaymentSheet();
-        setIsModalActivePayment(false);
     };
 
     return (
@@ -140,7 +102,6 @@ const AccountScreen = () => {
                     </View>
 
                     <View className="rounded-lg overflow-hidden flex flex-col">
-                        {/* Boton de Borrar Cuenta */}
                         <Option
                             styles="bg-red-500"
                             icon={Feather}
