@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { AppRegistry, LogBox, StyleSheet, View } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { StripeProvider } from '@stripe/stripe-react-native';
@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Stack } from 'expo-router';
 import { Asset, useAssets } from 'expo-asset';
+import * as SplashScreen from 'expo-splash-screen';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import { AuthProvider, AuthContext } from 'context/AuthContext';
@@ -20,6 +21,16 @@ import { PUBLISHABLE_KEY } from '@env';
 AppRegistry.registerHeadlessTask('StripeKeepJsAwakeTask', () => async () => { });
 
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
+
+// Evita que el splash se oculte solo al terminar de cargar el bundle de JS —
+// lo mantenemos visible hasta que SwitchAuth confirma que la carga inicial
+// (sesión + datos del cliente + íconos del home) terminó, y ahí lo ocultamos
+// nosotros con un fade en vez del corte seco de por defecto.
+SplashScreen.preventAutoHideAsync().catch(() => { });
+SplashScreen.setOptions({
+    duration: 400,
+    fade: true,
+});
 
 GoogleSignin.configure({
     webClientId: '642547837410-p4il9usad2705bbhf6c9g97ib1109d6d.apps.googleusercontent.com',
@@ -43,6 +54,20 @@ const SwitchAuth = ({ children }: { children: React.ReactNode }) => {
         require('assets/adaptive-icon.png'),
         ...iconAssets,
     ]);
+
+    // "Carga inicial" = lo mismo que hoy dispara <Connecting/>. Una vez que esto
+    // termina, el splash nativo ya cumplió su función y se puede ocultar — lo que
+    // pase después (socket que se cae, reconecta, etc.) sigue como overlay normal,
+    // ya no como parte del splash.
+    const isInitialLoadDone = !loading && !(token && !customer) && !!iconsLoaded;
+    const splashHiddenRef = useRef(false);
+
+    useEffect(() => {
+        if (isInitialLoadDone && !splashHiddenRef.current) {
+            splashHiddenRef.current = true;
+            SplashScreen.hideAsync();
+        }
+    }, [isInitialLoadDone]);
 
     let overlay: React.ReactNode = null;
     if (loading || (token && !customer) || !iconsLoaded) {

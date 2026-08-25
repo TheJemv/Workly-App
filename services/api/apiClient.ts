@@ -12,7 +12,6 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
    async (config) => {
-      console.log("5️⃣ interceptor ejecutándose");
       try {
          const app = getApp();
          const auth = getAuth(app);
@@ -24,7 +23,6 @@ apiClient.interceptors.request.use(
       } catch (error) {
          console.log("⚠️ Error obteniendo token, continuando sin auth:", error.message);
       }
-      console.log("6️⃣ interceptor terminado");
       return config; // ← siempre continúa aunque falle el token
    },
    (error) => {
