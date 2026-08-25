@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import { Image } from "expo-image";
 
-import { Order } from "../../types";
+import { Order } from "@/types/Order";
 
 type Props = {
     order: Order;

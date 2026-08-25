@@ -5,6 +5,7 @@ import { Image } from 'expo-image'
 import { router } from 'expo-router'
 
 import { Colors } from 'lib';
+import { formatMessageDate } from 'utils';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -16,9 +17,13 @@ const formatter = new Intl.NumberFormat("es-MX", {
 });
 
 const fromStripe = (amount: number) => formatter.format(amount / 100);
-const ServiceBubble = memo(({ order, uid }: any) => (
+const ServiceBubble = memo(({ order, uid }: any) => {
+    // El tipo Message permite `order: null`; sin orden no hay nada que mostrar.
+    if (!order) return null;
+
+    return (
     <View className="flex flex-row p-0.5 px-3 my-2">
-        {order.customer.uid === uid && <View className='flex-1' />}
+        {order.customer?.uid === uid && <View className='flex-1' />}
         {/* Este view tiene el shadow pero SIN overflow hidden */}
         <View style={{
             width: 240,
@@ -48,13 +53,13 @@ const ServiceBubble = memo(({ order, uid }: any) => (
                     {/* Customer */}
                     <View className='w-full flex flex-row items-center justify-between py-1'>
                         <View className='flex flex-row items-center' style={{ gap: 2 }}>
-                            <Image source={{ uri: order.customer.profile.photo }} style={{ width: 24, height: 24, borderRadius: 999 }} />
-                            <Text className='text-xs text-[#808080]'>{order.customer.profile.name}</Text>
+                            <Image source={{ uri: order.customer?.profile?.photo }} style={{ width: 24, height: 24, borderRadius: 999 }} />
+                            <Text className='text-xs text-[#808080]'>{order.customer?.profile?.name}</Text>
                         </View>
 
                         <View className='flex flex-row items-center' style={{ gap: 2 }}>
                             <Ionicons name="time-outline" size={18} color="#808080" />
-                            <Text className='text-[#808080] text-xs'>27 Feb</Text>
+                            <Text className='text-[#808080] text-xs'>{formatMessageDate(order.createdAt)}</Text>
                         </View>
                     </View>
 
@@ -72,6 +77,7 @@ const ServiceBubble = memo(({ order, uid }: any) => (
             </View>
         </View>
     </View>
-))
+    )
+})
 
 export default ServiceBubble

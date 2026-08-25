@@ -1,4 +1,4 @@
-import { Order } from "../../types";
+import { Order } from "@/types/Order";
 import OrderStatusEnum from "enum/OrderStatusEnum";
 
 export function getOrderFromState(
@@ -21,10 +21,17 @@ export function canConfirmDelivery(deliveryDate: string): boolean {
     const minConfirmTime = new Date(deliveryTime.getTime() + 45 * 60 * 1000);
     return now >= minConfirmTime;
 }
-export function getTrackingSteps(status: OrderStatusEnum) {
+// Icons que StepTrack acepta (ver components/TrackOrderScreen/step-track.tsx).
+// Se anota el arreglo con este tipo para que el .push() de abajo no choque con
+// el tipo más angosto que TS infiere de los primeros 3 elementos literales.
+type StepIcon = "file-text" | "credit-card" | "check" | "dropbox" | "bus" | "times" | "clock-o" | "check-circle" | "times-circle";
+
+// Order.status es `string | OrderStatusEnum` (a veces llega como string crudo
+// del backend antes de compararse contra el enum), así que aceptamos ambos.
+export function getTrackingSteps(status: string | OrderStatusEnum) {
     const isCancelled = status === OrderStatusEnum.CANCELLED;
 
-    const steps = [
+    const steps: { icon: StepIcon; title: string; description: string; completed: boolean; current: boolean; cancelled: boolean }[] = [
         {
             icon: "file-text" as const,
             title: "Pedido Realizado",
@@ -42,11 +49,11 @@ export function getTrackingSteps(status: OrderStatusEnum) {
                     : status === OrderStatusEnum.DATE_MODIFIED
                         ? "Cliente revisando nueva fecha"
                         : "Confirmado",
-            completed: [
+            completed: ([
                 OrderStatusEnum.CONFIRMED,
                 OrderStatusEnum.DELIVERED,
-            ].includes(status),
-            current: [OrderStatusEnum.PENDING, OrderStatusEnum.DATE_MODIFIED].includes(status),
+            ] as (string | OrderStatusEnum)[]).includes(status),
+            current: ([OrderStatusEnum.PENDING, OrderStatusEnum.DATE_MODIFIED] as (string | OrderStatusEnum)[]).includes(status),
             cancelled: false,
         },
         {

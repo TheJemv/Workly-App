@@ -3,8 +3,8 @@
  */
 
 interface CompanyActivity {
-    charges_enabled: boolean;
-    payouts_enabled: boolean;
+    charges_enabled?: boolean;
+    payouts_enabled?: boolean;
     requirements?: {
         currently_due?: string[];
         disabled_reason?: string | null;

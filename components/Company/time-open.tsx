@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
+import type { JSX } from "react";
 
 type Props = {
    title: string;

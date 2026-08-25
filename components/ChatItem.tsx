@@ -40,17 +40,16 @@ interface LastMessage {
    id: string
    content: string
    type: MessageType
-   order: Order | null
+   order?: Order | null
    createdAt: string
-   customer: { uid: string; profile: { name: string } }
+   customer?: { uid: string; profile?: any } | null
 }
 
 interface Props {
    id: string
-   createdAt: string
    onView?: boolean
-   lastMessage: LastMessage
-   customers: { profile: { photo: string; name: string }, uid: string }[]
+   lastMessage: LastMessage | null
+   customers: { profile?: { photo?: string; name?: string }, uid: string }[]
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -68,11 +67,14 @@ const LastLocationMessage = memo(({ createdAt, message, isMe }: { createdAt: str
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 const ChatItem = memo(({ data }: { data: Props }) => {
-   const uid = useGlobal((s) => s.customer.uid)
+   const uid = useGlobal((s) => s.customer?.uid)
    const isMe = data.lastMessage?.customer?.uid === uid
 
    const convertMessage = () => {
-      const { type, order, content, createdAt, customer } = data.lastMessage
+      // Un chat recién creado (p. ej. justo después de comprar un servicio) puede
+      // no tener todavía lastMessage — no asumir que siempre existe.
+      if (!data.lastMessage) return 'Inicia la conversación'
+      const { type, order, content, createdAt } = data.lastMessage
       switch (type) {
          case MessageType.SERVICE:
             return `Orden: ${order?.serviceName}`
@@ -87,14 +89,15 @@ const ChatItem = memo(({ data }: { data: Props }) => {
       }
    }
 
-   const otherCustomer = data.customers.find(c => c.uid !== uid);
+   // Puede no existir si `customers` viene incompleto (edge case de datos del backend).
+   const otherCustomer = data.customers?.find(c => c.uid !== uid);
    return (
       <Pressable
          onPress={() => router.push({ pathname: "/(app)/chat", params: { roomId: data.id } })}
          style={({ pressed }) => [{ backgroundColor: pressed ? 'lightgray' : 'transparent' }, styles.container]}
       >
          <Image
-            source={{ uri: otherCustomer.profile.photo }}
+            source={{ uri: otherCustomer?.profile?.photo }}
             style={styles.image}
             resizeMode="cover"
          />
@@ -105,7 +108,7 @@ const ChatItem = memo(({ data }: { data: Props }) => {
                   numberOfLines={1}
                   style={[styles.topName, { fontWeight: data.onView ? '900' : '700' }]}
                >
-                  {otherCustomer.profile.name}
+                  {otherCustomer?.profile?.name ?? 'Usuario'}
                </Text>
                <Text style={styles.topTime}>
                   {formatMessageDate(data?.lastMessage?.createdAt)}

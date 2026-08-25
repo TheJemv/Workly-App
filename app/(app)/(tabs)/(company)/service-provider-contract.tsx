@@ -66,7 +66,7 @@ const ServiceProviderContract = () => {
                     <Text style={styles.bulletPoint}>• Mantener la confidencialidad de toda la información proporcionada por los clientes</Text>
                     <Text style={styles.bulletPoint}>• Utilizar los datos exclusivamente para la prestación del servicio contratado</Text>
                     <Text style={styles.bulletPoint}>• Abstenerse de compartir, vender o utilizar los datos para fines publicitarios sin consentimiento expreso</Text>
-                    <Text style={styles.text} style={{ marginTop: 8 }}>
+                    <Text style={[styles.text, { marginTop: 8 }]}>
                         El incumplimiento de esta cláusula podrá resultar en la baja definitiva de la Empresa.
                     </Text>
                 </View>
@@ -87,7 +87,7 @@ const ServiceProviderContract = () => {
                     <Text style={styles.bulletPoint}>• Emitir comprobantes fiscales (facturación)</Text>
                     <Text style={styles.bulletPoint}>• Declarar y pagar impuestos</Text>
                     <Text style={styles.bulletPoint}>• Cumplir con las obligaciones ante el SAT</Text>
-                    <Text style={styles.text} style={{ marginTop: 8 }}>
+                    <Text style={[styles.text, { marginTop: 8 }]}>
                         Workly no asume responsabilidad fiscal, directa o indirecta.
                     </Text>
                 </View>

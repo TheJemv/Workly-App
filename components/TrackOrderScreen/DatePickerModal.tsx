@@ -1,5 +1,6 @@
 import DatePicker from "react-native-date-picker";
 import { Alert } from "react-native";
+import type { JSX } from "react";
 import formatDateService from "functions/formatDateService";
 
 type Props = {

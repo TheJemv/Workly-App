@@ -4,9 +4,6 @@ import { Image } from 'expo-image'
 
 const MessageHeader = memo(({ friend }: any) => {
     const user = friend?.profile
-    if (!user) {
-
-    }
 
     return (
         <View className="flex-1 flex-row items-center">

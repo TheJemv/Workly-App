@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, JSX } from "react";
 import { Pressable, View, Text } from "react-native";
 
 type Props = {

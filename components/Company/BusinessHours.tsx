@@ -4,7 +4,7 @@ import { DataDays, Day, DayName } from '@/types/Schedule';
 import { Colors } from 'lib';
 
 interface Props {
-    businessHours: DataDays[];
+    businessHours: DataDays;
 }
 
 const daysArray: DayName[] = [

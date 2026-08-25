@@ -141,7 +141,7 @@ const ProfileCompanyScreen = () => {
                         </View>
 
                         <View className="mt-4 px-4 pb-4 flex flex-col items-center">
-                            <Text className="text-xl font-bold text-text-dark font-heading text-balance text-center">Plometo Don Pepe 2</Text>
+                            <Text className="text-xl font-bold text-text-dark font-heading text-balance text-center">{company.profile.name}</Text>
                         </View>
 
 

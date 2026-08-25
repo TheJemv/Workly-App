@@ -1,4 +1,4 @@
-import Customer from "./customer"
+import Customer from "./Customer"
 import Profile from "./Profile"
 
 export {

@@ -53,6 +53,7 @@ const AccountScreen: React.FC = () => {
                     <Text className="order-0 text-dark font-bold text-[22px]">
                         Configuracion
                     </Text>
+
                     <UserConfigButton onPress={() => router.push('/profile')} />
 
                     <View className="rounded-lg overflow-hidden flex flex-col">

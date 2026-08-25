@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Feather } from "@expo/vector-icons";
 import { Colors } from "lib";
-import { IconName } from "./types";
+import { IconName } from "./../utils/types";
 
 export type CardInfoVariant = "label" | "heading";
 

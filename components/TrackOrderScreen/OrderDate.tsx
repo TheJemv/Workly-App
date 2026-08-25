@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity } from "react-native";
+import type { JSX } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Colors } from "lib";
-import { Order } from "../../types";
+import { Order } from "@/types/Order";
 import OrderStatusEnum from "enum/OrderStatusEnum";
 import formatDateService from "functions/formatDateService";
 

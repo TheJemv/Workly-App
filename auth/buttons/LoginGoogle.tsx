@@ -10,9 +10,11 @@ const LoginGoogle = () => {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const signInResult = await GoogleSignin.signIn();
 
+      // El shape de la respuesta cambió entre versiones del SDK; probamos ambas
+      // sin romper el tipo (la fallback vive en una versión anterior no tipada).
       let idToken = signInResult.data?.idToken;
       if (!idToken) {
-         idToken = signInResult.idToken;
+         idToken = (signInResult as any).idToken;
       }
       if (!idToken) return;
 

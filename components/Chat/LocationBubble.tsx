@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Platform, Linking } from 'react-native'
 import { memo, useCallback } from 'react'
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome"
+import Feather from "@expo/vector-icons/Feather"
 import { Colors } from 'lib'
 import MapView, { Marker } from 'react-native-maps'
 
@@ -32,8 +33,7 @@ export const LocationSendView = ({ data }: any) => (
     </View>
 )
 
-const LocationBubble = memo(({ location, isMe, isFirst, isLast }: any) => {
-    console.log(location)
+const LocationBubble = memo(({ location, isMe, isFirst, isLast, isTemp }: any) => {
     const openMap = useCallback(() => {
         const lat = parseFloat(location.latitude)
         const lng = parseFloat(location.longitude)
@@ -51,8 +51,14 @@ const LocationBubble = memo(({ location, isMe, isFirst, isLast }: any) => {
             className="flex flex-row py-0.5 px-2"
             style={{ justifyContent: isMe ? "flex-end" : "flex-start" }}
         >
+            {isMe && isTemp && (
+                <View className="flex-row justify-end pr-1 mt-auto mb-1">
+                    <Feather name="clock" size={10} color="#909090" />
+                </View>
+            )}
             <View style={{
                 backgroundColor: isMe ? '#303040' : '#f0f0f0',
+                opacity: isMe && isTemp ? 0.5 : 1,
                 overflow: 'hidden',
                 maxWidth: '80%',
                 borderRadius: 16,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { Period } from '../../../types';
+import { Period } from '@/types/Schedule';
 
 interface TimePickerModalProps {
     visible: boolean;

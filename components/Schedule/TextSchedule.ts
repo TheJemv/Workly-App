@@ -1,7 +1,7 @@
 import { DataDays, Day, DayName } from "@/types/Schedule"
 import timeToMinutes from "utils/TimeToMinuts"
 
-const TextSchedule = (dataDays: DataDays[], daysArray: DayName[]) => {
+const TextSchedule = (dataDays: DataDays, daysArray: DayName[]) => {
     const date = new Date()
 
     // (getDay() + 6) % 7 convierte el índice de JS al tuyo:

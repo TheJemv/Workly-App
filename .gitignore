@@ -41,6 +41,8 @@ yarn-error.*
 *.dmg
 *.aab
 *.apk
+*.ipa
+*.xcarchive
 *.zip
 
 # Variables de entorno (todas las variantes salvo el ejemplo)

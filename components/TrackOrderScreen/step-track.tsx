@@ -1,4 +1,5 @@
 import { View, Text } from "react-native";
+import type { JSX } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "lib";
 

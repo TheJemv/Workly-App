@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native'
 import { memo } from 'react'
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome"
+import Feather from "@expo/vector-icons/Feather"
 import { Colors } from 'lib'
 import { DetailInfo } from 'components/Profile/Billing/components/detail-info'
 import regimenes from "../../data/RegimenFiscales.json"
@@ -45,20 +46,37 @@ export const BillingSendView = ({ data }: any) => (
     </View>
 )
 
-const BillingBubble = memo(({ billing, isMe, isFirst, isLast }: any) => (
-    <View className="flex flex-row py-0.5 px-2" style={{ justifyContent: isMe ? "flex-end" : "flex-start" }}>
-        <View style={{
-            backgroundColor: isMe ? '#303040' : '#f0f0f0',
-            padding: 12,
-            maxWidth: '80%',
-            gap: 6,
+const BillingBubble = memo(({ billing, isMe, isFirst, isLast, isTemp }: any) => {
+    // Mismo patrón de MessageBubble: solo se "aplana" el lado que hace de columna
+    // (derecho si es mío, izquierdo si es del otro) y solo en el corner que conecta
+    // con el siguiente/anterior mensaje del mismo grupo. El extremo exterior del
+    // grupo (primero arriba / último abajo) siempre queda redondeado.
+    const isIsolated = isFirst && isLast
+    const outerRadius = isIsolated ? 32 : 16
 
-            borderRadius: 16,
-            borderBottomRightRadius: isMe && isLast ? 4 : 16,
-            borderBottomLeftRadius: !isMe && isLast ? 4 : 16,
-            borderTopRightRadius: isMe && isFirst ? 4 : 16,
-            borderTopLeftRadius: !isMe && isFirst ? 4 : 16,
-        }}>
+    return (
+        <View className="flex flex-row py-0.5 px-2" style={{ justifyContent: isMe ? "flex-end" : "flex-start" }}>
+            {isMe && isTemp && (
+                <View className="flex-row justify-end pr-1 mt-auto mb-1">
+                    <Feather name="clock" size={10} color="#909090" />
+                </View>
+            )}
+            <View style={{
+                backgroundColor: isMe ? '#303040' : '#f0f0f0',
+                opacity: isMe && isTemp ? 0.5 : 1,
+                padding: 12,
+                maxWidth: '80%',
+                gap: 6,
+
+                borderRadius: outerRadius,
+                ...(isMe ? {
+                    borderTopRightRadius: isIsolated ? outerRadius : isFirst ? 16 : 4,
+                    borderBottomRightRadius: isIsolated ? outerRadius : isLast ? 16 : 4,
+                } : {
+                    borderTopLeftRadius: isIsolated ? outerRadius : isFirst ? 16 : 4,
+                    borderBottomLeftRadius: isIsolated ? outerRadius : isLast ? 16 : 4,
+                }),
+            }}>
             <View className="flex flex-row items-center" style={{ gap: 6 }}>
                 <FontAwesomeIcon name="user" size={13} color={isMe ? '#fff' : Colors.principal.DEFAULT} />
                 <Text style={{ fontSize: 13, fontWeight: '600', color: isMe ? '#fff' : '#050505' }}>{billing.name}</Text>
@@ -83,6 +101,7 @@ const BillingBubble = memo(({ billing, isMe, isFirst, isLast }: any) => (
             </View>
         </View>
     </View>
-))
+    )
+})
 
 export default BillingBubble
