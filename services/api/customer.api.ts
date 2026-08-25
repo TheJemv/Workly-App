@@ -10,14 +10,10 @@ export const updatedCustomer = async (data: object) => {
 };
 
 export const trandingCustomer = async (): Promise<any> => {
-   console.log("1️⃣ entrando a trandingCustomer");
    try {
-      console.log("2️⃣ antes del interceptor");
       const response = await apiClient.get("/customer/trending");
-      console.log("3️⃣ respuesta recibida:", response?.status);
       return response?.data;
    } catch (error) {
-      console.log("4️⃣ error:", error.message, error.code);
       throw error;
    }
 };

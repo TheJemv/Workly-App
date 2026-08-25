@@ -20,12 +20,10 @@ const HomeScreen = () => {
 
     const { customer } = useGlobal();
     useEffect(() => {
-        console.log("🟡 fetchData ejecutándose...");
         const fetchData = async () => {
             // Cambia temporalmente a una URL pública para probar
             try {
                 const data = await trandingCustomer();
-                console.log("✅ data recibida:", data);
                 setCompanies(data.companies);
                 setServices(data.services);
             } catch (error) {

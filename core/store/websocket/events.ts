@@ -58,9 +58,7 @@ export const responseSalesGet = (set, get, data) => {
 };
 
 export const responseOrdersGet = (set, get, data) => {
-    console.log("📦 responseOrdersGet:", data);
-
-    // data ya es { loaded, data, meta }
+    // console.log("📦 responseOrdersGet:", data);
     if (!data?.data) return; // 👈 guard por si llega mal
     set((state) => ({
         orders: {
