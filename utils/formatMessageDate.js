@@ -6,11 +6,13 @@ const formatMessageDate = (dateString) => {
          throw new Error('Fecha no válida');
       }
 
-      // Obtener el offset de la zona horaria del usuario en minutos
-      const userTimezoneOffset = new Date().getTimezoneOffset() * 60000; // en milisegundos
-
-      // Convertir la fecha UTC a la fecha local del usuario
-      const localDate = new Date(date.getTime() - userTimezoneOffset);
+      // OJO: no hay que restar manualmente el timezone offset aquí. `date` ya es un
+      // instante UTC correcto (viene de un ISO string), y los métodos de Date como
+      // getHours()/getDate()/getMonth() YA devuelven la hora/fecha convertida a la
+      // zona horaria local del dispositivo automáticamente. Restar el offset a mano
+      // aplicaba la conversión DOS veces y desfasaba la hora mostrada (p. ej. 6h en
+      // México), y en casos cerca de medianoche hasta podía cambiar el día mostrado.
+      const localDate = date;
 
       const now = new Date();
 

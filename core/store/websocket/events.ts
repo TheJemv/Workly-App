@@ -1,4 +1,28 @@
-export const responseMessageNew = (set, get, data) => { };
+// Se dispara cuando se crea un chat/room nuevo (p. ej. al comprar un servicio).
+// El payload trae el chat completo (id, customers, lastMessage, ...), igual que
+// cada elemento de "message.chats", por lo que lo normalizamos de la misma forma.
+export const responseMessageNew = (set, get, data) => {
+    if (!data?.id) return;
+
+    set((state) => {
+        const exists = state.chats.some(c => c.id === data.id);
+        if (exists) return {}; // ya lo tenemos (p. ej. llegó por otra vía), no duplicar
+
+        const newChat = {
+            ...data,
+            messages: data.messages ?? [],
+            messagesNext: data.messagesNext ?? null,
+            messagesLoaded: data.messagesLoaded ?? false,
+        };
+
+        return {
+            chats: [newChat, ...state.chats].sort((a, b) =>
+                new Date(b.lastMessage?.createdAt ?? 0).getTime() -
+                new Date(a.lastMessage?.createdAt ?? 0).getTime()
+            ),
+        };
+    });
+};
 
 export const responseCustomerGet = (set, get, data) => {
     set((state) => ({
@@ -93,7 +117,9 @@ export const responseMessageSend = (set, get, data) => {
             if (chat.id !== roomId) return chat;
             const messages = data.tempId
                 ? chat.messages.map(msg =>
-                    msg.tempId === data.tempId ? { ...data, tempId: null } : msg
+                    // Guardamos el tempId resuelto en otra llave: chat.tsx lo necesita
+                    // para hacer match exacto (billing/location no tienen "content" único).
+                    msg.tempId === data.tempId ? { ...data, tempId: null, resolvedTempId: data.tempId } : msg
                 )
                 : [...chat.messages, data] // ✅ ASC: nuevo al FINAL
             return { ...chat, messages, lastMessage: data };

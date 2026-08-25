@@ -7,7 +7,7 @@ import {
     Platform
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
-import { invoiceDataResolver, InvoiceData, defaultInvoiceData } from "@/types/Billing/Billing";
+import { invoiceDataResolver, Billing, defaultInvoiceData } from "@/types/Billing/Billing";
 import { TextInput } from "components/Profile/Billing/components/text-input";
 import { postBilling } from "services/api/billing.api";
 import useGlobal from "core/globals";
@@ -21,7 +21,7 @@ import { RegimeSelect } from "components/Profile/Billing/regime-select";
 export default function CreateInvoiceScreen() {
     const navigation = useNavigation()
     const { token } = useGlobal();
-    const { control, handleSubmit } = useForm<InvoiceData>({
+    const { control, handleSubmit } = useForm<Billing>({
         resolver: invoiceDataResolver,
         defaultValues: defaultInvoiceData,
     });
@@ -32,7 +32,7 @@ export default function CreateInvoiceScreen() {
         }
     }
 
-    const handleCreate = async (data: InvoiceData): Promise<void> => {
+    const handleCreate = async (data: Billing): Promise<void> => {
         await postBilling(token, data)
             .then(() => {
                 handleBack();

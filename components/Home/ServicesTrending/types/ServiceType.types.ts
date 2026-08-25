@@ -6,7 +6,7 @@ interface ServiceType {
    unit_amount: number;
    indefinite: boolean;
 
-   company: {
+   company?: {
       profile: {
          photo: string;
       };

@@ -20,6 +20,9 @@ export default interface Order {
 
     notes: string;
     dateRequest: string;
+    // Fecha propuesta por la empresa cuando cambia dateRequest (status DATE_MODIFIED);
+    // se usa para mostrar "fecha original" tachada. Ver OrderDate.tsx.
+    originalDeliveryDate?: string;
 
     location?: Location
 };

@@ -1,5 +1,7 @@
 interface Profile {
     name: string
+    email: string
+
     lastName: string
     photo: string
     phone: string

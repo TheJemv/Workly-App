@@ -6,7 +6,7 @@ function formatRelativeDate(dateInput): string {
     const startOfToday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const startOfDate: Date = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-    const diffMs = startOfToday - startOfDate;
+    const diffMs = startOfToday.getTime() - startOfDate.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return "hoy";

@@ -1,4 +1,5 @@
 import { View, Text, TouchableWithoutFeedback } from "react-native";
+import type { JSX } from "react";
 import { Order } from "@/types/Order";
 import OrderStatusEnum from "enum/OrderStatusEnum";
 import SpinLoading from "components/SpinLoading";

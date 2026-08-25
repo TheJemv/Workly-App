@@ -170,13 +170,13 @@ export default function Company() {
                                 <Text className="text-white font-medium">Horarios</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 className="flex-1 flex flex-row items-center justify-center py-3 px-4 rounded-full"
                                 style={{ backgroundColor: Colors.principal.DEFAULT, gap: 6 }}
                             >
                                 <Ionicons name="location-outline" size={18} color="white" />
                                 <Text className="text-white font-medium">Ubicación</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                     </View>
 

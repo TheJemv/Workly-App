@@ -25,6 +25,8 @@ import { MoneyTextInput } from '@alexzunik/react-native-money-input';
 import { setService } from 'services/api/services.api'
 import LoadingScreen from 'components/LoadingScreen'
 
+import EmptyImage from "@/assets/cover/service.png"
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 // Función auxiliar para convertir URI a base64 puro usando JS nativo
@@ -191,6 +193,10 @@ export default function ServiceCreate() {
                                             size={32}
                                             color={Colors.principal.DEFAULT}
                                         />
+                                    ) : !currentImage ? (
+                                        <View className='w-full h-full bg-white overflow-hidden flex justify-center items-center' style={styles.image}>
+                                            <Image className="overflow-hidded w-20 h-20" resizeMode='cover' source={EmptyImage} />
+                                        </View>
                                     ) : (
                                         <Image
                                             style={styles.image}
@@ -199,9 +205,11 @@ export default function ServiceCreate() {
                                         />
                                     )}
                                 </View>
+
                                 <Text className="text-primary text-base font-medium mt-2">
                                     Cambiar foto del servicio
                                 </Text>
+
                                 {fieldState.error && (
                                     <Text className="text-red-500 text-sm mt-1">
                                         {fieldState.error.message}

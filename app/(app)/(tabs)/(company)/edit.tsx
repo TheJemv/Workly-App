@@ -359,22 +359,21 @@ export default function Edit() {
                                 </Text>
                             </View>
 
-                            <ToggleSwitch
-                                isOn={getByPath(companyData, OptionsKeyEnum.public)}
-                                onColor={Colors.principal.DEFAULT}
-                                offColor="#eaeaea"
-                                labelStyle={{ color: "black", fontWeight: "900" }}
-                                onToggle={isOn => {
-                                    handleSaveData(OptionsKeyEnum.public, isOn)
-                                }}
-                                disabled={loadingPublicButton}
-                            />
-
-                            {loadingPublicButton && (
-                                <View className="mx-auto absolute top-1 right-1">
-                                    <SpinLoading size={14} />
-                                </View>
-                            )}
+                            <View className="w-[46px] h-7 items-center justify-center">
+                                {loadingPublicButton ? (
+                                    <SpinLoading size={20} color={Colors.principal.DEFAULT} />
+                                ) : (
+                                    <ToggleSwitch
+                                        isOn={getByPath(companyData, OptionsKeyEnum.public)}
+                                        onColor={Colors.principal.DEFAULT}
+                                        offColor="#eaeaea"
+                                        labelStyle={{ color: "black", fontWeight: "900" }}
+                                        onToggle={isOn => {
+                                            handleSaveData(OptionsKeyEnum.public, isOn)
+                                        }}
+                                    />
+                                )}
+                            </View>
                         </View>
                     </View>
                 </View>

@@ -10,6 +10,26 @@ dist/
 build/
 *.tsbuildinfo
 
+# Firmas y certificados nativos locales: EAS maneja sus propias credenciales
+# (eas credentials), no hace falta ni conviene subir esto al build.
+*.jks
+*.p8
+*.p12
+*.key
+*.keystore
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.pem
+
+# Binarios y archivos pesados que no aportan nada al build
+*.dmg
+*.aab
+*.apk
+*.ipa
+*.xcarchive
+*.zip
+
 # icons/ guarda exports de diseño pesados; solo suben los dos íconos
 # que usa app.config.ts para iOS (icon-dev.png / icon-prod.png)
 /icons/*

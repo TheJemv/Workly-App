@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { ScrollView, View, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { useForm, Controller } from "react-hook-form";
-import { invoiceDataResolver, InvoiceData, defaultInvoiceData } from "@/types/Billing/Billing";
+import { invoiceDataResolver, Billing, defaultInvoiceData } from "@/types/Billing/Billing";
 import { TextInput } from "components/Profile/Billing/components/text-input";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Entypo } from "@expo/vector-icons";
@@ -12,12 +12,12 @@ import { patchBilling } from "services/api/billing.api";
 
 export default function Edit() {
     const params = useLocalSearchParams()
-    const data: InvoiceData = params as InvoiceData;
+    const data: Billing = params as Billing;
     const navigation = useNavigation()
     const [hasChanges, setHasChanges] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const { control, handleSubmit, reset, watch } = useForm<InvoiceData>({
+    const { control, handleSubmit, reset, watch } = useForm<Billing>({
         resolver: invoiceDataResolver,
         defaultValues: defaultInvoiceData,
     });
@@ -37,7 +37,7 @@ export default function Edit() {
         }
     }, [formValues, data]);
 
-    const handleUpdate = async (data: InvoiceData): Promise<void> => {
+    const handleUpdate = async (data: Billing): Promise<void> => {
         setIsLoading(true)
         try {
             await patchBilling(data.id, data)

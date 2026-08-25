@@ -20,6 +20,7 @@ export interface Chat {
 export interface Message {
     id: string;
     tempId?: string | null;
+    resolvedTempId?: string | null; // tempId original ya resuelto (ver responseMessageSend)
     room: { id: string };
     content: string;
     type: MessageType;
@@ -97,7 +98,8 @@ export interface GlobalActions {
     handleRetrySocket: () => void;
     onAppForeground: () => void;
     // API calls via WebSocket
-    sendMessage: (room: string, message: string, temp?: string | null, type?: MessageType) => void;
+    sendMessage: (room: string, message: string, temp?: string | null, type?: MessageType) => boolean;
+    getChats: () => void;
     messageList: (room: string, page?: number) => void;
     companyReload: () => void;
     getServices: () => void;

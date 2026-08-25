@@ -48,7 +48,7 @@ export function useAccountPaymentSheet(
             customerEphemeralKeySecret: ephemeralKey,
             setupIntentClientSecret: setupIntent,
             merchantDisplayName: "User",
-            returnURL: "workit://stripe-return",
+            returnURL: "workly://stripe-return",
             customerId: customerUser.customerId,
         });
 

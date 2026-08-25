@@ -1,5 +1,5 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { ServiceType } from "../types";
+import ServiceType from "../Home/ServicesTrending/types/ServiceType.types";
 import formatterUnit from "utils/fomatterUnit";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";

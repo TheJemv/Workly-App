@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
-import { Order } from "../../types";
+import type { JSX } from "react";
+import { Order } from "@/types/Order";
 
 type Props = {
     order: Order;

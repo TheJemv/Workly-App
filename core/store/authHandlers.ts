@@ -11,13 +11,10 @@ export const createAuthHandlers = (
             // customer
             customer: null,
             orders: null,
-            chats: [],
 
             // messages
-            messagesList: [],
-            messagesNext: null,
-            messagesUser: null,
-            messagesRoom: null,
+            chats: [],
+            activeRoom: null,
 
             // company
             company: null,
@@ -58,7 +55,7 @@ export const createAuthHandlers = (
             return;
         }
 
-        set({ token, socketStatus: "connecting", autoRetryCount: 0 });
+        set({ token, socketStatus: "connecting", attempts: 0 });
         get().socketConnect();
     },
 

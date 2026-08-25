@@ -23,7 +23,7 @@ export function OrderTracking({ order }: Props) {
                 <FontAwesome
                     name="chevron-up"
                     size={16}
-                    color={isCancelled ? Colors.red : Colors.principal.DEFAULT}
+                    color={isCancelled ? Colors.red.DEFAULT : Colors.principal.DEFAULT}
                 />
             </View>
 

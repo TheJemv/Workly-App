@@ -41,6 +41,7 @@ export default function TabsLayout() {
     // Si es empresa, muestra tabs
     return (
         <MaterialTopTabs
+            id={undefined}
             screenOptions={{
                 tabBarStyle: {
                     backgroundColor: "#fff",
