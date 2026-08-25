@@ -1,6 +1,6 @@
 {
   "name": "workit",
-  "version": "0.6.2",
+  "version": "0.6.9",
   "scripts": {
     "start": "expo start --dev-client --clear",
     "android": "expo run:android",
