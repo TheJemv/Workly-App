@@ -56,6 +56,9 @@ serviceAccountKey.json
 google-services.json
 GoogleService-Info.plist
 
+# Google Play Console — clave de la cuenta de servicio para `eas submit`
+google-play-service-account.json
+
 # icons/ guarda exports de diseño pesados (zips, capturas, .icon bundles);
 # solo los dos íconos que usa app.config.ts van al repo
 /icons/*

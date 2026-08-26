@@ -48,6 +48,11 @@ test/
 .gitignore
 Makefile
 
+# Credenciales que el build NO necesita (solo las usa `eas submit` / backend)
+google-play-service-account.json
+firebase-adminsdk*.json
+serviceAccountKey.json
+
 # Variables de entorno locales (no las credenciales de Firebase:
 # esas SÍ deben subir porque app.config.ts las necesita para el build)
 .env
