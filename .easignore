@@ -45,7 +45,6 @@ build/
 
 # Tests y config que el build no necesita
 test/
-.gitignore
 Makefile
 
 # Credenciales que el build NO necesita (solo las usa `eas submit` / backend)
