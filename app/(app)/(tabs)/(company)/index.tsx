@@ -12,6 +12,7 @@ import Carousel from "react-native-reanimated-carousel";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import useGlobal from "core/globals";
 import { companyRequest } from "services/api/company.api";
+import { getUserMessage } from "services/api/errors";
 import TextInputComponent from "components/TextInputComponent";
 import { router } from "expo-router";
 
@@ -52,7 +53,7 @@ export default function CompanyIndex() {
             });
 
         } catch (error) {
-            alert(error.message);
+            alert(getUserMessage(error));
         }
     };
 

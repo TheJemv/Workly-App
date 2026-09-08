@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { ScrollView, View, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { ScrollView, View, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { invoiceDataResolver, Billing, defaultInvoiceData } from "@/types/Billing/Billing";
 import { TextInput } from "components/Profile/Billing/components/text-input";
@@ -8,6 +8,7 @@ import { Entypo } from "@expo/vector-icons";
 import { Colors } from "lib";
 import { RegimeSelect } from "components/Profile/Billing/regime-select";
 import { patchBilling } from "services/api/billing.api";
+import { useApiFormErrors } from "hooks/useApiFormErrors";
 
 
 export default function Edit() {
@@ -17,10 +18,12 @@ export default function Edit() {
     const [hasChanges, setHasChanges] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const { control, handleSubmit, reset, watch } = useForm<Billing>({
+    const form = useForm<Billing>({
         resolver: invoiceDataResolver,
         defaultValues: defaultInvoiceData,
     });
+    const { control, handleSubmit, reset, watch } = form;
+    const handleApiError = useApiFormErrors(form);
 
     // Observa todos los campos del formulario
     const formValues = watch();
@@ -43,7 +46,7 @@ export default function Edit() {
             await patchBilling(data.id, data)
             navigation.goBack()
         } catch (error) {
-            Alert.alert("Error", (error as Error).message)
+            handleApiError(error)
         } finally {
             setIsLoading(false)
         }

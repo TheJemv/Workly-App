@@ -11,6 +11,7 @@ import formatDateService from "functions/formatDateService";
 import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { StatsComponent } from "components/Services";
 import { getService, getServicePayment } from "services/api/services.api";
+import { getUserMessage } from "services/api/errors";
 import LoadingScreen from "components/LoadingScreen";
 import { timeToNumber } from "utils";
 import type { Service as ServiceType } from "@/types/Service";
@@ -67,7 +68,7 @@ const ServiceHire = () => {
                 setDataService(data?.service);
                 setValuePrice(data.service.unit_amount / 100);
             } catch (error: any) {
-                Alert.alert("Error", error.message ?? "No se pudo obtener el servicio.");
+                Alert.alert("Error", getUserMessage(error));
             } finally {
                 setLoading(false);
             }
@@ -144,7 +145,7 @@ const ServiceHire = () => {
 
             if (router.canGoBack()) router.back();
         } catch (error: any) {
-            Alert.alert("Error", error?.message ?? "Ocurrió un error al procesar el pago.");
+            Alert.alert("Error", getUserMessage(error));
         } finally {
             setEnableButton(false);
         }

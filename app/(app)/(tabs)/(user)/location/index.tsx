@@ -4,6 +4,7 @@ import { router, useFocusEffect, useNavigation } from 'expo-router'
 import { Colors } from 'lib'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { delLocation, getLocations } from 'services/api/location.api';
+import { getUserMessage } from 'services/api/errors';
 import { LoadingScreen } from 'components/Home';
 
 import LocationCard from 'components/Profile/Location/LocationCard';
@@ -19,7 +20,7 @@ export default function Location() {
             const res = await getLocations();
             setData(res.data);
         } catch (error: any) {
-            alert(error.message);
+            alert(getUserMessage(error));
         }
     }, []);
 
@@ -36,7 +37,7 @@ export default function Location() {
             await delLocation(location)
             await reloadLocations()
         } catch (error) {
-            alert(error.message)
+            alert(getUserMessage(error))
         } finally {
             setLoading(false)
         }

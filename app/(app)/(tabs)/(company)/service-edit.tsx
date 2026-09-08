@@ -24,6 +24,7 @@ import ServiceCategoryEnum from 'enum/ServiceCategoryEnum'
 import { MoneyTextInput } from '@alexzunik/react-native-money-input';
 import getChangedProperties from 'utils/CompareObjects'
 import { patchService } from 'services/api/services.api'
+import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import SaveButton from 'components/Header/SaveButton'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -59,10 +60,12 @@ export default function EditService() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const submitRef = useRef<() => void>(() => { })
 
-    const { control, handleSubmit, reset, watch, setValue, getValues } = useForm<ServiceData>({
+    const form = useForm<ServiceData>({
         resolver: serviceDataResolver,
         defaultValues: defaultServiceData,
     });
+    const { control, handleSubmit, reset, watch, setValue, getValues } = form;
+    const handleApiError = useApiFormErrors(form);
 
     const formValues = watch();
 
@@ -157,16 +160,12 @@ export default function EditService() {
         setIsSubmitting(true);
         try {
             const newData = getChangedProperties(service, data);
-            console.log(data)
-            await patchService(service.id, newData).catch((e) => {
-                console.error("Error: ", e)
-            });
+            await patchService(service.id, newData);
             if (router.canGoBack()) {
                 router.back()
             }
         } catch (error: any) {
-            console.error("Error al actualizar el servicio:", error);
-            Alert.alert("Error", error?.message || "No se pudo actualizar el servicio. Intenta de nuevo.");
+            handleApiError(error);
         } finally {
             setIsSubmitting(false);
         }

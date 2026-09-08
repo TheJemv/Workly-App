@@ -14,6 +14,7 @@ import useGlobal from "core/globals";
 import isEqual from "lodash/isEqual";
 import getChangedProperties from "utils/CompareObjects";
 import { updatedCustomer } from "services/api/customer.api";
+import { getUserMessage } from "services/api/errors";
 
 import DatePicker from "react-native-date-picker"
 import { router } from "expo-router";
@@ -86,7 +87,7 @@ const Profile = () => {
                 navigation.goBack();
             })
             .catch((e) => {
-                Alert.alert("Error", e.message);
+                Alert.alert("Error", getUserMessage(e));
             })
             .finally(() => {
                 setLoading(false);

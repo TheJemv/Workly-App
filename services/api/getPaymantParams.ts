@@ -1,4 +1,5 @@
 import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
+import { parseApiError } from "services/api/errors";
 
 export const getPaymentParams = async () => {
    try {
@@ -6,8 +7,7 @@ export const getPaymentParams = async () => {
 
       return response.data;
    } catch (error) {
-      console.log(error)
-      throw new Error("Error al obtener los datos bancarios");
+      throw parseApiError(error);
    }
 };
 
@@ -28,6 +28,6 @@ export const setPayment = async (token: string, setupIntent: string) => {
 
       return response.data;
    } catch (error) {
-      throw new Error(error.message || "Error al dar de alta la tarjeta");
+      throw parseApiError(error);
    }
 };

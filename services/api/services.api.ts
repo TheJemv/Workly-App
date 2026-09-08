@@ -1,4 +1,5 @@
-import apiClient from "services/api/apiClient"; // Asegúrate de que esta ruta sea correcta
+import apiClient from "services/api/apiClient";
+import { parseApiError } from "services/api/errors";
 
 export const setService = async (data: object) => {
    try {
@@ -8,10 +9,9 @@ export const setService = async (data: object) => {
          },
       });
 
-      if (response.data.errors) throw new Error(response.data.errors.message);
       return response.data;
    } catch (error) {
-      throw new Error(error.message || "Error al crear el servicio");
+      throw parseApiError(error);
    }
 };
 
@@ -24,10 +24,9 @@ export const delService = async (token: string, id: string) => {
          },
       });
 
-      if (response.data.errors) throw new Error(response.data.errors.message);
       return response.data;
    } catch (error) {
-      throw new Error(error.message || "Error al eliminar el servicio");
+      throw parseApiError(error);
    }
 };
 
@@ -39,10 +38,9 @@ export const patchService = async (id: string, obj: object) => {
          },
       });
 
-      if (response.data.errors) throw new Error(response.data.errors.message);
       return response.data;
    } catch (error) {
-      throw new Error(error.message || "Error al actualizar el servicio");
+      throw parseApiError(error);
    }
 };
 
@@ -52,7 +50,7 @@ export const getServices = async (category: string) => {
 
       return response.data;
    } catch (error) {
-      throw new Error(error.message || "Error al obtener los servicios");
+      throw parseApiError(error);
    }
 };
 
@@ -60,13 +58,13 @@ export const getService = async (id: string) => {
    try {
       const response = await apiClient.get(`/service/service`, {
          params: {
-            id
-         }
+            id,
+         },
       });
 
       return response.data;
    } catch (error) {
-      throw new Error(error.message || "Error al obtener el servicio");
+      throw parseApiError(error);
    }
 };
 
@@ -84,8 +82,6 @@ export const getServicePayment = async (
 
       return response.data;
    } catch (error) {
-      throw new Error(
-         error.message || "Error al procesar el pago del servicio",
-      );
+      throw parseApiError(error);
    }
 };

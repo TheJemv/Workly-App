@@ -2,7 +2,6 @@ import {
     ScrollView,
     View,
     KeyboardAvoidingView,
-    Alert,
     TouchableOpacity,
     Platform
 } from "react-native";
@@ -10,6 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { invoiceDataResolver, Billing, defaultInvoiceData } from "@/types/Billing/Billing";
 import { TextInput } from "components/Profile/Billing/components/text-input";
 import { postBilling } from "services/api/billing.api";
+import { useApiFormErrors } from "hooks/useApiFormErrors";
 import useGlobal from "core/globals";
 import { router, useNavigation } from "expo-router";
 import { Colors } from "lib";
@@ -21,10 +21,12 @@ import { RegimeSelect } from "components/Profile/Billing/regime-select";
 export default function CreateInvoiceScreen() {
     const navigation = useNavigation()
     const { token } = useGlobal();
-    const { control, handleSubmit } = useForm<Billing>({
+    const form = useForm<Billing>({
         resolver: invoiceDataResolver,
         defaultValues: defaultInvoiceData,
     });
+    const { control, handleSubmit } = form;
+    const handleApiError = useApiFormErrors(form);
 
     const handleBack = () => {
         if (router.canGoBack()) {
@@ -38,7 +40,7 @@ export default function CreateInvoiceScreen() {
                 handleBack();
             })
             .catch((error) => {
-                Alert.alert("Error", (error as Error).message);
+                handleApiError(error);
             });
     };
 

@@ -2,6 +2,7 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native'
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { Image } from 'react-native'
 import { ordersHistory } from 'services/api/orders.api'
+import { getUserMessage } from 'services/api/errors'
 import { router, useFocusEffect, useNavigation } from 'expo-router'
 import { OrderCard } from 'components/TrackOrderScreen/order-card'
 import { AntDesign } from "@expo/vector-icons";
@@ -33,7 +34,7 @@ export default function History() {
             setHistory(res.data);
             setHasNextPage(res.meta.hasNextPage);
         } catch (error: any) {
-            alert(error.message);
+            alert(getUserMessage(error));
         } finally {
             setLoading(false);
         }
@@ -49,7 +50,7 @@ export default function History() {
             setPage(nextPage);
             setHasNextPage(res.meta.hasNextPage);
         } catch (error: any) {
-            alert(error.message);
+            alert(getUserMessage(error));
         } finally {
             setLoadingMore(false);
         }

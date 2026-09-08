@@ -1,22 +1,16 @@
 import apiClient from "services/api/apiClient";
+import { parseApiError } from "services/api/errors";
 
 export const customer = async (token: string) => {
    try {
-      const response: any = await apiClient
-         .get("/customer", {
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         })
-         .then((response) => {
-            return response;
-         })
-         .catch((e) => {
-            console.log(e);
-         });
+      const response = await apiClient.get("/customer", {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      });
 
       return response?.data;
-   } catch {
-      throw new Error("Paso algo malo...");
+   } catch (error) {
+      throw parseApiError(error);
    }
 };

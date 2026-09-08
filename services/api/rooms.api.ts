@@ -1,4 +1,6 @@
 import apiClient from "./apiClient";
+import { parseApiError } from "./errors";
+
 interface GetMessagesParams {
     roomId: string;
     take?: number;
@@ -19,7 +21,7 @@ export const getMessages = async ({
         );
 
         return response.data;
-    } catch (error: any) {
-        throw error.response?.data || error;
+    } catch (error) {
+        throw parseApiError(error);
     }
 };

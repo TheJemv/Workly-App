@@ -19,10 +19,15 @@ import { DatePickerModal } from 'components/TrackOrderScreen/DatePickerModal';
 import { useLocalSearchParams } from 'expo-router';
 import TrackLocation from 'components/TrackOrderScreen/TrackLocation';
 import apiClient from 'services/api/apiClient';
+import { parseApiError } from 'services/api/errors';
 
 const getOrderById = async (orderId: string): Promise<Order> => {
-    const res = await apiClient.get(`/orders/${orderId}`)
-    return res.data.data
+    try {
+        const res = await apiClient.get(`/orders/${orderId}`)
+        return res.data.data
+    } catch (error) {
+        throw parseApiError(error)
+    }
 }
 
 export default function OrderPage() {

@@ -1,38 +1,12 @@
 import apiClient from "./apiClient";
-
-// export const cancelOrder = async (token: string, id: string) => {
-//    try {
-//       const response = await apiClient.get(`/orders/cancel/${id}`, {
-//          headers: {
-//             Authorization: `Bearer ${token}`,
-//          },
-//       });
-//       return response.data;
-//    } catch (error) {
-//       throw new Error((error as Error).message);
-//    }
-// };
-
-// export const nextOrder = async (token: string, id: string) => {
-//    try {
-//       const response = await apiClient.get(`/orders/next/${id}`, {
-//          headers: {
-//             Authorization: `Bearer ${token}`,
-//          },
-//       });
-//       return response.data;
-//    } catch (error) {
-//       throw new Error((error as Error).message);
-//    }
-// };
-
+import { parseApiError } from "./errors";
 
 export const getOrder = async (id: string) => {
    try {
       const response = await apiClient.post(`/orders/${id}`);
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 }
 
@@ -44,7 +18,7 @@ export const acceptOrder = async (id: string) => {
       const response = await apiClient.post(`/orders/accept-order/${id}`);
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -56,7 +30,7 @@ export const modifyDeliveryDate = async (id: string, newDeliveryDate: string) =>
       });
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -66,7 +40,7 @@ export const approveDateChange = async (id: string) => {
       const response = await apiClient.post(`/orders/approve-date-change/${id}`);
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -76,7 +50,7 @@ export const rejectDateChange = async (id: string) => {
       const response = await apiClient.post(`/orders/reject-date-change/${id}`);
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -86,7 +60,7 @@ export const confirmDelivery = async (id: string) => {
       const response = await apiClient.post(`/orders/confirm-delivery/${id}`);
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -96,8 +70,7 @@ export const cancelOrder = async (id: string) => {
       const response = await apiClient.post(`/orders/cancel-order/${id}`);
       return response.data;
    } catch (error) {
-      console.error(error)
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -109,6 +82,6 @@ export const ordersHistory = async (page: number = 1, limit: number = 10) => {
       });
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 }
