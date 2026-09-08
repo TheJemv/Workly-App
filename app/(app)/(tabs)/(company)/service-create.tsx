@@ -23,6 +23,7 @@ import { Dropdown } from 'react-native-element-dropdown'
 import ServiceCategoryEnum from 'enum/ServiceCategoryEnum'
 import { MoneyTextInput } from '@alexzunik/react-native-money-input';
 import { setService } from 'services/api/services.api'
+import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import LoadingScreen from 'components/LoadingScreen'
 
 import EmptyImage from "@/assets/cover/service.png"
@@ -54,10 +55,12 @@ export default function ServiceCreate() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [currentImage, setCurrentImage] = useState("");
     const companyReload = useGlobal(state => state.companyReload)
-    const { control, handleSubmit, reset, watch, setValue, getValues } = useForm<ServiceData>({
+    const form = useForm<ServiceData>({
         resolver: serviceDataResolver,
         defaultValues: defaultServiceData,
     });
+    const { control, handleSubmit, reset, watch, setValue, getValues } = form;
+    const handleApiError = useApiFormErrors(form);
     watch();
 
     const getFileSize = async (uri: string): Promise<number> => {
@@ -134,7 +137,7 @@ export default function ServiceCreate() {
                 router.back()
             }
         } catch (e: any) {
-            alert(e.message)
+            handleApiError(e)
         } finally {
             setIsSubmitting(false)
             setLoading(false)

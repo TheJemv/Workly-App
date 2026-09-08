@@ -1,6 +1,5 @@
-// import apiClient from "services/api/apiClient";
-
 import apiClient from "./apiClient";
+import { parseApiError } from "./errors";
 
 export const postBilling = async (token: string, data: {}) => {
    try {
@@ -12,7 +11,7 @@ export const postBilling = async (token: string, data: {}) => {
 
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -21,7 +20,7 @@ export const getBillings = async () => {
       const response: any = await apiClient.get("/billing");
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -38,7 +37,7 @@ export const delBilling = async (token: string, id: string) => {
 
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };
 
@@ -51,6 +50,6 @@ export const patchBilling = async (id: string, data: {}) => {
       });
       return response.data;
    } catch (error) {
-      throw new Error((error as Error).message);
+      throw parseApiError(error);
    }
 };

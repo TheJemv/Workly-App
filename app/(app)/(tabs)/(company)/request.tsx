@@ -2,6 +2,7 @@ import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacit
 import React, { useState } from 'react'
 import { TextInputComponent } from 'components'
 import { companyRequest } from 'services/api/company.api';
+import { useApiFormErrors } from 'hooks/useApiFormErrors';
 import { Controller, useForm } from 'react-hook-form';
 import { defaultRequestData, RequestData, requestDataResolver } from '@/types/Request/Request';
 import { router } from 'expo-router';
@@ -11,10 +12,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Request() {
     const [terms, setTerms] = useState<boolean>(false)
-    const { control, handleSubmit } = useForm<RequestData>({
+    const form = useForm<RequestData>({
         resolver: requestDataResolver,
         defaultValues: defaultRequestData,
     })
+    const { control, handleSubmit } = form
+    const handleApiError = useApiFormErrors(form)
 
     const handleSave = async (data) => {
         try {
@@ -22,11 +25,10 @@ export default function Request() {
                 alert("Tienes que aceptar los terminos y condiciones para empresas.")
                 return
             }
-            await companyRequest(data).then(e => {
-                if (router.canGoBack()) router.back()
-            })
+            await companyRequest(data)
+            if (router.canGoBack()) router.back()
         } catch (e) {
-            alert((e as Error).message)
+            handleApiError(e)
         }
     }
 

@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import { searchCompany } from "services/api/company.api";
+import { getUserMessage } from "services/api/errors";
 import ContainerSearch from "components/ContainerSearch";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -30,7 +31,7 @@ const SearchScreen = () => {
                     setSuggetions(data.suggestions);
                 });
             } catch (error) {
-                Alert.alert("Error", error.message);
+                Alert.alert("Error", getUserMessage(error));
             } finally {
                 setLoading(false);
             }

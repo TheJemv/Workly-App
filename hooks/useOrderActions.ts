@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Alert } from "react-native";
 
 import useGlobal from "core/globals";
+import { getUserMessage } from "services/api/errors";
 import { Order } from "@/types/Order";
 
 import {
@@ -33,7 +34,7 @@ export const useOrderActions = (order: Order) => {
             const response = await acceptOrder(order.id);
             Alert.alert("Éxito", "Orden aceptada y confirmada");
         } catch (error) {
-            Alert.alert("Error", (error as Error).message);
+            Alert.alert("Error", getUserMessage(error));
         } finally {
             setLoading(false);
         }
@@ -66,7 +67,7 @@ export const useOrderActions = (order: Order) => {
                                     "El cliente recibirá una notificación para aprobar el cambio"
                                 );
                             } catch (error) {
-                                Alert.alert("Error", (error as Error).message);
+                                Alert.alert("Error", getUserMessage(error));
                             } finally {
                                 setLoading(false);
                             }
@@ -75,7 +76,7 @@ export const useOrderActions = (order: Order) => {
                 ]
             );
         } catch (error) {
-            Alert.alert("Error", (error as Error).message);
+            Alert.alert("Error", getUserMessage(error));
         }
     };
 
@@ -102,7 +103,7 @@ export const useOrderActions = (order: Order) => {
                                     "La orden ha sido confirmada con la nueva fecha"
                                 );
                             } catch (error) {
-                                Alert.alert("Error", (error as Error).message);
+                                Alert.alert("Error", getUserMessage(error));
                             } finally {
                                 setLoading(false);
                             }
@@ -111,7 +112,7 @@ export const useOrderActions = (order: Order) => {
                 ]
             );
         } catch (error) {
-            Alert.alert("Error", (error as Error).message);
+            Alert.alert("Error", getUserMessage(error));
         }
     };
 
@@ -139,7 +140,7 @@ export const useOrderActions = (order: Order) => {
                                     "Se ha restaurado la fecha original"
                                 );
                             } catch (error) {
-                                Alert.alert("Error", (error as Error).message);
+                                Alert.alert("Error", getUserMessage(error));
                             } finally {
                                 setLoading(false);
                             }
@@ -148,7 +149,7 @@ export const useOrderActions = (order: Order) => {
                 ]
             );
         } catch (error) {
-            Alert.alert("Error", (error as Error).message);
+            Alert.alert("Error", getUserMessage(error));
         }
     };
 
@@ -175,7 +176,7 @@ export const useOrderActions = (order: Order) => {
                                     "El pago ha sido liberado exitosamente"
                                 );
                             } catch (error) {
-                                Alert.alert("Error", (error as Error).message);
+                                Alert.alert("Error", getUserMessage(error));
                             } finally {
                                 setLoading(false);
                             }
@@ -184,7 +185,7 @@ export const useOrderActions = (order: Order) => {
                 ]
             );
         } catch (error) {
-            Alert.alert("Error", (error as Error).message);
+            Alert.alert("Error", getUserMessage(error));
         }
     };
 
@@ -209,7 +210,7 @@ export const useOrderActions = (order: Order) => {
                                 // updateOrderInState(response.data);
                                 Alert.alert("Orden Cancelada", "La orden ha sido cancelada exitosamente");
                             } catch (error) {
-                                Alert.alert("Error", (error as Error).message);
+                                Alert.alert("Error", getUserMessage(error));
                             } finally {
                                 setLoadingCancel(false);
                             }
@@ -218,7 +219,7 @@ export const useOrderActions = (order: Order) => {
                 ]
             );
         } catch (error) {
-            Alert.alert("Error", (error as Error).message);
+            Alert.alert("Error", getUserMessage(error));
         }
     };
 

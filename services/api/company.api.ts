@@ -1,4 +1,5 @@
 import apiClient from "services/api/apiClient";
+import { parseApiError } from "services/api/errors";
 
 type RequestData = {
    company: string;
@@ -16,7 +17,7 @@ export const getCompany = async (token: string) => {
 
       return response.data;
    } catch (error) {
-      throw new Error("Paso algo malo..., al obtener tu empresa");
+      throw parseApiError(error);
    }
 };
 
@@ -28,17 +29,9 @@ export const updateCompany = async (data: object) => {
          },
       });
 
-      if (response.data.errors) {
-         throw new Error(response.data.errors.message);
-      }
-
       return response.data;
    } catch (error) {
-      if (error.response && error.response.data) {
-         throw new Error(error.response.data.message || "Something went wrong");
-      } else {
-         throw new Error(error.message);
-      }
+      throw parseApiError(error);
    }
 };
 
@@ -52,11 +45,7 @@ export const fetchOnboardingCompany = async (token: string) => {
 
       return response.data;
    } catch (error) {
-      if (error.response && error.response.data) {
-         throw new Error(error.response.data.message || "Something went wrong");
-      } else {
-         throw new Error(error.message);
-      }
+      throw parseApiError(error);
    }
 };
 
@@ -70,11 +59,7 @@ export const companyRequest = async (data: RequestData) => {
 
       return response.data;
    } catch (error) {
-      if (error.response && error.response.data) {
-         throw new Error(error.response.data.message || "Something went wrong");
-      } else {
-         throw new Error(error.message);
-      }
+      throw parseApiError(error);
    }
 };
 
@@ -87,11 +72,7 @@ export const getByIdCompany = async (id: string) => {
       });
       return response.data;
    } catch (error) {
-      if (error.response && error.response.data) {
-         throw new Error(error.response.data.message || "Something went wrong");
-      } else {
-         throw new Error(error.message);
-      }
+      throw parseApiError(error);
    }
 };
 
@@ -105,7 +86,7 @@ export const searchCompany = async (search: string) => {
 
       return response.data;
    } catch (error) {
-      throw new Error(error.response.data.message);
+      throw parseApiError(error);
    }
 };
 
@@ -119,6 +100,6 @@ export const getCompnaiesByIds = async (companies: string[]) => {
 
       return response.data;
    } catch (error) {
-      throw new Error(error.response.data.message);
+      throw parseApiError(error);
    }
 };

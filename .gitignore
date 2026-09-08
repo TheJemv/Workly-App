@@ -69,3 +69,6 @@ google-play-service-account.json
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
+
+credentials.json
+credentials/

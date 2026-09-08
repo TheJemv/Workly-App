@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { deleteCustomer } from "services/api/customer.api";
+import { getUserMessage } from "services/api/errors";
 import { Singout } from "services/firebase/Singout";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -42,7 +43,7 @@ export default function DeleteAccountScreen() {
                 Alert.alert("Error al cerrar sesión", e.message);
             });
         }).catch(e => {
-            alert(e.message);
+            alert(getUserMessage(e));
             return;
         });
     }
