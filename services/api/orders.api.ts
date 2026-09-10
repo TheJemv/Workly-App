@@ -1,5 +1,6 @@
 import apiClient from "./apiClient";
 import { parseApiError } from "./errors";
+import type { Order } from "@/types/Order";
 
 export const getOrder = async (id: string) => {
    try {
@@ -9,6 +10,17 @@ export const getOrder = async (id: string) => {
       throw parseApiError(error);
    }
 }
+
+// Lista de órdenes del cliente (REST). Se usa para el polling post-pago:
+// tras pagar, se busca aquí la orden por `paymentIntent`.
+export const listOrders = async (): Promise<Order[]> => {
+   try {
+      const response = await apiClient.get("/orders");
+      return Array.isArray(response.data?.data) ? response.data.data : [];
+   } catch (error) {
+      throw parseApiError(error);
+   }
+};
 
 
 // Orders

@@ -26,6 +26,7 @@ import getChangedProperties from 'utils/CompareObjects'
 import { patchService } from 'services/api/services.api'
 import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import SaveButton from 'components/Header/SaveButton'
+import AddonListEditor from 'components/Service/AddonListEditor'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -160,6 +161,18 @@ export default function EditService() {
         setIsSubmitting(true);
         try {
             const newData = getChangedProperties(service, data);
+
+            // `getChangedProperties` hace merge por índice y rompe los arreglos.
+            // El backend REEMPLAZA `addons` completo (contrato §4.2), así que si
+            // cambió cualquier cosa, mandamos la lista entera con sus `id`.
+            const prevAddons = JSON.stringify(service?.addons ?? []);
+            const nextAddons = JSON.stringify(data.addons ?? []);
+            if (prevAddons !== nextAddons) {
+                newData.addons = data.addons ?? [];
+            } else {
+                delete newData.addons;
+            }
+
             await patchService(service.id, newData);
             if (router.canGoBack()) {
                 router.back()
@@ -366,6 +379,9 @@ export default function EditService() {
                             )}
                         />
                     )}
+
+                    {/* Complementos (solo precio fijo) */}
+                    <AddonListEditor control={control} />
 
                     {/* ¿Solicitar ubicación? */}
                     <View style={styles.inputWrapper}>

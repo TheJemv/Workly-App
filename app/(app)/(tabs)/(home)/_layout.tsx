@@ -36,6 +36,12 @@ export default function LayoutHome() {
                 headerLeft: () => <CustomBackButton />,
             }} />
 
+            <Stack.Screen name='service/checkout' options={{
+                title: "Pago",
+                headerShown: true,
+                headerLeft: () => <CustomBackButton />,
+            }} />
+
             <Stack.Screen name='categories/[name]' options={{
                 title: "Categorias",
                 headerShown: true,
