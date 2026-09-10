@@ -13,6 +13,6 @@ export const defaultServiceData: ServiceData = {
     indefinite: false,
     unit_amount: 5000,
     requiresLocation: false,
-    photo: "",
+    photos: [],
     addons: [],
 }
