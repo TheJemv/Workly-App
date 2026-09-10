@@ -224,9 +224,18 @@ export default function ServiceCheckout() {
                         </CardContent>
                     </Container>
 
-                    <Text className="text-xs text-text-light px-1">
-                        Tu pago queda retenido de forma segura y se libera a la empresa cuando confirmes la entrega.
-                    </Text>
+                    <View className="px-1" style={{ gap: 6 }}>
+                        <Text className="text-xs text-text-light leading-relaxed">
+                            Tu pago queda retenido de forma segura y se libera a la empresa cuando confirmes la entrega.
+                        </Text>
+                        <Text className="text-xs text-text-light leading-relaxed">
+                            <Text className="font-semibold text-text-light">Reembolsos:</Text>{" "}
+                            una vez acordado el servicio, o dentro de las 24 horas previas a la
+                            entrega, el pago no es reembolsable. Fuera de ese plazo la empresa
+                            puede emitir un reembolso a su criterio, reservado para casos
+                            excepcionales.
+                        </Text>
+                    </View>
 
                     {/* Botón pagar */}
                     <TouchableOpacity
