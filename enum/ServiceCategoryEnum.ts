@@ -9,7 +9,8 @@ enum ServiceCategoryEnum {
    Gastronomy = 'Gastronomia',
    Programming = 'Programacion',
    Finance = 'Finanzas',
-   Services = 'Servicios'
+   Services = 'Servicios',
+   Lodging = 'Alojamiento'
 }
 
 export default ServiceCategoryEnum

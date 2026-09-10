@@ -1,24 +1,68 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { View, FlatList, Alert, Text } from "react-native"; // 👈 Añadido Text
-import { ServiceItem } from "components/Home/ServicesTrending/components";
-import useGlobal from "core/globals";
-import { getServices } from "services/api/services.api";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import React, {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import { View, FlatList, Alert, Text, Animated, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import { ServiceType as Service } from "components/Home/ServicesTrending/types";
 
-type ListItem = Service | { _type: "empty"; id: string };
+import { getServices } from "services/api/services.api";
+import { getUserMessage } from "services/api/errors";
+import { CategoryServiceItem } from "components/Home/Categories/components";
+import { ServiceType as Service } from "components/Home/ServicesTrending/types";
+import { COLOR_BACKGROUND } from "constants/index";
+
+function CategorySkeleton() {
+    const opacity = useRef(new Animated.Value(0.45)).current;
+
+    useEffect(() => {
+        const loop = Animated.loop(
+            Animated.sequence([
+                Animated.timing(opacity, { toValue: 1, duration: 750, useNativeDriver: true }),
+                Animated.timing(opacity, { toValue: 0.45, duration: 750, useNativeDriver: true }),
+            ])
+        );
+        loop.start();
+        return () => loop.stop();
+    }, [opacity]);
+
+    return (
+        <Animated.View style={{ opacity, gap: 12 }}>
+            {[0, 1, 2, 3].map((i) => (
+                <View
+                    key={i}
+                    style={{
+                        flexDirection: "row",
+                        gap: 12,
+                        padding: 10,
+                        backgroundColor: "#fff",
+                        borderRadius: 16,
+                        alignItems: "center",
+                    }}
+                >
+                    <View style={{ width: 104, height: 88, borderRadius: 12, backgroundColor: "#e6e6ea" }} />
+                    <View style={{ flex: 1, gap: 8 }}>
+                        <View style={{ width: "70%", height: 12, borderRadius: 6, backgroundColor: "#e6e6ea" }} />
+                        <View style={{ width: "40%", height: 10, borderRadius: 6, backgroundColor: "#e6e6ea" }} />
+                    </View>
+                </View>
+            ))}
+        </Animated.View>
+    );
+}
 
 export default function ServicesCategory() {
     const params = useLocalSearchParams();
     const nameParam = (params?.name ?? "") as string;
 
     const navigation = useNavigation();
-    const token = useGlobal((state) => state.token);
 
-    const [services, setServices] = useState<ListItem[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [services, setServices] = useState<Service[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const title = useMemo(() => {
         const str = (nameParam || "").trim();
@@ -27,88 +71,66 @@ export default function ServicesCategory() {
     }, [nameParam]);
 
     useLayoutEffect(() => {
-        navigation.setOptions({
-            headerTitle: title,
-        });
+        navigation.setOptions({ headerTitle: title });
     }, [navigation, title]);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const res = await getServices(nameParam);
-            const list: ListItem[] = (res?.services ?? []) as Service[];
-
-            if (list.length > 0 && list.length % 2 !== 0) {
-                list.push({ _type: "empty", id: "empty-0" });
-            }
-
-            setServices(list);
-        } catch (error: any) {
-            Alert.alert("Error", error?.message ?? "Ocurrió un error al cargar los servicios.");
+            setServices((res?.services ?? []) as Service[]);
+        } catch (error) {
+            Alert.alert("Error", getUserMessage(error));
         } finally {
             setLoading(false);
         }
-    }, [nameParam]); // Removí 'token' del array de dependencias si no lo usas en getServices
+    }, [nameParam]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    // 1. Estado de carga
-    if (loading) {
-        return (
-            <View className="flex pb-[70px] h-full flex-col items-center justify-center">
-                <FontAwesome name="hourglass-end" color={"#B1B1B4"} size={52} />
-            </View>
-        );
-    }
-
-    // 2. Estado vacío (Sin servicios)
-    if (!loading && services.length === 0) {
-        return (
-            <View className="flex pb-[70px] h-full flex-col items-center justify-center px-6">
-                <FontAwesome name="inbox" color={"#B1B1B4"} size={52} />
-                <Text className="text-[#B1B1B4] text-center font-medium mt-4 text-base">
-                    Por el momento no hay ningún servicio disponible en esta categoría.
-                </Text>
-            </View>
-        );
-    }
-
-    // 3. Estado con datos
     return (
-        <FlatList
-            data={services}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                paddingHorizontal: 8,
-                paddingTop: 16,
-                paddingBottom: 32,
-                flexGrow: 1,
-            }}
-            columnWrapperStyle={{
-                gap: 16,
-            }}
-            renderItem={({ item }) =>
-                "_type" in item && item._type === "empty" ? (
-                    <View className="flex-1 h-32" />
-                ) : (
-                    <View style={{
-                        flex: 1,
-                        marginBottom: 16,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: 8,
-                    }}>
-                        <ServiceItem item={item as Service} />
-                    </View>
-                )
-            }
-            initialNumToRender={8}
-            windowSize={7}
-            removeClippedSubviews
-        />
+        <View style={{ flex: 1, backgroundColor: COLOR_BACKGROUND }}>
+            <FlatList
+                data={loading ? [] : services}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <CategoryServiceItem item={item} />}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ padding: 12, gap: 12, flexGrow: 1 }}
+                initialNumToRender={8}
+                windowSize={7}
+                removeClippedSubviews
+                ListHeaderComponent={
+                    !loading && services.length > 0 ? (
+                        <Text className="text-text text-[13px]" style={{ paddingHorizontal: 4 }}>
+                            {`${services.length} ${services.length === 1 ? "servicio" : "servicios"} disponibles`}
+                        </Text>
+                    ) : null
+                }
+                ListEmptyComponent={
+                    loading ? (
+                        <CategorySkeleton />
+                    ) : (
+                        <View
+                            className="flex-1 items-center justify-center px-8"
+                            style={{ gap: 10, paddingTop: 72 }}
+                        >
+                            <Image
+                                source={require("assets/Empty/ServiceNotFound.png")}
+                                style={{ width: 120, height: 100 }}
+                                resizeMode="contain"
+                            />
+                            <Text className="text-dark font-semibold text-base text-center">
+                                Nada por aquí todavía
+                            </Text>
+                            <Text className="text-text text-[13px] text-center">
+                                Por el momento no hay servicios disponibles en {title}.
+                            </Text>
+                        </View>
+                    )
+                }
+            />
+        </View>
     );
 }
