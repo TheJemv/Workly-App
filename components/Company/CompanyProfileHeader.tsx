@@ -1,27 +1,22 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { Contact } from "@/types/Company";
 import { OpenStatus } from "utils/companySchedule";
-import { ButtonIconLink } from "./button-link";
+import { Colors } from "lib";
+import handleCall from "./handle-call";
 
 type Props = {
-   name: string;
-   photo: string;
+   name?: string;
+   photo?: string;
    address?: string;
    contact?: Contact;
    status?: OpenStatus | null;
 };
 
 export default function CompanyProfileHeader({ name, photo, address, contact, status }: Props) {
-   const links: { icon: "phone" | "facebook" | "instagram" | "linkedin"; value?: string }[] = [
-      { icon: "phone", value: contact?.phone },
-      { icon: "facebook", value: contact?.facebook },
-      { icon: "instagram", value: contact?.instagram },
-      { icon: "linkedin", value: contact?.linkedin },
-   ];
-   const activeLinks = links.filter((l) => !!l.value);
+   const phone = contact?.phone?.trim();
 
    return (
       <View
@@ -30,15 +25,15 @@ export default function CompanyProfileHeader({ name, photo, address, contact, st
       >
          <View className="flex-row" style={{ gap: 14 }}>
             <Image
-               source={{ uri: photo }}
-               style={{ width: 76, height: 76, borderRadius: 18 }}
+               source={photo ? { uri: photo } : undefined}
+               style={{ width: 76, height: 76, borderRadius: 18, backgroundColor: "#eaeaea" }}
                contentFit="cover"
                transition={200}
             />
 
             <View style={{ flex: 1, justifyContent: "center", gap: 5 }}>
                <Text className="text-dark font-bold text-[18px]" numberOfLines={2}>
-                  {name}
+                  {name ?? ""}
                </Text>
 
                {address ? (
@@ -71,20 +66,18 @@ export default function CompanyProfileHeader({ name, photo, address, contact, st
             </View>
          </View>
 
-         {activeLinks.length > 0 ? (
-            <View
-               className="flex-row items-center"
-               style={{
-                  gap: 22,
-                  paddingTop: 12,
-                  borderTopWidth: 1,
-                  borderTopColor: "#eaeaea",
-               }}
+         {phone ? (
+            <TouchableOpacity
+               onPress={() => handleCall(phone)}
+               activeOpacity={0.8}
+               className="flex-row items-center justify-center rounded-xl border border-border-soft"
+               style={{ gap: 8, paddingVertical: 11 }}
             >
-               {activeLinks.map((l) => (
-                  <ButtonIconLink key={l.icon} icon={l.icon} value={l.value as string} />
-               ))}
-            </View>
+               <Ionicons name="call-outline" size={16} color={Colors.principal.DEFAULT} />
+               <Text className="font-semibold text-[13px]" style={{ color: Colors.principal.DEFAULT }}>
+                  Llamar
+               </Text>
+            </TouchableOpacity>
          ) : null}
       </View>
    );
