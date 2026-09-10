@@ -1,5 +1,32 @@
 import apiClient from "services/api/apiClient";
 import { parseApiError } from "services/api/errors";
+import type { AddonSelection, Service, ServicePricing } from "@/types/Service";
+
+export interface PayServiceBody {
+   dateRequest: string;                 // ISO, futura, dentro de businessHours
+   location: string | null;             // uuid; requerido si service.requiresLocation
+   billing: string | null;              // uuid; hoy siempre null (se maneja por chat)
+   notes: string | null;
+   addonSelections: AddonSelection[];    // servicios de precio fijo
+   customPrice?: number | null;          // SOLO servicios indefinite (>= 4999)
+}
+
+export interface PayServiceResponse {
+   message: string;
+   paymentintent: string;               // client secret — nombre EXACTO en minúsculas
+   ephemeralKey: string;
+   customerId: string;
+   pricing: ServicePricing;
+   serviceSnapshot: {
+      id: string;
+      name: string;
+      description: string;
+      photo: string;
+      currency: string;
+      company: { id: string; name: string };
+   };
+   service: Service;                     // entidad completa (incluye company.profile)
+}
 
 export const setService = async (data: object) => {
    try {
@@ -69,17 +96,12 @@ export const getService = async (id: string) => {
 };
 
 export const getServicePayment = async (
-   token: string,
    id: string,
-   data: object,
-) => {
+   body: PayServiceBody,
+): Promise<PayServiceResponse> => {
    try {
-      const response = await apiClient.post(`/service/pay/${id}`, data, {
-         headers: {
-            Authorization: `Bearer ${token}`,
-         },
-      });
-
+      // El interceptor de apiClient ya inyecta el Bearer token.
+      const response = await apiClient.post(`/service/pay/${id}`, body);
       return response.data;
    } catch (error) {
       throw parseApiError(error);

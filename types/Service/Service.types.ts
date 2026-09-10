@@ -1,4 +1,5 @@
 import { Company } from "types/Company";
+import { Addon } from "./Addon.types";
 
 interface Service {
     id: string;
@@ -16,6 +17,9 @@ interface Service {
     unit_amount: number;
     indefinite: boolean;
     requiresLocation: boolean;
+
+    /** Complementos del servicio (solo servicios de precio fijo). */
+    addons?: Addon[];
 
     ordersCount: number;
     views: number
