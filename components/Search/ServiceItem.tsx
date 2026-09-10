@@ -2,6 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
 import { Service as ServiceType } from "@/types/Service";
 import formatterUnit from "utils/fomatterUnit";
+import { serviceCover } from "utils/serviceGallery";
 import { router } from "expo-router";
 import { Colors } from "lib";
 
@@ -37,7 +38,7 @@ export default function ServiceItem({ service }: { service: ServiceType }) {
          >
             <Image
                style={{ width: "100%", height: "100%" }}
-               source={{ uri: service.photo }}
+               source={{ uri: serviceCover(service) }}
                contentFit="cover"
                transition={200}
             />

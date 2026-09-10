@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 
 import { Order } from "@/types/Order";
 import OrderStatusEnum from "enum/OrderStatusEnum";
+import { orderGallery } from "utils/serviceGallery";
 
 type Props = {
    order: Order;
@@ -34,7 +35,7 @@ export function OrderCard({ order, onPress }: Props) {
             </View>
 
             <Image
-               source={{ uri: order?.servicePhoto }}
+               source={{ uri: orderGallery(order)[0] }}
                style={{
                   width: 70,
                   height: 70,

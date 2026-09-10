@@ -16,9 +16,11 @@ import { useServicePaymentSheet } from "hooks/stripe/useServicePaymentSheet";
 import { Container, CardInfo, CardContent, cardShadow } from "components/CardInfo";
 import PriceBreakdown from "components/Service/PriceBreakdown";
 import LocationPreview from "components/Service/LocationPreview";
+import ServiceGallery from "components/Service/ServiceGallery";
 import SpinLoading from "components/SpinLoading";
 import formatDateService from "functions/formatDateService";
 import { formatMXN } from "utils/pricing";
+import { serviceGallery } from "utils/serviceGallery";
 
 type Phase = "preparing" | "ready" | "paying" | "processing" | "error";
 
@@ -155,6 +157,7 @@ export default function ServiceCheckout() {
     }
 
     const snap = data!.serviceSnapshot;
+    const snapGallery = serviceGallery(snap);
     const companyPhoto = data!.service?.company?.profile?.photo;
     const companyName = snap?.company?.name ?? data!.service?.company?.profile?.name;
     const busy = phase === "paying";
@@ -170,26 +173,27 @@ export default function ServiceCheckout() {
                 contentContainerStyle={{ paddingBottom: 24, paddingTop: 8 }}
             >
                 <View style={{ gap: 18 }}>
-                    {/* Servicio */}
-                    <CardContent divided={false}>
-                        <View className="p-4 flex-row items-center" style={{ gap: 12 }}>
-                            <Image
-                                source={{ uri: snap?.photo }}
-                                style={{ width: 56, height: 56, borderRadius: 10, backgroundColor: "#eaeaea" }}
-                            />
+                    {/* Servicio + galería */}
+                    <View style={{ gap: 10 }}>
+                        {snapGallery.length ? (
+                            <ServiceGallery photos={snapGallery} horizontalPadding={24} />
+                        ) : null}
+
+                        <View className="flex-row items-center" style={{ gap: 8 }}>
+                            {companyPhoto ? (
+                                <Image
+                                    source={{ uri: companyPhoto }}
+                                    style={{ width: 22, height: 22, borderRadius: 6, backgroundColor: "#eaeaea" }}
+                                />
+                            ) : null}
                             <View className="flex-1">
                                 <Text className="text-sm font-bold" style={{ color: "#040404" }} numberOfLines={2}>
                                     {snap?.name}
                                 </Text>
-                                <View className="flex-row items-center mt-1" style={{ gap: 6 }}>
-                                    {companyPhoto ? (
-                                        <Image source={{ uri: companyPhoto }} style={{ width: 16, height: 16, borderRadius: 8 }} />
-                                    ) : null}
-                                    <Text className="text-xs text-text-light">{companyName}</Text>
-                                </View>
+                                <Text className="text-xs text-text-light mt-0.5">{companyName}</Text>
                             </View>
                         </View>
-                    </CardContent>
+                    </View>
 
                     {/* Tu pedido */}
                     <Container>

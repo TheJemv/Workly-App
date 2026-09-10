@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity, useWindowDimensions } from "react-native";
 import { ServiceType } from "../types";
 import formatterUnit from "utils/fomatterUnit";
+import { serviceCover } from "utils/serviceGallery";
 import { router } from "expo-router";
 
 
@@ -38,7 +39,7 @@ const PopularItem = ({ item }: { item: ServiceType }) => {
          <View className="flex-1 overflow-hidden rounded-t-lg">
             <Image
                source={{
-                  uri: item.photo,
+                  uri: serviceCover(item),
                }}
                style={{
                   width: "100%",
