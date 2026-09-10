@@ -3,50 +3,23 @@ import {
     Text,
     KeyboardAvoidingView,
     ScrollView,
-    TouchableOpacity,
-    StyleSheet,
-    Alert,
-    Platform
+    Platform,
 } from 'react-native'
 import { Image } from "expo-image"
-import { TextInput } from "components/Profile/Billing/components/text-input"
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { Controller, useForm } from 'react-hook-form'
+
 import useGlobal from 'core/globals'
 import { Service } from '@/types/Company'
-import { Colors } from 'lib'
-import { Controller, useForm } from 'react-hook-form'
 import { defaultServiceData, ServiceData, serviceDataResolver } from '@/types/Service/EditService.types'
-import * as ImagePicker from "expo-image-picker";
-import SpinLoading from "components/SpinLoading";
-import { Dropdown } from 'react-native-element-dropdown'
-import ServiceCategoryEnum from 'enum/ServiceCategoryEnum'
-import { MoneyTextInput } from '@alexzunik/react-native-money-input';
 import getChangedProperties from 'utils/CompareObjects'
 import { patchService } from 'services/api/services.api'
 import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import SaveButton from 'components/Header/SaveButton'
-import AddonListEditor from 'components/Service/AddonListEditor'
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
-
-// Función auxiliar nativa para convertir URI a Base64 puro
-async function uriToBase64(uri: string): Promise<string> {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const base64String = reader.result as string;
-            const base64Data = base64String.includes(",")
-                ? base64String.split(",")[1]
-                : base64String;
-            resolve(base64Data);
-        };
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(blob);
-    });
-}
+import ServiceImagePicker from 'components/Service/ServiceImagePicker'
+import ServiceFormFields from 'components/Service/ServiceFormFields'
+import { COLOR_BACKGROUND } from 'constants/index'
 
 export default function EditService() {
     const params = useLocalSearchParams()
@@ -56,8 +29,6 @@ export default function EditService() {
     const service = services.data.find((s: Service) => s.id === params.id)
 
     const [hasChanges, setHasChanges] = useState(false);
-    const [currentImage, setCurrentImage] = useState<string>(service?.photo || "");
-    const [loadingImage, setLoadingImage] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const submitRef = useRef<() => void>(() => { })
 
@@ -65,98 +36,21 @@ export default function EditService() {
         resolver: serviceDataResolver,
         defaultValues: defaultServiceData,
     });
-    const { control, handleSubmit, reset, watch, setValue, getValues } = form;
+    const { control, handleSubmit, reset, watch } = form;
     const handleApiError = useApiFormErrors(form);
 
     const formValues = watch();
 
     useEffect(() => {
-        if (service) {
-            reset(service);
-            setCurrentImage(service.photo);
-        }
+        if (service) reset(service);
     }, [service]);
 
     useEffect(() => {
         if (service) {
-            const isDifferent = JSON.stringify(formValues) !== JSON.stringify(service);
-            setHasChanges(isDifferent);
+            setHasChanges(JSON.stringify(formValues) !== JSON.stringify(service));
         }
     }, [formValues, service]);
 
-    /**
-     * Obtiene el tamaño de un archivo desde su URI
-     */
-    const getFileSize = async (uri: string): Promise<number> => {
-        try {
-            const response = await fetch(uri);
-            const blob = await response.blob();
-            return blob.size;
-        } catch (error) {
-            console.error("Error al obtener el tamaño del archivo:", error);
-            return 0;
-        }
-    };
-
-    /**
-     * Maneja la selección y actualización de la imagen del servicio
-     */
-    const handleImageService = async () => {
-        setLoadingImage(true);
-        try {
-            // Solicitar permisos
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert(
-                    "Permisos requeridos",
-                    "Necesitamos permiso para acceder a tus fotos"
-                );
-                return;
-            }
-
-            // Abrir selector de imágenes
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ['images'],
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.8,
-            });
-            if (result.canceled) {
-                return;
-            }
-
-            const imageUri = result.assets[0].uri;
-            const fileSize = await getFileSize(imageUri);
-            if (fileSize >= MAX_FILE_SIZE) {
-                Alert.alert(
-                    "Archivo muy grande",
-                    "La imagen no puede ser mayor de 10MB. Por favor, elige otra imagen."
-                );
-                return;
-            }
-
-            // Reemplazo de RNFS por la función pura basada en JS
-            const base64 = await uriToBase64(imageUri);
-            setValue('photo', base64, {
-                shouldDirty: true,
-                shouldValidate: true
-            });
-            setCurrentImage(`data:image/jpeg;base64,${base64}`);
-
-        } catch (error: any) {
-            console.error("Error al actualizar la foto:", error);
-            Alert.alert(
-                "Error",
-                error?.message || "No se pudo actualizar la foto. Intenta de nuevo."
-            );
-        } finally {
-            setLoadingImage(false);
-        }
-    };
-
-    /**
-     * Maneja la actualización del servicio
-     */
     const handleUpdate = useCallback(async (data: ServiceData) => {
         setIsSubmitting(true);
         try {
@@ -174,15 +68,20 @@ export default function EditService() {
             }
 
             await patchService(service.id, newData);
-            if (router.canGoBack()) {
-                router.back()
-            }
+            if (router.canGoBack()) router.back()
         } catch (error: any) {
             handleApiError(error);
         } finally {
             setIsSubmitting(false);
         }
     }, [service]);
+
+    useEffect(() => {
+        submitRef.current = handleSubmit(
+            handleUpdate,
+            (errors) => console.log('VALIDATION ERRORS:', JSON.stringify(errors, null, 2))
+        )
+    }, [handleSubmit, handleUpdate])
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -192,7 +91,6 @@ export default function EditService() {
         })
     }, [hasChanges, isSubmitting])
 
-    // Error state
     if (!service) {
         return (
             <View className="flex-1 items-center justify-center px-6">
@@ -213,292 +111,30 @@ export default function EditService() {
         )
     }
 
-    useEffect(() => {
-        submitRef.current = handleSubmit(
-            handleUpdate,
-            (errors) => console.log('VALIDATION ERRORS:', JSON.stringify(errors, null, 2))
-        )
-    }, [handleSubmit, handleUpdate])
-
     return (
         <KeyboardAvoidingView
-            className='flex-1'
+            style={{ flex: 1, backgroundColor: COLOR_BACKGROUND }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
             <ScrollView
-                className='flex-1 px-3 py-4'
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ padding: 12, gap: 12, paddingBottom: 32 }}
             >
-                <View style={styles.formContainer}>
-                    {/* Imagen del servicio */}
-                    <Controller
-                        control={control}
-                        name='photo'
-                        render={({ field, fieldState }) => (
-                            <TouchableOpacity
-                                onPress={handleImageService}
-                                disabled={loadingImage}
-                                className="flex flex-col items-center mb-6"
-                                activeOpacity={0.7}
-                            >
-                                <View
-                                    className="items-center justify-center"
-                                    style={styles.imageBox}
-                                >
-                                    {loadingImage ? (
-                                        <SpinLoading
-                                            size={32}
-                                            color={Colors.principal.DEFAULT}
-                                        />
-                                    ) : (
-                                        <Image
-                                            style={styles.image}
-                                            source={{ uri: currentImage || field.value }}
-                                            resizeMode="cover"
-                                        />
-                                    )}
-                                </View>
-                                <Text className="text-primary text-base font-medium mt-2">
-                                    Cambiar foto del servicio
-                                </Text>
-                                {fieldState.error && (
-                                    <Text className="text-red-500 text-sm mt-1">
-                                        {fieldState.error.message}
-                                    </Text>
-                                )}
-                            </TouchableOpacity>
-                        )}
-                    />
-
-                    {/* Nombre del servicio */}
-                    <View style={styles.inputWrapper}>
-                        <Controller
-                            control={control}
-                            name='name'
-                            render={({ field, fieldState }) => (
-                                <TextInput
-                                    label="Nombre"
-                                    placeholder='Nombre del servicio'
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    error={fieldState.error?.message}
-                                />
-                            )}
-                        />
-                    </View>
-
-                    {/* Descripción del servicio */}
-                    <View style={styles.inputWrapper}>
-                        <Controller
-                            control={control}
-                            name='description'
-                            render={({ field, fieldState }) => (
-                                <TextInput
-                                    label="Descripción"
-                                    placeholder='Describe tu servicio'
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    error={fieldState.error?.message}
-                                    multiline
-                                    maxLength={256}
-                                />
-                            )}
-                        />
-                    </View>
-
-                    {/* Precio indefinido o definido */}
-                    <View style={styles.inputWrapper}>
-                        <Controller
-                            control={control}
-                            name='indefinite'
-                            render={({ field }) => (
-                                <View>
-                                    <Text style={styles.textDropdown}>Precio Fijo</Text>
-                                    <Dropdown
-                                        style={styles.dropdown}
-                                        selectedTextStyle={{
-                                            color: "#050505",
-                                            fontSize: 14,
-                                        }}
-                                        labelField="label"
-                                        valueField="value"
-                                        placeholder="Escoge tu categoría"
-                                        placeholderStyle={{
-                                            color: "#92929D",
-                                            fontSize: 14,
-                                        }}
-                                        itemContainerStyle={{
-                                            backgroundColor: Colors.white,
-                                            borderRadius: 8,
-                                        }}
-                                        containerStyle={{
-                                            borderRadius: 8,
-                                            borderWidth: 1,
-                                        }}
-                                        dropdownPosition="top"
-                                        data={[
-                                            { label: "Indefinido", value: true },
-                                            { label: "Fijo", value: false },
-                                        ]}
-                                        value={field?.value}
-                                        onChange={(item) => field.onChange(item.value)}
-                                    />
-                                </View>
-                            )}
-                        />
-                    </View>
-
-                    {/* Precio con formato */}
-                    {!getValues().indefinite && (
-                        <Controller
-                            control={control}
-                            name='unit_amount'
-                            render={({ field }) => (
-                                <View style={styles.inputWrapper}>
-                                    <Text style={styles.textDropdown}>Precio</Text>
-                                    <MoneyTextInput
-                                        className="py-2 px-2 rounded-lg border border-dark/10"
-                                        value={(field.value / 100).toString()}
-                                        onChangeText={(_formatted, extracted) => {
-                                            field.onChange(Number(extracted) * 100)
-                                        }}
-                                        style={{
-                                            padding: 8,
-                                            borderRadius: 8,
-                                            borderWidth: 1,
-                                            borderColor: "#04040420"
-                                        }}
-                                        prefix="$"
-                                        groupingSeparator=","
-                                        fractionSeparator="."
-                                        placeholderTextColor={"#92929D"}
-                                        placeholder='$50.00'
-                                    />
-                                </View>
-                            )}
+                <Controller
+                    control={control}
+                    name='photo'
+                    render={({ field, fieldState }) => (
+                        <ServiceImagePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={fieldState.error?.message}
                         />
                     )}
+                />
 
-                    {/* Complementos (solo precio fijo) */}
-                    <AddonListEditor control={control} />
-
-                    {/* ¿Solicitar ubicación? */}
-                    <View style={styles.inputWrapper}>
-                        <Controller
-                            control={control}
-                            name='requiresLocation'
-                            render={({ field }) => (
-                                <View>
-                                    <Text style={styles.textDropdown}>¿Solicitar ubicación?</Text>
-                                    <Dropdown
-                                        style={styles.dropdown}
-                                        selectedTextStyle={{ color: "#050505", fontSize: 14 }}
-                                        labelField="label"
-                                        valueField="value"
-                                        placeholder="¿Requiere ubicación?"
-                                        placeholderStyle={{ color: "#92929D", fontSize: 14 }}
-                                        itemContainerStyle={{ backgroundColor: Colors.white, borderRadius: 8 }}
-                                        containerStyle={{ borderRadius: 8, borderWidth: 1 }}
-                                        dropdownPosition="top"
-                                        data={[
-                                            { label: "No", value: false },
-                                            { label: "Sí", value: true },
-                                        ]}
-                                        value={field.value}
-                                        onChange={(item) => field.onChange(item.value)}
-                                    />
-                                </View>
-                            )}
-                        />
-                    </View>
-
-                    {/* Categoría */}
-                    <View style={styles.inputWrapper}>
-                        <Controller
-                            control={control}
-                            name='category'
-                            render={({ field, fieldState }) => (
-                                <View className='flex flex-col gap-y-1'>
-                                    <Text style={styles.textDropdown}>Categoría</Text>
-                                    <Dropdown
-                                        style={styles.dropdown}
-                                        selectedTextStyle={{
-                                            color: "#050505",
-                                            fontSize: 14,
-                                        }}
-                                        labelField="label"
-                                        valueField="value"
-                                        placeholder="Escoge tu categoría"
-                                        placeholderStyle={{
-                                            color: "#92929D",
-                                            fontSize: 14,
-                                        }}
-                                        itemContainerStyle={{
-                                            backgroundColor: Colors.white,
-                                            borderRadius: 8,
-                                        }}
-                                        containerStyle={{
-                                            borderRadius: 8,
-                                            borderWidth: 1,
-                                        }}
-                                        dropdownPosition="top"
-                                        data={Object.keys(ServiceCategoryEnum).map(
-                                            key => ({
-                                                label: ServiceCategoryEnum[key],
-                                                value: ServiceCategoryEnum[key]
-                                            })
-                                        )}
-                                        value={field.value}
-                                        onChange={(item) => field.onChange(item.value)}
-                                    />
-                                    {fieldState.error && (
-                                        <Text className="text-red-500 text-sm mt-1">
-                                            {fieldState.error.message}
-                                        </Text>
-                                    )}
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
+                <ServiceFormFields form={form} />
             </ScrollView>
         </KeyboardAvoidingView>
     )
 }
-
-const styles = StyleSheet.create({
-    formContainer: {
-        paddingBottom: 20,
-    },
-    inputWrapper: {
-        marginBottom: 16,
-    },
-    image: {
-        width: 120,
-        height: 120,
-        borderRadius: 100,
-    },
-    imageBox: {
-        width: 140,
-        height: 140,
-        borderRadius: 200,
-        borderWidth: 4,
-        display: "flex",
-        flexDirection: "column",
-        borderStyle: "dashed",
-        borderColor: "#364670",
-    },
-    textDropdown: {
-        color: Colors.principal.DEFAULT,
-        fontSize: 14,
-        fontWeight: '700',
-    },
-    dropdown: {
-        backgroundColor: Colors.transparent,
-        borderRadius: 8,
-        borderWidth: 1,
-        padding: 8,
-        borderColor: "#04040420"
-    }
-});
