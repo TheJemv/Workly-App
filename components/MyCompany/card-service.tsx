@@ -13,7 +13,7 @@ type Props = {
     description: string;
     price: number;
     currency: string;
-    photo: string;
+    photo?: string;
     data: any;
 };
 export default function CardService({

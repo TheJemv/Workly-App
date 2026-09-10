@@ -21,7 +21,9 @@ export interface PayServiceResponse {
       id: string;
       name: string;
       description: string;
+      /** @deprecated espejo de `photos[0]`. */
       photo: string;
+      photos?: string[];
       currency: string;
       company: { id: string; name: string };
    };

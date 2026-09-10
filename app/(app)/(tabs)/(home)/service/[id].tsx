@@ -29,6 +29,8 @@ import { Feather } from "@expo/vector-icons";
 
 import AddonStepper from "components/Service/AddonStepper";
 import PriceBreakdown from "components/Service/PriceBreakdown";
+import ServiceGallery from "components/Service/ServiceGallery";
+import { serviceGallery } from "utils/serviceGallery";
 import {
     computeMerchandiseSubtotal,
     defaultSelections,
@@ -231,6 +233,8 @@ const ServiceHire = () => {
     }
 
     const addons = dataService.indefinite ? [] : dataService.addons ?? [];
+    const gallery = serviceGallery(dataService);
+    const galleryPhotos = gallery.length ? gallery : [FALLBACK_PHOTO_URL];
 
     return (
         <>
@@ -246,22 +250,32 @@ const ServiceHire = () => {
                 >
                     <View className="flex flex-col pb-3" style={{ gap: 18 }}>
 
-                        {/* Header imagen + empresa */}
-                        <View className="flex flex-col items-center justify-center pt-2" style={{ gap: 8 }}>
-                            <Image
-                                resizeMode="cover"
-                                source={{ uri: dataService.photo ?? FALLBACK_PHOTO_URL }}
-                                style={[{ width: 96, height: 96, borderRadius: 12 }, cardShadow]}
-                                className="border border-border-soft"
-                            />
-                            <TouchableOpacity onPress={OpenCompany} className="flex flex-col items-center mt-1">
-                                <Text className="text-sm font-bold" style={{ color: Colors.principal.DEFAULT }}>
-                                    Empresa
-                                </Text>
-                                <Text className="text-xs text-text-light mt-0.5">
+                        {/* Galería + servicio + empresa */}
+                        <View className="pt-2" style={{ gap: 12 }}>
+                            <ServiceGallery photos={galleryPhotos} horizontalPadding={24} />
+
+                            <View>
+                                <Text className="text-dark font-bold text-[18px]" numberOfLines={2}>
                                     {dataService.name ?? "Servicio"}
                                 </Text>
-                            </TouchableOpacity>
+
+                                {dataService.company?.profile ? (
+                                    <TouchableOpacity
+                                        onPress={OpenCompany}
+                                        className="flex-row items-center"
+                                        style={{ gap: 8, marginTop: 6 }}
+                                    >
+                                        <Image
+                                            source={{ uri: dataService.company.profile.photo }}
+                                            style={{ width: 22, height: 22, borderRadius: 6, backgroundColor: "#eaeaea" }}
+                                        />
+                                        <Text className="text-text text-[13px] flex-1" numberOfLines={1}>
+                                            {dataService.company.profile.name}
+                                        </Text>
+                                        <Feather name="chevron-right" size={16} color="#9fa8c9" />
+                                    </TouchableOpacity>
+                                ) : null}
+                            </View>
                         </View>
 
                         <StatsComponent
