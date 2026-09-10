@@ -1,36 +1,29 @@
 import React, { useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { CategroyItem } from "./components";
+import { HomeCategory } from "data/serviceCategories";
 
-export default function Categories({ data }: { data: any[] }) {
-   const rows = useMemo(() => {
-      const r1: any[] = [];
-      const r2: any[] = [];
+const TWO_ROWS_THRESHOLD = 6;
 
+export default function Categories({ data }: { data: HomeCategory[] }) {
+   // >= 6 categorías -> 2 filas (reparto column-major para que al hacer scroll
+   // horizontal las columnas queden alineadas de a pares). <= 5 -> una sola fila.
+   const rows = useMemo<HomeCategory[][]>(() => {
+      if (data.length < TWO_ROWS_THRESHOLD) return [data];
+
+      const top: HomeCategory[] = [];
+      const bottom: HomeCategory[] = [];
       data.forEach((item, index) => {
-         if (index % 2 === 0) r1.push(item);
-         else r2.push(item);
+         (index % 2 === 0 ? top : bottom).push(item);
       });
-
-      return [r1, r2];
+      return [top, bottom];
    }, [data]);
 
+   if (data.length === 0) return null;
+
    return (
-      <View
-         style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
-         }}
-      >
-         <View
-            style={{
-               display: "flex",
-               flexDirection: "column",
-               gap: 2,
-               paddingHorizontal: 12,
-            }}
-         >
+      <View style={{ flexDirection: "column", gap: 4 }}>
+         <View style={{ flexDirection: "column", gap: 2, paddingHorizontal: 12 }}>
             <Text className="text-dark" style={{ fontSize: 20, fontWeight: "600" }}>
                Categorias
             </Text>
@@ -47,19 +40,13 @@ export default function Categories({ data }: { data: any[] }) {
             }}
          >
             <View style={{ flexDirection: "column", gap: 12 }}>
-               {/* ROW 1 */}
-               <View style={{ flexDirection: "row", gap: 12 }}>
-                  {rows[0].map((item) => (
-                     <CategroyItem key={item.id} item={item} />
-                  ))}
-               </View>
-
-               {/* ROW 2 */}
-               <View style={{ flexDirection: "row", gap: 12 }}>
-                  {rows[1].map((item) => (
-                     <CategroyItem key={item.id} item={item} />
-                  ))}
-               </View>
+               {rows.map((row, i) => (
+                  <View key={i} style={{ flexDirection: "row", gap: 12 }}>
+                     {row.map((item) => (
+                        <CategroyItem key={item.category} item={item} />
+                     ))}
+                  </View>
+               ))}
             </View>
          </ScrollView>
       </View>

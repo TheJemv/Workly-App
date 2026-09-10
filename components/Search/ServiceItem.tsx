@@ -1,40 +1,59 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import ServiceType from "../Home/ServicesTrending/types/ServiceType.types";
+import { Text, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
+import { Service as ServiceType } from "@/types/Service";
 import formatterUnit from "utils/fomatterUnit";
-import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
+import { Colors } from "lib";
+
+const CARD_WIDTH = 150;
+const IMAGE_HEIGHT = 112;
 
 export default function ServiceItem({ service }: { service: ServiceType }) {
    const handleService = () => {
       router.navigate({
          pathname: "/(home)/service/[id]",
-         params: { id: service.id }
-      })
+         params: { id: service.id },
+      });
    };
+
+   const price = service.indefinite
+      ? "Por consumo"
+      : `${formatterUnit.format(service.unit_amount / 100)} ${(service.currency ?? "").toUpperCase()}`.trim();
 
    return (
       <TouchableOpacity
          onPress={handleService}
-         className="w-36 flex flex-col gap-y-1 overflow-hidden"
+         activeOpacity={0.85}
+         style={{ width: CARD_WIDTH }}
       >
-         <View className="h-36 w-full rounded-[12px] overflow-hidden max-w-24">
+         <View
+            className="bg-border-soft"
+            style={{
+               width: "100%",
+               height: IMAGE_HEIGHT,
+               borderRadius: 12,
+               overflow: "hidden",
+            }}
+         >
             <Image
-               resizeMode="cover"
-               className="w-full h-full"
-               source={{
-                  uri: service.photo,
-               }}
+               style={{ width: "100%", height: "100%" }}
+               source={{ uri: service.photo }}
+               contentFit="cover"
+               transition={200}
             />
          </View>
 
-         <View>
-            <Text numberOfLines={1} className="uppercase w-full text-[13px]">
+         <View style={{ marginTop: 6, gap: 2 }}>
+            <Text numberOfLines={1} className="text-dark text-[13px] font-medium">
                {service.name}
             </Text>
             <Text
                numberOfLines={1}
-               className="uppercase text-[15px] font-semibold"
-            >{`${service.currency}${formatterUnit.format(service.unit_amount / 100)}`}</Text>
+               className="text-[12px] font-semibold"
+               style={{ color: Colors.principal.DEFAULT }}
+            >
+               {price}
+            </Text>
          </View>
       </TouchableOpacity>
    );

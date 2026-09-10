@@ -12,7 +12,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AuthProvider, AuthContext } from 'context/AuthContext';
 import { Connecting, Disconnected } from 'components/Auth';
 import { usePushTokenSync } from 'services/auth/notifications';
-import { HomeServicesData } from '@data/index';
+import { CATEGORY_ICON_ASSETS } from '@data/serviceCategories';
 import useGlobal from 'core/globals';
 import { PUBLISHABLE_KEY } from '@env';
 
@@ -38,7 +38,7 @@ GoogleSignin.configure({
 });
 
 // Íconos de las categorías del home: se precargan para que no parpadeen al entrar.
-const iconAssets = HomeServicesData.map((item) => item.Icon);
+const iconAssets = CATEGORY_ICON_ASSETS;
 
 /**
  * Bloquea la navegación real con un overlay (Connecting / Disconnected) mientras
