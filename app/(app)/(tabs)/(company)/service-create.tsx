@@ -17,7 +17,7 @@ import { setService } from 'services/api/services.api'
 import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import LoadingScreen from 'components/LoadingScreen'
 import SpinLoading from 'components/SpinLoading'
-import ServiceImagePicker from 'components/Service/ServiceImagePicker'
+import ServiceGalleryPicker from 'components/Service/ServiceGalleryPicker'
 import ServiceFormFields from 'components/Service/ServiceFormFields'
 import { COLOR_BACKGROUND } from 'constants/index'
 
@@ -81,9 +81,9 @@ export default function ServiceCreate() {
             >
                 <Controller
                     control={control}
-                    name='photo'
+                    name='photos'
                     render={({ field, fieldState }) => (
-                        <ServiceImagePicker
+                        <ServiceGalleryPicker
                             value={field.value}
                             onChange={field.onChange}
                             error={fieldState.error?.message}

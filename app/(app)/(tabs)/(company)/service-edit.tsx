@@ -6,7 +6,7 @@ import {
     Platform,
 } from 'react-native'
 import { Image } from "expo-image"
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -14,10 +14,11 @@ import useGlobal from 'core/globals'
 import { Service } from '@/types/Company'
 import { defaultServiceData, ServiceData, serviceDataResolver } from '@/types/Service/EditService.types'
 import getChangedProperties from 'utils/CompareObjects'
+import { serviceGallery } from 'utils/serviceGallery'
 import { patchService } from 'services/api/services.api'
 import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import SaveButton from 'components/Header/SaveButton'
-import ServiceImagePicker from 'components/Service/ServiceImagePicker'
+import ServiceGalleryPicker from 'components/Service/ServiceGalleryPicker'
 import ServiceFormFields from 'components/Service/ServiceFormFields'
 import { COLOR_BACKGROUND } from 'constants/index'
 
@@ -27,6 +28,13 @@ export default function EditService() {
 
     const services = useGlobal(state => state.services)
     const service = services.data.find((s: Service) => s.id === params.id)
+
+    // Servicio normalizado: `photos` siempre presente (fallback al legacy `photo`).
+    // Es el baseline contra el que se comparan los cambios y con el que se hace reset.
+    const baseline = useMemo(
+        () => (service ? { ...service, photos: serviceGallery(service) } : null),
+        [service],
+    );
 
     const [hasChanges, setHasChanges] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,23 +50,23 @@ export default function EditService() {
     const formValues = watch();
 
     useEffect(() => {
-        if (service) reset(service);
-    }, [service]);
+        if (baseline) reset(baseline);
+    }, [baseline]);
 
     useEffect(() => {
-        if (service) {
-            setHasChanges(JSON.stringify(formValues) !== JSON.stringify(service));
+        if (baseline) {
+            setHasChanges(JSON.stringify(formValues) !== JSON.stringify(baseline));
         }
-    }, [formValues, service]);
+    }, [formValues, baseline]);
 
     const handleUpdate = useCallback(async (data: ServiceData) => {
         setIsSubmitting(true);
         try {
-            const newData = getChangedProperties(service, data);
+            const newData = getChangedProperties(baseline, data);
 
             // `getChangedProperties` hace merge por índice y rompe los arreglos.
-            // El backend REEMPLAZA `addons` completo (contrato §4.2), así que si
-            // cambió cualquier cosa, mandamos la lista entera con sus `id`.
+            // El backend REEMPLAZA `addons` y `photos` completos (contrato §3), así
+            // que si cambió cualquier cosa mandamos la lista entera.
             const prevAddons = JSON.stringify(service?.addons ?? []);
             const nextAddons = JSON.stringify(data.addons ?? []);
             if (prevAddons !== nextAddons) {
@@ -67,6 +75,18 @@ export default function EditService() {
                 delete newData.addons;
             }
 
+            // `photos`: mezcla de URLs de Cloudinary existentes (tal cual, para
+            // conservarlas) + data-URIs nuevos. Solo se manda si cambió la galería.
+            const prevPhotos = JSON.stringify(baseline?.photos ?? []);
+            const nextPhotos = JSON.stringify(data.photos ?? []);
+            if (prevPhotos !== nextPhotos) {
+                newData.photos = data.photos ?? [];
+            } else {
+                delete newData.photos;
+            }
+            // La app nueva nunca manda el campo legacy `photo`.
+            delete (newData as Record<string, unknown>).photo;
+
             await patchService(service.id, newData);
             if (router.canGoBack()) router.back()
         } catch (error: any) {
@@ -74,7 +94,7 @@ export default function EditService() {
         } finally {
             setIsSubmitting(false);
         }
-    }, [service]);
+    }, [service, baseline]);
 
     useEffect(() => {
         submitRef.current = handleSubmit(
@@ -123,9 +143,9 @@ export default function EditService() {
             >
                 <Controller
                     control={control}
-                    name='photo'
+                    name='photos'
                     render={({ field, fieldState }) => (
-                        <ServiceImagePicker
+                        <ServiceGalleryPicker
                             value={field.value}
                             onChange={field.onChange}
                             error={fieldState.error?.message}
