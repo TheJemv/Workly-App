@@ -19,6 +19,7 @@ import LocationPreview from "components/Service/LocationPreview";
 import SpinLoading from "components/SpinLoading";
 import formatDateService from "functions/formatDateService";
 import { formatMXN } from "utils/pricing";
+import { serviceGallery } from "utils/serviceGallery";
 
 type Phase = "preparing" | "ready" | "paying" | "processing" | "error";
 
@@ -155,6 +156,7 @@ export default function ServiceCheckout() {
     }
 
     const snap = data!.serviceSnapshot;
+    const snapCover = serviceGallery(snap)[0];
     const companyPhoto = data!.service?.company?.profile?.photo;
     const companyName = snap?.company?.name ?? data!.service?.company?.profile?.name;
     const busy = phase === "paying";
@@ -174,7 +176,7 @@ export default function ServiceCheckout() {
                     <CardContent divided={false}>
                         <View className="p-4 flex-row items-center" style={{ gap: 12 }}>
                             <Image
-                                source={{ uri: snap?.photo }}
+                                source={{ uri: snapCover }}
                                 style={{ width: 56, height: 56, borderRadius: 10, backgroundColor: "#eaeaea" }}
                             />
                             <View className="flex-1">

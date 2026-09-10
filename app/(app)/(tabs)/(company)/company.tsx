@@ -17,6 +17,7 @@ import {
 } from "components/Company";
 import CardService from "components/MyCompany/card-service";
 import { getOpenStatus } from "utils/companySchedule";
+import { serviceCover } from "utils/serviceGallery";
 import { COLOR_BACKGROUND } from "constants/index";
 
 export default function Company() {
@@ -123,7 +124,7 @@ export default function Company() {
                             description={item.description}
                             price={item.unit_amount}
                             currency={item.currency}
-                            photo={item.photo}
+                            photo={serviceCover(item)}
                             data={item}
                         />
                     ))}

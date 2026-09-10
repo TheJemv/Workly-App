@@ -6,6 +6,7 @@ import { router } from 'expo-router'
 
 import { Colors } from 'lib';
 import { formatMessageDate } from 'utils';
+import { orderGallery } from 'utils/serviceGallery';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -37,7 +38,7 @@ const ServiceBubble = memo(({ order, uid }: any) => {
         }}>
             {/* Este view tiene overflow hidden para recortar la imagen */}
             <View style={{ borderRadius: 12, overflow: 'hidden' }}>
-                <Image source={{ uri: order.servicePhoto }} style={{ width: '100%', height: 180 }} />
+                <Image source={{ uri: orderGallery(order)[0] }} style={{ width: '100%', height: 180 }} />
                 <View style={{ backgroundColor: '#fff', padding: 12, gap: 4 }}>
                     <View className='flex flex-row' style={{ gap: 4 }}>
                         <View className='flex flex-col items-center justify-center h-[36px] w-[36px] rounded-md' style={{ backgroundColor: Colors.principal[50] }}>

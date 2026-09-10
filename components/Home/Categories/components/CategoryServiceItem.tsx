@@ -4,6 +4,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { router } from "expo-router";
 
 import formatterUnit from "utils/fomatterUnit";
+import { serviceCover } from "utils/serviceGallery";
 import { Colors } from "lib";
 import { ServiceType } from "components/Home/ServicesTrending/types";
 
@@ -39,7 +40,7 @@ export default function CategoryServiceItem({ item }: { item: ServiceType }) {
             style={{ width: 104, height: 88, borderRadius: 12, overflow: "hidden" }}
          >
             <Image
-               source={{ uri: item.photo }}
+               source={{ uri: serviceCover(item) }}
                style={{ width: "100%", height: "100%" }}
                contentFit="cover"
                transition={200}

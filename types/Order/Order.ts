@@ -15,7 +15,10 @@ export default interface Order {
 
     id: string;
     createdAt: Date;
+    /** @deprecated espejo de `servicePhotos[0]`. Usar `orderGallery(order)`. */
     servicePhoto: string;
+    /** Snapshot inmutable de la galería del servicio al momento de comprar. */
+    servicePhotos?: string[];
     status: string | OrderStatusEnum;
 
     serviceName: string;
