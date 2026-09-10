@@ -9,7 +9,10 @@ interface Service {
     category: string;
     public: boolean;
     isDelete: boolean;
+    /** @deprecated espejo de `photos[0]`. Usar `photos` (helper `serviceGallery`). */
     photo: string;
+    /** Galería ordenada de 1 a 5 URLs. Índice 0 = portada. Fuente de verdad. */
+    photos?: string[];
 
     price: string;
     product: string;

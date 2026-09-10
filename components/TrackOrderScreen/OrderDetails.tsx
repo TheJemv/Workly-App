@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import { Image } from "expo-image";
 
 import { Order } from "@/types/Order";
+import { orderGallery } from "utils/serviceGallery";
 
 type Props = {
     order: Order;
@@ -23,7 +24,7 @@ export function OrderDetails({ order }: Props) {
                     </Text>
                 </View>
                 <Image
-                    source={{ uri: order.servicePhoto }}
+                    source={{ uri: orderGallery(order)[0] }}
                     className="w-20 h-20 rounded-xl bg-light/25"
                 />
             </View>

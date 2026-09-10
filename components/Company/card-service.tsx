@@ -2,6 +2,7 @@ import { Colors } from "lib";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Service as ServiceType } from "@/types/Service";
 import formatterUnit from "utils/fomatterUnit";
+import { serviceCover } from "utils/serviceGallery";
 import { router } from "expo-router";
 import { Image } from 'expo-image'
 
@@ -24,7 +25,7 @@ const CardService = ({ item }: Props) => {
                <View className="flex items-center justify-center overflow-hidden w-[56px] h-[56px] rounded-[6px] bg-light/10">
                   <Image
                      className="w-full h-full"
-                     source={{ uri: item.photo }}
+                     source={{ uri: serviceCover(item) }}
                      contentFit="cover"
                   />
                </View>

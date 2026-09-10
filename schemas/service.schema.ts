@@ -10,7 +10,13 @@ export const ServiceDataSchema = z
             .trim()
             .min(20, "La descripción debe tener al menos 20 caracteres.")
             .max(260, "La descripción es demasiado larga (máx 260)."),
-        photo: z.string().min(1, "Obligatorio poner una foto al servicio."),
+        // Galería de 1 a 5 fotos, en orden (índice 0 = portada). Al crear son
+        // data-URIs base64; al editar, mezcla de URLs de Cloudinary existentes
+        // (se conservan) + data-URIs nuevos. Reemplazo total, igual que addons.
+        photos: z
+            .array(z.string().min(1))
+            .min(1, "Sube al menos 1 foto del servicio.")
+            .max(5, "Máximo 5 fotos por servicio."),
 
         currency: z.string().min(1, "Es obligatorio el tipo de Moneda."),
         category: z.string().min(1, "Es obligatorio seleccionar una categoria."),
