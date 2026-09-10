@@ -1,27 +1,21 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { Image } from "expo-image";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { Contact } from "@/types/Company";
 import { OpenStatus } from "utils/companySchedule";
-import { Colors } from "lib";
-import handleCall from "./handle-call";
 
 type Props = {
    name?: string;
    photo?: string;
    address?: string;
-   contact?: Contact;
    status?: OpenStatus | null;
 };
 
-export default function CompanyProfileHeader({ name, photo, address, contact, status }: Props) {
-   const phone = contact?.phone?.trim();
-
+export default function CompanyProfileHeader({ name, photo, address, status }: Props) {
    return (
       <View
          className="bg-white rounded-2xl border border-border-soft"
-         style={{ padding: 16, gap: 14 }}
+         style={{ padding: 16 }}
       >
          <View className="flex-row" style={{ gap: 14 }}>
             <Image
@@ -65,20 +59,6 @@ export default function CompanyProfileHeader({ name, photo, address, contact, st
                ) : null}
             </View>
          </View>
-
-         {phone ? (
-            <TouchableOpacity
-               onPress={() => handleCall(phone)}
-               activeOpacity={0.8}
-               className="flex-row items-center justify-center rounded-xl border border-border-soft"
-               style={{ gap: 8, paddingVertical: 11 }}
-            >
-               <Ionicons name="call-outline" size={16} color={Colors.principal.DEFAULT} />
-               <Text className="font-semibold text-[13px]" style={{ color: Colors.principal.DEFAULT }}>
-                  Llamar
-               </Text>
-            </TouchableOpacity>
-         ) : null}
       </View>
    );
 }

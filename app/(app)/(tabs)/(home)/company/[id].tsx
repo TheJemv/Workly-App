@@ -96,7 +96,6 @@ const ProfileCompanyScreen = () => {
                 name={company.profile.name}
                 photo={company.profile.photo}
                 address={company.location?.address}
-                contact={company.profile.contact}
                 status={status}
             />
 

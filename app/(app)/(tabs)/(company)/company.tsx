@@ -71,7 +71,6 @@ export default function Company() {
                 name={companyData.profile?.name}
                 photo={companyData.profile?.photo}
                 address={companyData.location?.address}
-                contact={companyData.profile?.contact}
                 status={status}
             />
 
