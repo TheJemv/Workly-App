@@ -1,56 +1,75 @@
 import { useEffect, useState } from "react";
-import { Alert, FlatList, ScrollView, StatusBar, View } from "react-native";
-import { getCompnaiesByIds, searchCompany } from "services/api/company.api";
-import { CompanyItem } from "components/Search";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Company as CompanyType } from "@/types/Company";
+import { Alert, FlatList, RefreshControl, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
-export default function ResultsScreen() {
-    const params = useLocalSearchParams()
-    const { query } = params;
+import { getCompnaiesByIds, searchCompany } from "services/api/company.api";
+import { getUserMessage } from "services/api/errors";
+import { CompanyItem, ResultsEmpty, ResultsSkeleton } from "components/Search";
+import { Company as CompanyType } from "@/types/Company";
+import { COLOR_BACKGROUND } from "constants/index";
 
-    const [loading, setLoading] = useState<boolean>(false);
-    const [companies, setCompanies] = useState<CompanyType[] | null>(null);
+export default function ResultsScreen() {
+    const { query } = useLocalSearchParams<{ query?: string }>();
+
+    const [loading, setLoading] = useState<boolean>(true);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [companies, setCompanies] = useState<CompanyType[]>([]);
+
+    const fetchData = async () => {
+        try {
+            const { results } = await searchCompany((query as string) ?? "");
+            if (!results?.length) {
+                setCompanies([]);
+                return;
+            }
+            const companiesIds = results.map((c: any) => c.objectID);
+            const data = await getCompnaiesByIds(companiesIds);
+            setCompanies(data.companies ?? []);
+        } catch (error) {
+            Alert.alert("Error", getUserMessage(error));
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const { results } = await searchCompany(query as string);
-                if (!results) return;
-                const companiesIds = results.map((c: any): any => c.objectID);
-                await getCompnaiesByIds(companiesIds).then((data) => {
-                    setCompanies(data.companies);
-                });
-            } catch (error) {
-                Alert.alert("Error", error?.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
     }, []);
 
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchData();
+    };
+
     return (
-        !loading || companies === null ? (
-            <ScrollView className="h-full flex-1">
-                <FlatList
-                    scrollEnabled={false}
-                    data={(companies)}
-                    renderItem={({ item }) => <CompanyItem item={item} />}
-                    contentContainerStyle={{
-                        paddingHorizontal: 12,
-                        paddingTop: StatusBar.currentHeight,
-                        flex: 1
-                    }}
-                />
-            </ScrollView>
-        ) : (
-            <View className="fle flex-1 pb-[70px] h-full flex-col items-center justify-center">
-                <FontAwesome name="hourglass-end" color={"#B1B1B4"} size={52} />
-            </View>
-        )
+        <View style={{ flex: 1, backgroundColor: COLOR_BACKGROUND }}>
+            <FlatList
+                data={loading ? [] : companies}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <CompanyItem item={item} />}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ padding: 12, gap: 12, flexGrow: 1 }}
+                refreshControl={
+                    loading ? undefined : (
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    )
+                }
+                ListHeaderComponent={
+                    !loading && companies.length > 0 && query ? (
+                        <Text className="text-text text-[13px]" style={{ paddingHorizontal: 4 }}>
+                            {`${companies.length} ${companies.length === 1 ? "resultado" : "resultados"} para “${query}”`}
+                        </Text>
+                    ) : null
+                }
+                ListEmptyComponent={
+                    loading ? (
+                        <ResultsSkeleton />
+                    ) : (
+                        <ResultsEmpty query={query as string | undefined} />
+                    )
+                }
+            />
+        </View>
     );
 }

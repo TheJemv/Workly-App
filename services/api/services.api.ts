@@ -81,6 +81,45 @@ export const getServices = async (category: string) => {
    }
 };
 
+export interface ServiceCategoryCount {
+   category: string;
+   count: number;
+}
+
+/**
+ * Público. Categorías que HOY tienen al menos un servicio disponible para
+ * comprar (empresa pública + completa, servicio no borrado). Para el home.
+ * Orden: `count` desc, luego nombre asc. Puede venir vacío.
+ */
+export const getServiceCategories = async (): Promise<{
+   categories: ServiceCategoryCount[];
+}> => {
+   try {
+      const response = await apiClient.get("/service/categories");
+
+      return response.data;
+   } catch (error) {
+      throw parseApiError(error);
+   }
+};
+
+/**
+ * Público. Catálogo completo de categorías válidas (todos los valores de
+ * `ServiceCategoryEnum`, tengan o no oferta). Para el selector al crear/editar
+ * un servicio. Nunca viene vacío.
+ */
+export const getServiceCategoryCatalog = async (): Promise<{
+   categories: string[];
+}> => {
+   try {
+      const response = await apiClient.get("/service/categories/catalog");
+
+      return response.data;
+   } catch (error) {
+      throw parseApiError(error);
+   }
+};
+
 export const getService = async (id: string) => {
    try {
       const response = await apiClient.get(`/service/service`, {

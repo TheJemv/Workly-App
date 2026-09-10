@@ -2,13 +2,14 @@ import { Text, ScrollView, View, Alert, Button } from "react-native";
 import { useEffect, useState } from "react";
 
 import { Image } from 'expo-image'
-import { HomeServicesData } from "data";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
 
 import SearchBar from "components/Home/SearchBar";
 import useGlobal from "core/globals";
 import { trandingCustomer } from "services/api/customer.api";
+import { getServiceCategories } from "services/api/services.api";
+import { HomeCategory, toHomeCategory } from "data/serviceCategories";
 
 import ServicesTrending from "components/Home/ServicesTrending";
 import CompaniesTrending from "components/Home/CompaniesTrending";
@@ -17,6 +18,7 @@ import Categories from "components/Home/Categories";
 const HomeScreen = () => {
     const [companies, setCompanies] = useState([]);
     const [services, setServices] = useState([]);
+    const [categories, setCategories] = useState<HomeCategory[]>([]);
 
     const { customer } = useGlobal();
     useEffect(() => {
@@ -34,6 +36,21 @@ const HomeScreen = () => {
 
 
         fetchData()
+    }, []);
+
+    useEffect(() => {
+        // Solo las categorías con oferta real (endpoint público). Si falla, el
+        // home simplemente no pinta la sección de categorías.
+        const fetchCategories = async () => {
+            try {
+                const { categories } = await getServiceCategories();
+                setCategories((categories ?? []).map(toHomeCategory));
+            } catch (error) {
+                console.error("Error en el fetch de categorías:", error);
+            }
+        };
+
+        fetchCategories();
     }, []);
 
 
@@ -98,7 +115,7 @@ const HomeScreen = () => {
                         >
 
                             {/* Categrias de los Servicios */}
-                            <Categories data={HomeServicesData} />
+                            <Categories data={categories} />
 
                             {/* Servicios Populares */}
                             <ServicesTrending data={services} />
