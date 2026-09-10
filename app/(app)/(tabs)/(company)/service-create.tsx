@@ -25,6 +25,7 @@ import { MoneyTextInput } from '@alexzunik/react-native-money-input';
 import { setService } from 'services/api/services.api'
 import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import LoadingScreen from 'components/LoadingScreen'
+import AddonListEditor from 'components/Service/AddonListEditor'
 
 import EmptyImage from "@/assets/cover/service.png"
 
@@ -360,6 +361,9 @@ export default function ServiceCreate() {
                             )}
                         />
                     )}
+
+                    {/* Complementos (solo precio fijo) */}
+                    <AddonListEditor control={control} />
 
                     {/* Categoría */}
                     <View style={styles.inputWrapper}>

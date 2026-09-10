@@ -1,6 +1,6 @@
 import { AuthContext } from "context/AuthContext";
 import { Colors } from "lib";
-import { useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import {
     Text, ScrollView, View, Image,
     TouchableOpacity, TextInput, Alert, Share,
@@ -10,7 +10,7 @@ import DatePicker from "react-native-date-picker";
 import formatDateService from "functions/formatDateService";
 import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { StatsComponent } from "components/Services";
-import { getService, getServicePayment } from "services/api/services.api";
+import { getService } from "services/api/services.api";
 import { getUserMessage } from "services/api/errors";
 import LoadingScreen from "components/LoadingScreen";
 import { timeToNumber } from "utils";
@@ -27,7 +27,14 @@ import { Container, CardInfo, CardContent, Row, cardShadow } from "components/Ca
 import { getServiceShareUrl } from "utils/shareLinks"
 import { Feather } from "@expo/vector-icons";
 
-import { useServicePaymentSheet } from "hooks/stripe/useServicePaymentSheet";
+import AddonStepper from "components/Service/AddonStepper";
+import PriceBreakdown from "components/Service/PriceBreakdown";
+import {
+    computeMerchandiseSubtotal,
+    defaultSelections,
+    selectionsToArray,
+} from "utils/pricing";
+import { useCheckoutStore } from "core/checkoutStore";
 
 // Orden para validar contra Date.getDay() (0 = Domingo) - NO reordenar, es índice real
 const daysArray: DayName[] = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -37,11 +44,13 @@ const displayDaysOrder: DayName[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 
 
 const FALLBACK_PHOTO_URL = "https://1.bp.blogspot.com/-CLJH1C9LCj8/U_qBzC3WCII/AAAAAAACR9g/_QV42D7tkO8/s1600/imagenes%2Bbonitas%2By%2Bfotos%2Bde%2Bpaisajes%2Bnaturales%2B-%2Bamazing%2Bfree%2Bwallpapers%2B(1).jpg";
 
+const MIN_AMOUNT = 4999;
+
 const ServiceHire = () => {
     const params = useLocalSearchParams();
     const navigation = useNavigation();
-    const { token, customer } = useContext(AuthContext);
-    const { pay } = useServicePaymentSheet();
+    const { token } = useContext(AuthContext);
+    const setDraft = useCheckoutStore((s) => s.setDraft);
 
     const [infoUserNote, setInfoUserNote] = useState("");
     const [dataService, setDataService] = useState<ServiceType | null>(null);
@@ -51,7 +60,10 @@ const ServiceHire = () => {
         new Date(new Date().setMinutes(new Date().getMinutes() + 30))
     );
     const [showPickerDate, setShowPickerDate] = useState(false);
+    // Precio para servicios "a convenir" (pesos). Para precio fijo no se usa.
     const [valuePrice, setValuePrice] = useState<number>(0);
+    // Cantidades elegidas por addon: { [addonId]: quantity }
+    const [selections, setSelections] = useState<Record<string, number>>({});
 
     const [locations, setLocations] = useState<Location[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -65,8 +77,10 @@ const ServiceHire = () => {
             setLoading(true);
             try {
                 const data = await getService(params.id as string);
-                setDataService(data?.service);
-                setValuePrice(data.service.unit_amount / 100);
+                const svc: ServiceType = data?.service;
+                setDataService(svc);
+                setValuePrice((svc?.unit_amount ?? 0) / 100);
+                setSelections(defaultSelections(svc ?? { addons: [] }));
             } catch (error: any) {
                 Alert.alert("Error", getUserMessage(error));
             } finally {
@@ -90,62 +104,63 @@ const ServiceHire = () => {
         }, [dataService?.requiresLocation])
     );
 
-    const handlePayService = async () => {
+    // Subtotal de mercancía en vivo (sin comisión). Para "a convenir" la base es lo que teclea el usuario.
+    const subtotal = useMemo(() => {
+        if (!dataService) return null;
+        const isIndefinite = dataService.indefinite;
+        return computeMerchandiseSubtotal(
+            {
+                unit_amount: isIndefinite ? Math.round(valuePrice * 100) : dataService.unit_amount,
+                addons: isIndefinite ? [] : dataService.addons,
+            },
+            selections,
+        );
+    }, [dataService, valuePrice, selections]);
+
+    const handleContinue = () => {
+        if (!dataService) return;
         setEnableButton(true);
-
-        if (valuePrice * 100 <= 4999) {
-            Alert.alert("Error", "El precio del servicio no puede ser menor a $50.00");
-            setEnableButton(false);
-            return;
-        }
-
-        if (dataService?.requiresLocation && !selectedLocation) {
-            Alert.alert("Error", "Selecciona una ubicación de entrega.");
-            setEnableButton(false);
-            return;
-        }
-
-        if (!token) {
-            router.replace("/(auth)");
-            setEnableButton(false);
-            return;
-        }
-
-        const customerId = customer?.customer?.customerId;
-        if (!customerId) {
-            Alert.alert("Error", "No se pudo obtener tu información de cliente.");
-            setEnableButton(false);
-            return;
-        }
-
         try {
-            const { paymentintent, ephemeralKey } = await getServicePayment(
-                token,
-                dataService?.id,
-                {
-                    notes: infoUserNote,
-                    dateRequest: dateRequest.toString(),
-                    location: selectedLocation?.id ?? undefined,
-                    amount: valuePrice * 100,
-                },
-            );
-
-            const { success, error } = await pay({
-                paymentIntentClientSecret: paymentintent,
-                ephemeralKey,
-                customerId,
-                merchantDisplayName: dataService?.name ?? "Workly",
-                merchantCountryCode: "MX",
-            });
-
-            if (!success) {
-                if (error) Alert.alert("Error", error);
+            if (!token) {
+                router.replace("/(auth)");
+                return;
+            }
+            if (dataService.requiresLocation && !selectedLocation) {
+                Alert.alert("Error", "Selecciona una ubicación de entrega.");
+                return;
+            }
+            if (dataService.indefinite && Math.round(valuePrice * 100) < MIN_AMOUNT) {
+                Alert.alert("Error", "Ingresa un precio de al menos $49.99.");
+                return;
+            }
+            if ((subtotal?.totalAmount ?? 0) < MIN_AMOUNT) {
+                Alert.alert("Error", "El total no puede ser menor a $49.99.");
                 return;
             }
 
-            if (router.canGoBack()) router.back();
-        } catch (error: any) {
-            Alert.alert("Error", getUserMessage(error));
+            const locationLabel = selectedLocation
+                ? [
+                      selectedLocation.name,
+                      [selectedLocation.street, selectedLocation.streetNumber, selectedLocation.neighborhood, selectedLocation.city]
+                          .filter(Boolean)
+                          .join(", "),
+                  ]
+                      .filter(Boolean)
+                      .join(" · ")
+                : null;
+
+            setDraft({
+                serviceId: dataService.id,
+                dateRequest: dateRequest.toISOString(),
+                location: dataService.requiresLocation ? selectedLocation?.id ?? null : null,
+                locationLabel,
+                locationData: dataService.requiresLocation ? selectedLocation : null,
+                notes: infoUserNote.trim() ? infoUserNote.trim() : null,
+                addonSelections: dataService.indefinite ? [] : selectionsToArray(selections),
+                customPrice: dataService.indefinite ? Math.round(valuePrice * 100) : undefined,
+            });
+
+            router.push("/(app)/(tabs)/(home)/service/checkout");
         } finally {
             setEnableButton(false);
         }
@@ -214,6 +229,8 @@ const ServiceHire = () => {
             </View>
         );
     }
+
+    const addons = dataService.indefinite ? [] : dataService.addons ?? [];
 
     return (
         <>
@@ -295,6 +312,25 @@ const ServiceHire = () => {
                             </CardContent>
                         </Container>
 
+                        {/* Complementos */}
+                        {addons.length > 0 && (
+                            <Container>
+                                <CardInfo title="Complementos" icon="plus-circle" variant="heading" />
+                                <CardContent>
+                                    {addons.map((addon) => (
+                                        <AddonStepper
+                                            key={addon.id}
+                                            addon={addon}
+                                            quantity={selections[addon.id] ?? addon.minQuantity}
+                                            onChange={(q) =>
+                                                setSelections((prev) => ({ ...prev, [addon.id]: q }))
+                                            }
+                                        />
+                                    ))}
+                                </CardContent>
+                            </Container>
+                        )}
+
                         {/* Fecha de entrega */}
                         <Container>
                             <CardInfo title="Fecha de Entrega" icon="calendar" variant="heading" />
@@ -372,6 +408,7 @@ const ServiceHire = () => {
                                 <TextInput
                                     placeholder="Agregar notas..."
                                     multiline
+                                    maxLength={1000}
                                     className="text-sm text-text-default px-4 py-3"
                                     style={{ height: 100, textAlignVertical: "top" }}
                                     value={infoUserNote}
@@ -398,20 +435,30 @@ const ServiceHire = () => {
                             </Container>
                         )}
 
-                        {/* Botón pagar */}
+                        {/* Resumen (subtotal de mercancía en vivo) */}
+                        {subtotal && (
+                            <Container>
+                                <CardInfo title="Resumen" icon="file-text" variant="heading" />
+                                <CardContent divided={false}>
+                                    <PriceBreakdown variant="preview" subtotal={subtotal} />
+                                </CardContent>
+                            </Container>
+                        )}
+
+                        {/* Botón continuar */}
                         <TouchableOpacity
                             disabled={enableButton}
-                            onPress={handlePayService}
-                            className="flex flex-col items-center justify-center py-4 rounded-xl h-14"
-                            style={[{ backgroundColor: Colors.principal.DEFAULT }, cardShadow]}
+                            onPress={handleContinue}
+                            className="flex flex-row items-center justify-center py-4 rounded-xl h-14"
+                            style={[{ backgroundColor: Colors.principal.DEFAULT, gap: 8 }, cardShadow]}
                         >
                             {enableButton ? (
                                 <SpinLoading color="#ffffff" />
                             ) : (
-                                <Text className="text-white font-bold text-base">
-                                    {valuePrice.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 })}
-                                    {" "}{dataService.currency.toUpperCase()}
-                                </Text>
+                                <>
+                                    <Text className="text-white font-bold text-base">Continuar</Text>
+                                    <Feather name="arrow-right" size={18} color="#ffffff" />
+                                </>
                             )}
                         </TouchableOpacity>
                     </View>

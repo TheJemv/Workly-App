@@ -10,6 +10,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { OrderHeader } from 'components/TrackOrderScreen/OrderHeader';
 import { OrderDetails } from 'components/TrackOrderScreen/OrderDetails';
 import { OrderNotes } from 'components/TrackOrderScreen/OrderNotes';
+import { OrderPricing } from 'components/TrackOrderScreen/OrderPricing';
 import { OrderDate } from 'components/TrackOrderScreen/OrderDate';
 import { OrderTracking } from 'components/TrackOrderScreen/OrderTracking';
 import { CompanyActions } from 'components/TrackOrderScreen/CompanyActions';
@@ -92,6 +93,7 @@ export default function OrderPage() {
                     <OrderHeader order={order} />
                     <OrderDetails order={order} />
                     <OrderNotes order={order} />
+                    <OrderPricing order={order} />
                     {order?.location && (
                         <TrackLocation location={order.location} />
                     )}
