@@ -72,3 +72,5 @@ google-play-service-account.json
 
 credentials.json
 credentials/
+
+test/

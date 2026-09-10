@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
          if (!isFetchingRef.current) {
             try {
                const freshToken = await getIdToken(u);
+               console.log(freshToken)
                setToken(freshToken);
                setTokenGlobal(freshToken);
             } catch (e) {
