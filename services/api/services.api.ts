@@ -4,7 +4,11 @@ import type { AddonSelection, Service, ServicePricing } from "@/types/Service";
 
 export interface PayServiceBody {
    dateRequest: string;                 // ISO, futura, dentro de businessHours
-   location: string | null;             // uuid; requerido si service.requiresLocation
+   // uuid de una dirección propia del cliente (`GET /location`). Obligatorio
+   // SOLO si `service.locationMode === "customer_location"`; en "not_required"
+   // no se manda, y en "company_location" el backend ya sabe la sucursal (si
+   // se manda algo, se ignora).
+   location: string | null;
    billing: string | null;              // uuid; hoy siempre null (se maneja por chat)
    notes: string | null;
    addonSelections: AddonSelection[];    // servicios de precio fijo

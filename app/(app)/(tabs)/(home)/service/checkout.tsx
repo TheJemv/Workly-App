@@ -204,7 +204,7 @@ export default function ServiceCheckout() {
                         </CardContent>
                     </Container>
 
-                    {/* Ubicación de entrega */}
+                    {/* Ubicación de entrega (dirección del cliente) */}
                     {draft.location ? (
                         <Container>
                             <CardInfo title="Ubicación de entrega" icon="map-pin" variant="heading" />
@@ -216,6 +216,16 @@ export default function ServiceCheckout() {
                                         {draft.locationLabel ?? "Ubicación seleccionada"}
                                     </Text>
                                 )}
+                            </CardContent>
+                        </Container>
+                    ) : null}
+
+                    {/* Sucursal fija de la empresa (informativa) */}
+                    {draft.companyLocation ? (
+                        <Container>
+                            <CardInfo title="A dónde llegar" icon="map-pin" variant="heading" />
+                            <CardContent divided={false}>
+                                <LocationPreview location={draft.companyLocation} />
                             </CardContent>
                         </Container>
                     ) : null}

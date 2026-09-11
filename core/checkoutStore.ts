@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { AddonSelection } from "@/types/Service";
-import type { Location } from "@/types/Location";
+import type { Location, CompanyLocation } from "@/types/Location";
 
 /**
  * Borrador del checkout de un servicio. Lo llena la pantalla de detalle
@@ -13,9 +13,10 @@ import type { Location } from "@/types/Location";
 export interface CheckoutDraft {
     serviceId: string;
     dateRequest: string;                  // ISO
-    location: string | null;              // location id
+    location: string | null;              // location id — solo modo customer_location
     locationLabel?: string | null;        // texto para mostrar en el resumen
-    locationData?: Location | null;       // ubicación completa (para la vista previa con mapa)
+    locationData?: Location | null;       // dirección del cliente completa (customer_location)
+    companyLocation?: CompanyLocation | null; // sucursal fija del servicio (company_location)
     notes: string | null;
     addonSelections: AddonSelection[];
     customPrice?: number | null;          // solo servicios indefinite
