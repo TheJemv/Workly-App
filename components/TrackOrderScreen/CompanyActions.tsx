@@ -101,8 +101,8 @@ export function CompanyActions({
                         ) : (
                             <Text className="text-white text-base font-semibold">
                                 {deliveryReady
-                                    ? "Confirmar Entrega"
-                                    : "Confirmar Entrega (Disponible en 45 min)"}
+                                    ? "Confirmar Finalización"
+                                    : "Confirmar Finalización (Disponible en 45 min)"}
                             </Text>
                         )}
                     </View>

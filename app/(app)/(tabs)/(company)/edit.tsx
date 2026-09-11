@@ -422,7 +422,7 @@ export default function Edit() {
                                 <Feather name="map-pin" size={16} color={Colors.principal.DEFAULT} />
                             </View>
                             <View className="flex-1">
-                                <Text className="text-xs font-semibold text-text-light">Ubicaciones para recoger o atender</Text>
+                                <Text className="text-xs font-semibold text-text-light">Ubicaciones de atención al cliente</Text>
                                 <Text className="text-sm text-brand font-medium">Administrar sucursales</Text>
                             </View>
                             <Feather name="chevron-right" size={16} color={Colors.principal[300]} />

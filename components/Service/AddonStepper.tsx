@@ -3,21 +3,24 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Colors } from "lib";
 import type { Addon } from "@/types/Service";
-import { computeAddonLine, formatMXN, snapQuantity } from "utils/pricing";
+import { computeAddonLine, formatMXN, pluralizeUnit, snapQuantity } from "utils/pricing";
 
 type Props = {
     addon: Addon;
     quantity: number;
     onChange: (quantity: number) => void;
+    /** Cantidad y unidad del intervalo del servicio (ej. 10 noches). Omitir si el servicio no maneja `interval`. */
+    interval?: { quantity: number; unitLabel: string } | null;
 };
 
 /**
  * Selector de un complemento PER_UNIT. Va dentro de un <CardContent> (que agrega
  * los divisores entre cada uno).
  */
-export default function AddonStepper({ addon, quantity, onChange }: Props) {
+export default function AddonStepper({ addon, quantity, onChange, interval }: Props) {
     const value = snapQuantity(addon, quantity);
-    const { extraUnits, amount } = computeAddonLine(addon, value);
+    const { extraUnits, amount } = computeAddonLine(addon, value, interval?.quantity);
+    const repeatsPerInterval = !!addon.perInterval && !!interval;
 
     const atMin = value <= addon.minQuantity;
     const atMax = value >= addon.maxQuantity;
@@ -64,6 +67,7 @@ export default function AddonStepper({ addon, quantity, onChange }: Props) {
             <Text className="text-xs" style={{ color: "#717171" }}>
                 Incluye {addon.minQuantity} {addon.unitLabel} · +{formatMXN(addon.pricePerExtraUnit)} por {addon.unitLabel} extra
                 {"  ·  "}Máx. {addon.maxQuantity}
+                {repeatsPerInterval && `  ·  Se repite por cada ${interval!.unitLabel} (×${interval!.quantity} ${pluralizeUnit(interval!.unitLabel, interval!.quantity)})`}
             </Text>
         </View>
     );

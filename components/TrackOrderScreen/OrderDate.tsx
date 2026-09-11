@@ -19,7 +19,7 @@ export function OrderDate({ order, isCompany, onEditPress }: Props): JSX.Element
         <View className="flex flex-col space-y-1 p-4 border-b-2 border-b-light/25">
             <View className="flex flex-row justify-between items-center">
                 <Text className="text-sm text-dark font-semibold">
-                    Fecha de Entrega
+                    Fecha y hora
                 </Text>
 
                 {canEdit && (

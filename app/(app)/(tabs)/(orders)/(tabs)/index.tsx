@@ -15,9 +15,12 @@ export default function OrdersIndex() {
     const getOrders = useGlobal((state) => state.getOrders);
 
     const handleOrder = (data: any) => {
+        // Solo el id — el objeto completo ya vive en el store global (`orders`);
+        // pasarlo por params lo corrompería (expo-router serializa cada valor a
+        // string) y aquí no hace falta.
         router.push({
             pathname: "/(app)/order",
-            params: { ...data }
+            params: { id: data.id }
         });
     };
 

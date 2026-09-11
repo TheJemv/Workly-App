@@ -26,11 +26,7 @@ export function OrderCard({ order, onPress }: Props) {
                   className="text-xs text-text font-medium"
                   numberOfLines={3}
                >
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Explicabo laboriosam molestias voluptates enim exercitationem
-                  reiciendis excepturi eligendi. Corporis fuga, consequuntur
-                  quis tempora, inventore nisi est perferendis unde at, ut
-                  doloribus?
+                  {order?.notes || order?.serviceDescription}
                </Text>
             </View>
 
@@ -65,7 +61,7 @@ export function OrderCard({ order, onPress }: Props) {
                {order.status === OrderStatusEnum.PENDING && "Orden pendiente"}
                {order.status === OrderStatusEnum.DATE_MODIFIED && "Fecha modificada"}
                {order.status === OrderStatusEnum.CONFIRMED && "Orden en curso"}
-               {order.status === OrderStatusEnum.DELIVERED && "Orden entregada"}
+               {order.status === OrderStatusEnum.DELIVERED && "Orden completada"}
                {order.status === OrderStatusEnum.CANCELLED && "Orden cancelada"}
                {order.status === OrderStatusEnum.FAILED && "Pedido fallido"}
             </Text>

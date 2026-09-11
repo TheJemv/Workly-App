@@ -1,4 +1,4 @@
-import type { Addon, AddonSelection, Service } from "@/types/Service";
+import type { Addon, AddonSelection, Service, ServiceInterval } from "@/types/Service";
 
 /**
  * Cálculo de precio SOLO para el preview de la pantalla de configuración.
@@ -40,6 +40,19 @@ export function snapQuantity(addon: Addon, quantity: number): number {
     return Math.min(Math.max(stepped, minQuantity), maxQuantity);
 }
 
+/** Igual que `snapQuantity`, pero para el selector de `interval` (mismos nombres de límites). */
+export function snapIntervalQuantity(interval: ServiceInterval, quantity: number): number {
+    const { minQuantity, maxQuantity, step } = interval;
+    const clamped = Math.min(Math.max(quantity, minQuantity), maxQuantity);
+    const stepped = minQuantity + Math.round((clamped - minQuantity) / step) * step;
+    return Math.min(Math.max(stepped, minQuantity), maxQuantity);
+}
+
+/** `service.interval.minQuantity` — cantidad inicial del selector de intervalo. */
+export function defaultIntervalQuantity(service: Pick<Service, "interval">): number {
+    return service.interval?.minQuantity ?? 1;
+}
+
 /** `{ [addonId]: minQuantity }` — estado inicial de los selectores. */
 export function defaultSelections(service: Pick<Service, "addons">): Record<string, number> {
     const out: Record<string, number> = {};
@@ -56,17 +69,45 @@ export interface AddonLine {
     addon: Addon;
     quantity: number;
     extraUnits: number;
+    /** `extraUnits * pricePerExtraUnit`, antes de multiplicar por intervalos. */
+    amountPerInterval: number;
+    /** `amountPerInterval`, o `amountPerInterval * intervalQuantity` si `addon.perInterval`. */
     amount: number;
 }
 
-export function computeAddonLine(addon: Addon, quantity: number): AddonLine {
+/**
+ * `intervalQuantity`: cantidad de intervalos elegida (ej. noches). Solo se usa
+ * si el addon es `perInterval` — pásalo únicamente cuando el servicio maneja
+ * `interval`; si el servicio no lo maneja, omítelo (no tiene efecto de todos
+ * modos, pero evita multiplicar por una cantidad que no aplica).
+ */
+export function computeAddonLine(addon: Addon, quantity: number, intervalQuantity?: number): AddonLine {
     const q = snapQuantity(addon, quantity);
     const extraUnits = Math.max(0, q - addon.minQuantity);
-    return { addon, quantity: q, extraUnits, amount: extraUnits * addon.pricePerExtraUnit };
+    const amountPerInterval = extraUnits * addon.pricePerExtraUnit;
+    const amount = addon.perInterval && intervalQuantity ? amountPerInterval * intervalQuantity : amountPerInterval;
+    return { addon, quantity: q, extraUnits, amountPerInterval, amount };
+}
+
+export interface IntervalLine {
+    interval: ServiceInterval;
+    quantity: number;
+    /** Precio de 1 intervalo (`service.unit_amount`). */
+    unitAmount: number;
+    /** `quantity * unitAmount`. */
+    amount: number;
+}
+
+export function computeIntervalLine(interval: ServiceInterval, unitAmount: number, quantity: number): IntervalLine {
+    const q = snapIntervalQuantity(interval, quantity);
+    return { interval, quantity: q, unitAmount, amount: q * unitAmount };
 }
 
 export interface MerchandiseSubtotal {
+    /** Precio base: `unit_amount`, o el total del intervalo (`intervalLine.amount`) si el servicio lo maneja. */
     baseAmount: number;
+    /** `null` si el servicio no maneja precio por intervalo. */
+    intervalLine: IntervalLine | null;
     lines: AddonLine[];
     addonsAmount: number;
     /** Mercancía (sin comisión de plataforma). */
@@ -74,17 +115,25 @@ export interface MerchandiseSubtotal {
 }
 
 /**
- * Subtotal de mercancía: `unit_amount + Σ (extra * pricePerExtraUnit)`.
- * NO incluye la comisión de plataforma (el cliente no la conoce).
+ * Subtotal de mercancía: precio base (intervalo si aplica, si no `unit_amount`)
+ * `+ Σ (extra * pricePerExtraUnit)`. NO incluye la comisión de plataforma (el
+ * cliente no la conoce).
  */
 export function computeMerchandiseSubtotal(
-    service: Pick<Service, "unit_amount" | "addons">,
+    service: Pick<Service, "unit_amount" | "addons" | "interval">,
     selections: Record<string, number>,
+    intervalQuantity?: number,
 ): MerchandiseSubtotal {
-    const baseAmount = Math.round(service.unit_amount || 0);
+    const unitAmount = Math.round(service.unit_amount || 0);
+    const intervalLine = service.interval
+        ? computeIntervalLine(service.interval, unitAmount, intervalQuantity ?? service.interval.minQuantity)
+        : null;
+    const baseAmount = intervalLine ? intervalLine.amount : unitAmount;
+    // Los addons `perInterval` solo se multiplican si el servicio de verdad
+    // maneja intervalo (`intervalLine` no es null) — si no, `undefined`.
     const lines = (service.addons ?? []).map((addon) =>
-        computeAddonLine(addon, selections[addon.id] ?? addon.minQuantity),
+        computeAddonLine(addon, selections[addon.id] ?? addon.minQuantity, intervalLine?.quantity),
     );
     const addonsAmount = lines.reduce((sum, l) => sum + l.amount, 0);
-    return { baseAmount, lines, addonsAmount, totalAmount: baseAmount + addonsAmount };
+    return { baseAmount, intervalLine, lines, addonsAmount, totalAmount: baseAmount + addonsAmount };
 }

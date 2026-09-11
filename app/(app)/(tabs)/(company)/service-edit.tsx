@@ -42,6 +42,7 @@ export default function EditService() {
                       photos: serviceGallery(service),
                       locationMode: service.locationMode ?? ServiceLocationModeEnum.NotRequired,
                       companyLocationId: service.companyLocation?.id ?? null,
+                      interval: service.interval ?? null,
                   }
                 : null,
         [service],
@@ -94,6 +95,17 @@ export default function EditService() {
                 newData.photos = data.photos ?? [];
             } else {
                 delete newData.photos;
+            }
+
+            // `interval`: mismo caso que `addons`/`photos` — el backend REEMPLAZA
+            // el objeto completo (o lo quita con `null`), así que si cambió
+            // cualquier subcampo mandamos el objeto entero, no el diff parcial.
+            const prevInterval = JSON.stringify(service?.interval ?? null);
+            const nextInterval = JSON.stringify(data.interval ?? null);
+            if (prevInterval !== nextInterval) {
+                newData.interval = data.interval ?? null;
+            } else {
+                delete newData.interval;
             }
             // La app nueva nunca manda el campo legacy `photo`.
             delete (newData as Record<string, unknown>).photo;

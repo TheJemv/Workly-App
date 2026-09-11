@@ -5,7 +5,7 @@ export function getOrderFromState(
     paramOrder: any, // params de expo-router
     orders: any,
     sales: any
-): Order {
+): Order | undefined {
     const id = paramOrder?.orderId ?? paramOrder?.id  // ✅ soporta ambos
 
     if (orders?.data?.find((o: Order) => o.id === id)) {
@@ -13,7 +13,14 @@ export function getOrderFromState(
     } else if (sales?.data?.find((o: Order) => o.id === id)) {
         return sales.data.find((o: Order) => o.id === id);
     }
-    return paramOrder;
+    // OJO: nunca devolver `paramOrder` tal cual. expo-router serializa cada
+    // param a string, así que los campos anidados (pricing, servicePhotos,
+    // location…) llegan rotos (ej. "[object Object]") — por eso "Total a
+    // pagar" salía en $0 y las fotos no se veían al entrar desde Historial
+    // (esa lista vive en estado local, no en `orders`/`sales`, así que nunca
+    // se encontraba ahí y siempre caía en este fallback). Si no está en el
+    // store global, hay que dejar que `order.tsx` la pida completa a la API.
+    return undefined;
 }
 export function canConfirmDelivery(deliveryDate: string): boolean {
     const deliveryTime = new Date(deliveryDate);
@@ -81,7 +88,7 @@ export function getTrackingSteps(status: string | OrderStatusEnum) {
     } else {
         steps.push({
             icon: "check" as const,
-            title: "Pedido Entregado",
+            title: "Pedido Completado",
             description: "El pedido ha sido completado",
             completed: status === OrderStatusEnum.DELIVERED,
             current: status === OrderStatusEnum.DELIVERED,

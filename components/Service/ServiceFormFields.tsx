@@ -12,6 +12,7 @@ import { Colors } from "lib";
 import FormSection from "./FormSection";
 import SegmentedField from "./SegmentedField";
 import AddonListEditor from "./AddonListEditor";
+import IntervalFields from "./IntervalFields";
 import CompanyLocationPicker from "./CompanyLocationPicker";
 
 const labelStyle = {
@@ -25,6 +26,7 @@ export default function ServiceFormFields({ form }: { form: UseFormReturn<Servic
    const categoryOptions = useServiceCategoryCatalog();
    const indefinite = useWatch({ control, name: "indefinite" });
    const locationMode = useWatch({ control, name: "locationMode" });
+   const interval = useWatch({ control, name: "interval" });
 
    return (
       <View style={{ gap: 12 }}>
@@ -92,7 +94,9 @@ export default function ServiceFormFields({ form }: { form: UseFormReturn<Servic
                   name="unit_amount"
                   render={({ field, fieldState }) => (
                      <View style={{ gap: 4 }}>
-                        <Text style={labelStyle}>Monto</Text>
+                        <Text style={labelStyle}>
+                           {interval ? `Precio por ${interval.unitLabel || "unidad"}` : "Monto"}
+                        </Text>
                         <MoneyTextInput
                            value={((Number(field.value) || 0) / 100).toString()}
                            onChangeText={(_formatted, extracted) => {
@@ -120,6 +124,8 @@ export default function ServiceFormFields({ form }: { form: UseFormReturn<Servic
                   )}
                />
             )}
+
+            {!indefinite && <IntervalFields control={control} setValue={setValue} />}
          </FormSection>
 
          {!indefinite && (

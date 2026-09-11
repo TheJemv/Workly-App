@@ -58,6 +58,7 @@ export default function ServiceCheckout() {
                 notes: draft.notes,
                 addonSelections: draft.addonSelections,
                 customPrice: draft.customPrice ?? null,
+                intervalCount: draft.intervalCount ?? null,
             });
             if (!mountedRef.current) return;
             setData(res);
@@ -199,15 +200,15 @@ export default function ServiceCheckout() {
                     <Container>
                         <CardInfo title="Tu pedido" icon="clipboard" variant="heading" />
                         <CardContent>
-                            <SummaryRow icon="calendar" label="Fecha de entrega" value={formatDateService(new Date(draft.dateRequest))} />
+                            <SummaryRow icon="calendar" label="Fecha y hora" value={formatDateService(new Date(draft.dateRequest))} />
                             <SummaryRow icon="edit-3" label="Notas" value={draft.notes || "Sin notas"} />
                         </CardContent>
                     </Container>
 
-                    {/* Ubicación de entrega (dirección del cliente) */}
+                    {/* Ubicación del servicio (dirección del cliente) */}
                     {draft.location ? (
                         <Container>
-                            <CardInfo title="Ubicación de entrega" icon="map-pin" variant="heading" />
+                            <CardInfo title="Ubicación del servicio" icon="map-pin" variant="heading" />
                             <CardContent divided={false}>
                                 {draft.locationData ? (
                                     <LocationPreview location={draft.locationData} />
@@ -240,13 +241,13 @@ export default function ServiceCheckout() {
 
                     <View className="px-1" style={{ gap: 6 }}>
                         <Text className="text-xs text-text-light leading-relaxed">
-                            Tu pago queda retenido de forma segura y se libera a la empresa cuando confirmes la entrega.
+                            Tu pago queda retenido de forma segura y se libera a la empresa cuando confirmes que el servicio se completó.
                         </Text>
                         <Text className="text-xs text-text-light leading-relaxed">
                             <Text className="font-semibold text-text-light">Reembolsos:</Text>{" "}
                             una vez acordado el servicio, o dentro de las 24 horas previas a la
-                            entrega, el pago no es reembolsable. Fuera de ese plazo la empresa
-                            puede emitir un reembolso a su criterio, reservado para casos
+                            fecha del servicio, el pago no es reembolsable. Fuera de ese plazo la
+                            empresa puede emitir un reembolso a su criterio, reservado para casos
                             excepcionales.
                         </Text>
                     </View>

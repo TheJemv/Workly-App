@@ -20,6 +20,7 @@ export interface CheckoutDraft {
     notes: string | null;
     addonSelections: AddonSelection[];
     customPrice?: number | null;          // solo servicios indefinite
+    intervalCount?: number | null;        // solo servicios con `interval` (ej. cantidad de noches)
 }
 
 interface CheckoutStore {

@@ -17,14 +17,36 @@ export interface ServicePricingLine {
     /** `selectedQuantity - minQuantity`. */
     extraUnits: number;
     pricePerExtraUnit: number;
-    /** `extraUnits * pricePerExtraUnit`. */
+    /** Si el cargo se repite por cada intervalo elegido (solo si el servicio maneja `interval`). */
+    perInterval?: boolean;
+    /** `extraUnits * pricePerExtraUnit`, antes de multiplicar por intervalos. */
+    amountPerInterval: number;
+    /** `amountPerInterval`, o `amountPerInterval * interval.quantity` si `perInterval`. Ya sumado en `addonsAmount`. */
+    amount: number;
+}
+
+/** Desglose del precio "por intervalo" (ej. $/noche), solo si el servicio lo maneja. */
+export interface ServicePricingInterval {
+    unitLabel: string;
+    unitHours: number;
+    /** Cantidad que eligió el cliente. */
+    quantity: number;
+    /** Copia de `service.unit_amount` (precio de 1 intervalo) al momento de comprar. */
+    unitAmount: number;
+    /** `quantity * unitAmount`. Ya está incluido en `baseAmount`. */
     amount: number;
 }
 
 export interface ServicePricing {
     currency: string;
-    /** Copia de `service.unit_amount` al momento de comprar. */
+    /**
+     * Copia de `service.unit_amount` al momento de comprar — o, si el servicio
+     * maneja `interval`, el total del intervalo (`interval.amount`), no el
+     * precio de 1 unidad.
+     */
     baseAmount: number;
+    /** `null` si el servicio no maneja precio por intervalo. */
+    interval: ServicePricingInterval | null;
     addons: ServicePricingLine[];
     /** Suma de `addons[].amount`. */
     addonsAmount: number;

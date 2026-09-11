@@ -13,6 +13,11 @@ export interface PayServiceBody {
    notes: string | null;
    addonSelections: AddonSelection[];    // servicios de precio fijo
    customPrice?: number | null;          // SOLO servicios indefinite (>= 4999)
+   // Cantidad de intervalos (ej. noches). Solo aplica si `service.interval` no
+   // es null; si se manda y el servicio no maneja intervalos, el backend lo
+   // ignora. Si no se manda y el servicio SÍ maneja intervalos, el backend
+   // asume `interval.minQuantity`.
+   intervalCount?: number | null;
 }
 
 export interface PayServiceResponse {
