@@ -200,15 +200,15 @@ export default function ServiceCheckout() {
                     <Container>
                         <CardInfo title="Tu pedido" icon="clipboard" variant="heading" />
                         <CardContent>
-                            <SummaryRow icon="calendar" label="Fecha de entrega" value={formatDateService(new Date(draft.dateRequest))} />
+                            <SummaryRow icon="calendar" label="Fecha y hora" value={formatDateService(new Date(draft.dateRequest))} />
                             <SummaryRow icon="edit-3" label="Notas" value={draft.notes || "Sin notas"} />
                         </CardContent>
                     </Container>
 
-                    {/* Ubicación de entrega (dirección del cliente) */}
+                    {/* Ubicación del servicio (dirección del cliente) */}
                     {draft.location ? (
                         <Container>
-                            <CardInfo title="Ubicación de entrega" icon="map-pin" variant="heading" />
+                            <CardInfo title="Ubicación del servicio" icon="map-pin" variant="heading" />
                             <CardContent divided={false}>
                                 {draft.locationData ? (
                                     <LocationPreview location={draft.locationData} />
