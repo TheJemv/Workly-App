@@ -1,5 +1,7 @@
 import { Company } from "types/Company";
 import { Addon } from "./Addon.types";
+import ServiceLocationModeEnum from "enum/ServiceLocationModeEnum";
+import { CompanyLocation } from "@/types/Location";
 
 interface Service {
     id: string;
@@ -19,7 +21,10 @@ interface Service {
     currency: string;
     unit_amount: number;
     indefinite: boolean;
-    requiresLocation: boolean;
+    /** Reemplaza al viejo `requiresLocation: boolean`. */
+    locationMode: ServiceLocationModeEnum;
+    /** Solo no-null cuando `locationMode === "company_location"`. */
+    companyLocation: CompanyLocation | null;
 
     /** Complementos del servicio (solo servicios de precio fijo). */
     addons?: Addon[];

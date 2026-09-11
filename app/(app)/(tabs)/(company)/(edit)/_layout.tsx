@@ -26,6 +26,19 @@ export default function Layout() {
                     headerLeft: () => <CustomBackButton />,
                     presentation: "modal",
                 }} />
+
+                {/* Sucursales de la empresa */}
+                <Stack.Screen name='locations/index' options={{
+                    headerShown: true,
+                    title: "Sucursales",
+                    headerLeft: () => <CustomBackButton />,
+                }} />
+                <Stack.Screen name='locations/create' options={{
+                    headerShown: true,
+                    headerTransparent: true,
+                    title: "Nueva sucursal",
+                    headerLeft: () => <CustomBackButton />,
+                }} />
             </Stack>
         </React.Fragment>
     )

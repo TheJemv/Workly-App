@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AddonSchema } from "./addon.schema";
+import ServiceLocationModeEnum from "enum/ServiceLocationModeEnum";
 
 export const ServiceDataSchema = z
     .object({
@@ -23,7 +24,12 @@ export const ServiceDataSchema = z
         indefinite: z.boolean().default(false),
 
         unit_amount: z.number().nullable().optional(),
-        requiresLocation: z.boolean().default(false),
+
+        // Reemplaza al viejo `requiresLocation: boolean`. `companyLocationId`
+        // solo aplica (y es obligatorio) en modo "company_location" — ver
+        // el superRefine de abajo.
+        locationMode: z.nativeEnum(ServiceLocationModeEnum).default(ServiceLocationModeEnum.NotRequired),
+        companyLocationId: z.string().uuid("companyLocationId debe ser un UUID válido.").nullable().optional(),
 
         // Complementos. Solo para servicios de precio fijo. El backend asigna los `id`.
         addons: z.array(AddonSchema).max(15, "Máximo 15 complementos.").optional().default([]),
@@ -44,6 +50,19 @@ export const ServiceDataSchema = z
                     message: "El precio debe ser mayor a $49.99 pesos.",
                 });
             }
+        }
+    })
+    .superRefine((data, ctx) => {
+        // Modo "sucursal propia" exige tener una sucursal elegida (contrato:
+        // companyLocationId es obligatorio si y solo si locationMode es
+        // company_location; el backend igual lo valida, esto solo evita el
+        // viaje redondo).
+        if (data.locationMode === ServiceLocationModeEnum.CompanyLocation && !data.companyLocationId) {
+            ctx.addIssue({
+                path: ["companyLocationId"],
+                code: z.ZodIssueCode.custom,
+                message: "Selecciona la ubicación de la empresa para este servicio.",
+            });
         }
     })
     .superRefine((data, ctx) => {
