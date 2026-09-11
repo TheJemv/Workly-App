@@ -17,12 +17,14 @@ import { timeToNumber } from "utils";
 import type { Service as ServiceType } from "@/types/Service";
 import type { Day, DayName } from "@/types/Schedule";
 import type { Location } from "@/types/Location";
+import ServiceLocationModeEnum from "enum/ServiceLocationModeEnum";
 import ShareButton from "components/Header/ShareButton";
 import { MoneyTextInput } from "@alexzunik/react-native-money-input";
 import { Dropdown } from "react-native-element-dropdown";
 import SpinLoading from "components/SpinLoading";
 import { getLocations } from "services/api/location.api";
 import { Container, CardInfo, CardContent, Row, cardShadow } from "components/CardInfo";
+import LocationPreview from "components/Service/LocationPreview";
 
 import { getServiceShareUrl } from "utils/shareLinks"
 import { Feather } from "@expo/vector-icons";
@@ -94,7 +96,7 @@ const ServiceHire = () => {
 
     useFocusEffect(
         useCallback(() => {
-            if (!dataService?.requiresLocation) return;
+            if (dataService?.locationMode !== ServiceLocationModeEnum.CustomerLocation) return;
 
             getLocations().then(data => {
                 const list: Location[] = Array.isArray(data.data) ? data.data : [];
@@ -103,7 +105,7 @@ const ServiceHire = () => {
                     prev ? list.find(l => l.id === prev.id) ?? list[0] ?? null : list[0] ?? null
                 );
             });
-        }, [dataService?.requiresLocation])
+        }, [dataService?.locationMode])
     );
 
     // Subtotal de mercancía en vivo (sin comisión). Para "a convenir" la base es lo que teclea el usuario.
@@ -127,7 +129,7 @@ const ServiceHire = () => {
                 router.replace("/(auth)");
                 return;
             }
-            if (dataService.requiresLocation && !selectedLocation) {
+            if (dataService.locationMode === ServiceLocationModeEnum.CustomerLocation && !selectedLocation) {
                 Alert.alert("Error", "Selecciona una ubicación de entrega.");
                 return;
             }
@@ -151,12 +153,16 @@ const ServiceHire = () => {
                       .join(" · ")
                 : null;
 
+            const isCustomerLocation = dataService.locationMode === ServiceLocationModeEnum.CustomerLocation;
+            const isCompanyLocation = dataService.locationMode === ServiceLocationModeEnum.CompanyLocation;
+
             setDraft({
                 serviceId: dataService.id,
                 dateRequest: dateRequest.toISOString(),
-                location: dataService.requiresLocation ? selectedLocation?.id ?? null : null,
+                location: isCustomerLocation ? selectedLocation?.id ?? null : null,
                 locationLabel,
-                locationData: dataService.requiresLocation ? selectedLocation : null,
+                locationData: isCustomerLocation ? selectedLocation : null,
+                companyLocation: isCompanyLocation ? dataService.companyLocation ?? null : null,
                 notes: infoUserNote.trim() ? infoUserNote.trim() : null,
                 addonSelections: dataService.indefinite ? [] : selectionsToArray(selections),
                 customPrice: dataService.indefinite ? Math.round(valuePrice * 100) : undefined,
@@ -360,8 +366,8 @@ const ServiceHire = () => {
                             </CardContent>
                         </Container>
 
-                        {/* Ubicación (opcional) */}
-                        {dataService.requiresLocation && (
+                        {/* Ubicación de entrega — solo si el servicio la pide */}
+                        {dataService.locationMode === ServiceLocationModeEnum.CustomerLocation && (
                             <Container>
                                 <CardInfo title="Ubicación de entrega" icon="map-pin" variant="heading" />
                                 {locations.length === 0 ? (
@@ -410,6 +416,24 @@ const ServiceHire = () => {
                                                 </Text>
                                             )}
                                         </View>
+                                    </CardContent>
+                                )}
+                            </Container>
+                        )}
+
+                        {/* Sucursal fija — informativa, no se elige nada aquí */}
+                        {dataService.locationMode === ServiceLocationModeEnum.CompanyLocation && (
+                            <Container>
+                                <CardInfo title="A dónde llegar" icon="map-pin" variant="heading" />
+                                {dataService.companyLocation ? (
+                                    <CardContent divided={false}>
+                                        <LocationPreview location={dataService.companyLocation} />
+                                    </CardContent>
+                                ) : (
+                                    <CardContent divided={false}>
+                                        <Text className="text-sm px-4 py-3" style={{ color: '#e53e3e' }}>
+                                            Este servicio no tiene una sucursal asignada. Contacta a la empresa.
+                                        </Text>
                                     </CardContent>
                                 )}
                             </Container>

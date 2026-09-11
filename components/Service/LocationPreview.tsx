@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, Linking, Platform, StyleSheet } from "rea
 import MapView, { Marker } from "react-native-maps";
 import { Feather } from "@expo/vector-icons";
 import { Colors } from "lib";
-import type { Location } from "@/types/Location";
+import type { LocationLike } from "@/types/Location";
 
-type Props = { location: Location };
+// Acepta tanto una dirección de cliente (`Location`) como una sucursal de
+// empresa (`CompanyLocation`) — mismo shape de campos en ambas.
+type Props = { location: LocationLike };
 
 /**
  * Vista previa de una ubicación (mapa + dirección + botón "Ver"), pensada para ir

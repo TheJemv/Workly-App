@@ -6,11 +6,13 @@ import { MoneyTextInput } from "@alexzunik/react-native-money-input";
 import { TextInput } from "components/Profile/Billing/components/text-input";
 import { ServiceData } from "@/types/Service/EditService.types";
 import { useServiceCategoryCatalog } from "hooks/useServiceCategoryCatalog";
+import ServiceLocationModeEnum from "enum/ServiceLocationModeEnum";
 import { Colors } from "lib";
 
 import FormSection from "./FormSection";
 import SegmentedField from "./SegmentedField";
 import AddonListEditor from "./AddonListEditor";
+import CompanyLocationPicker from "./CompanyLocationPicker";
 
 const labelStyle = {
    color: Colors.principal.DEFAULT,
@@ -22,6 +24,7 @@ export default function ServiceFormFields({ form }: { form: UseFormReturn<Servic
    const { control, setValue } = form;
    const categoryOptions = useServiceCategoryCatalog();
    const indefinite = useWatch({ control, name: "indefinite" });
+   const locationMode = useWatch({ control, name: "locationMode" });
 
    return (
       <View style={{ gap: 12 }}>
@@ -131,20 +134,46 @@ export default function ServiceFormFields({ form }: { form: UseFormReturn<Servic
          <FormSection title="Detalles">
             <Controller
                control={control}
-               name="requiresLocation"
+               name="locationMode"
                render={({ field }) => (
                   <SegmentedField
-                     label="¿Pedir ubicación al cliente?"
-                     value={field.value ? "si" : "no"}
-                     onChange={(v) => field.onChange(v === "si")}
+                     label="Ubicación del servicio"
+                     value={field.value}
+                     onChange={(v) => {
+                        field.onChange(v);
+                        if (v !== ServiceLocationModeEnum.CompanyLocation) {
+                           setValue("companyLocationId", null, { shouldDirty: true });
+                        }
+                     }}
                      options={[
-                        { label: "No", value: "no" },
-                        { label: "Sí", value: "si" },
+                        { label: "No requiere", value: ServiceLocationModeEnum.NotRequired },
+                        { label: "Del cliente", value: ServiceLocationModeEnum.CustomerLocation },
+                        { label: "Mi sucursal", value: ServiceLocationModeEnum.CompanyLocation },
                      ]}
-                     caption="Actívalo si necesitas ir a un domicilio para dar el servicio."
+                     caption={
+                        locationMode === ServiceLocationModeEnum.CustomerLocation
+                           ? "El cliente elige su dirección al pagar (tú vas hasta allá)."
+                           : locationMode === ServiceLocationModeEnum.CompanyLocation
+                              ? "El cliente llega a la sucursal que elijas abajo."
+                              : "No se le pide ubicación a nadie."
+                     }
                   />
                )}
             />
+
+            {locationMode === ServiceLocationModeEnum.CompanyLocation && (
+               <Controller
+                  control={control}
+                  name="companyLocationId"
+                  render={({ field, fieldState }) => (
+                     <CompanyLocationPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={fieldState.error?.message}
+                     />
+                  )}
+               />
+            )}
 
             <Controller
                control={control}

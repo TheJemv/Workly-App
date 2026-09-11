@@ -15,6 +15,7 @@ import { Service } from '@/types/Company'
 import { defaultServiceData, ServiceData, serviceDataResolver } from '@/types/Service/EditService.types'
 import getChangedProperties from 'utils/CompareObjects'
 import { serviceGallery } from 'utils/serviceGallery'
+import ServiceLocationModeEnum from 'enum/ServiceLocationModeEnum'
 import { patchService } from 'services/api/services.api'
 import { useApiFormErrors } from 'hooks/useApiFormErrors'
 import SaveButton from 'components/Header/SaveButton'
@@ -29,10 +30,20 @@ export default function EditService() {
     const services = useGlobal(state => state.services)
     const service = services.data.find((s: Service) => s.id === params.id)
 
-    // Servicio normalizado: `photos` siempre presente (fallback al legacy `photo`).
-    // Es el baseline contra el que se comparan los cambios y con el que se hace reset.
+    // Servicio normalizado: `photos` siempre presente (fallback al legacy `photo`),
+    // `locationMode`/`companyLocationId` con default explícito para servicios
+    // viejos que aún no traen el campo. Es el baseline contra el que se
+    // comparan los cambios y con el que se hace reset.
     const baseline = useMemo(
-        () => (service ? { ...service, photos: serviceGallery(service) } : null),
+        () =>
+            service
+                ? {
+                      ...service,
+                      photos: serviceGallery(service),
+                      locationMode: service.locationMode ?? ServiceLocationModeEnum.NotRequired,
+                      companyLocationId: service.companyLocation?.id ?? null,
+                  }
+                : null,
         [service],
     );
 
