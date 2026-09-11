@@ -1,4 +1,6 @@
 import { Addon } from "@/types/Service/Addon.types";
+import ServiceLocationModeEnum from "enum/ServiceLocationModeEnum";
+import { CompanyLocation } from "@/types/Location";
 
 type ServiceType = {
     id: string;
@@ -12,7 +14,10 @@ type ServiceType = {
     description: string;
     indefinite: boolean;
     unit_amount: number;
-    requiresLocation?: boolean;
+    /** Reemplaza al viejo `requiresLocation?: boolean`. */
+    locationMode?: ServiceLocationModeEnum;
+    /** Solo no-null cuando `locationMode === "company_location"`. */
+    companyLocation?: CompanyLocation | null;
     public?: boolean;
     addons?: Addon[];
 };

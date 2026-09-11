@@ -404,6 +404,32 @@ export default function Edit() {
                     </View>
                 </View>
             </View>
+
+            {/* Sucursales */}
+            <View className="px-4 mb-6">
+                <Text className="text-xs font-semibold text-text-light uppercase tracking-widest mb-2 px-1">
+                    Sucursales
+                </Text>
+
+                <View className="rounded-xl bg-white" style={cardShadow}>
+                    <View className="bg-white rounded-xl overflow-hidden shadow-sm border border-border-soft">
+                        <TouchableOpacity
+                            onPress={() => router.push("/(edit)/locations")}
+                            activeOpacity={0.7}
+                            className="flex-row items-center gap-3 px-4 py-3.5"
+                        >
+                            <View className="w-8 h-8 rounded-lg bg-brand-light/50 items-center justify-center">
+                                <Feather name="map-pin" size={16} color={Colors.principal.DEFAULT} />
+                            </View>
+                            <View className="flex-1">
+                                <Text className="text-xs font-semibold text-text-light">Ubicaciones para recoger o atender</Text>
+                                <Text className="text-sm text-brand font-medium">Administrar sucursales</Text>
+                            </View>
+                            <Feather name="chevron-right" size={16} color={Colors.principal[300]} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
         </ScrollView>
     );
 }
