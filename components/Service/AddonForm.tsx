@@ -1,11 +1,13 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, useWatch } from "react-hook-form";
 import { Feather } from "@expo/vector-icons";
 import { MoneyTextInput } from "@alexzunik/react-native-money-input";
 import { TextInput } from "components/Profile/Billing/components/text-input";
 import { Colors } from "lib";
 import type { ServiceData } from "@/types/Service/EditService.types";
+import { pluralizeUnit } from "utils/pricing";
+import SegmentedField from "./SegmentedField";
 
 type Props = {
     control: Control<ServiceData>;
@@ -16,6 +18,7 @@ type Props = {
 /** Editor de un complemento PER_UNIT dentro del form de servicio (crear / editar). */
 export default function AddonForm({ control, index, onRemove }: Props) {
     const base = `addons.${index}` as const;
+    const interval = useWatch({ control, name: "interval" });
 
     return (
         <View style={styles.card}>
@@ -110,6 +113,30 @@ export default function AddonForm({ control, index, onRemove }: Props) {
                     </View>
                 )}
             />
+
+            {/* Solo aplica si el servicio tiene precio por intervalo (ej. $/noche). */}
+            {interval && (
+                <Controller
+                    control={control}
+                    name={`${base}.perInterval` as const}
+                    render={({ field }) => (
+                        <SegmentedField
+                            label={`¿Se repite por cada ${interval.unitLabel || "unidad"}?`}
+                            value={!!field.value}
+                            onChange={field.onChange}
+                            options={[
+                                { label: "No", value: false },
+                                { label: "Sí", value: true },
+                            ]}
+                            caption={
+                                field.value
+                                    ? `Se multiplica por la cantidad de ${pluralizeUnit(interval.unitLabel || "unidades", 2)} que elija el cliente.`
+                                    : `Se cobra una sola vez, sin importar cuántas ${pluralizeUnit(interval.unitLabel || "unidades", 2)} elija el cliente.`
+                            }
+                        />
+                    )}
+                />
+            )}
         </View>
     );
 }

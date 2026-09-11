@@ -17,4 +17,5 @@ export const defaultServiceData: ServiceData = {
     companyLocationId: null,
     photos: [],
     addons: [],
+    interval: null,
 }

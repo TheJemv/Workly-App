@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AddonSchema } from "./addon.schema";
+import { IntervalSchema } from "./interval.schema";
 import ServiceLocationModeEnum from "enum/ServiceLocationModeEnum";
 
 export const ServiceDataSchema = z
@@ -33,6 +34,10 @@ export const ServiceDataSchema = z
 
         // Complementos. Solo para servicios de precio fijo. El backend asigna los `id`.
         addons: z.array(AddonSchema).max(15, "Máximo 15 complementos.").optional().default([]),
+
+        // Precio "por intervalo" (ej. $/noche). `null` = precio fijo, como siempre.
+        // Igual que `addons`, no aplica a servicios "a convenir" (superRefine abajo).
+        interval: IntervalSchema.nullable().optional(),
     })
     .superRefine((data, ctx) => {
         // Precio base obligatorio (y >= $49.99) si el servicio no es "a convenir".
@@ -62,6 +67,17 @@ export const ServiceDataSchema = z
                 path: ["companyLocationId"],
                 code: z.ZodIssueCode.custom,
                 message: "Selecciona la ubicación de la empresa para este servicio.",
+            });
+        }
+    })
+    .superRefine((data, ctx) => {
+        // Un servicio "a convenir" no puede tener precio por intervalo (mismo
+        // mensaje exacto que devuelve el backend).
+        if (data.indefinite && data.interval) {
+            ctx.addIssue({
+                path: ["interval"],
+                code: z.ZodIssueCode.custom,
+                message: "Un servicio de precio a convenir no puede tener intervalo.",
             });
         }
     })

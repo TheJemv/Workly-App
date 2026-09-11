@@ -41,6 +41,7 @@ export default function AddonListEditor({ control }: Props) {
             maxQuantity: 10,
             step: 1,
             pricePerExtraUnit: 15000,
+            perInterval: false,
         } as any);
     };
 
