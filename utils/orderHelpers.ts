@@ -81,7 +81,7 @@ export function getTrackingSteps(status: string | OrderStatusEnum) {
     } else {
         steps.push({
             icon: "check" as const,
-            title: "Pedido Entregado",
+            title: "Pedido Completado",
             description: "El pedido ha sido completado",
             completed: status === OrderStatusEnum.DELIVERED,
             current: status === OrderStatusEnum.DELIVERED,
