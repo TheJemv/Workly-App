@@ -20,9 +20,12 @@ export default function History() {
     const navigation = useNavigation()
 
     const handleOrder = (data: any) => {
+        // Solo el id — pasar el objeto completo por params lo corrompe (expo-router
+        // serializa cada valor a string, así que `pricing`/`servicePhotos` llegan
+        // rotos). `order.tsx` la pide completa a la API con este id.
         router.push({
             pathname: "/(app)/order",
-            params: { ...data }
+            params: { id: data.id }
         })
     }
 
