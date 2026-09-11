@@ -115,14 +115,12 @@ export default function OrderPage() {
                             onCancel={handleCancelOrder}
                         />
                     )}
-                    {/* Acciones del CLIENTE */}
+                    {/* Acciones del CLIENTE — no puede cancelar, solo la empresa */}
                     {isCustomer && (
                         <CustomerActions
                             order={order}
-                            loadingCancel={loadingCancel}
                             onApproveDate={handleApproveDate}
                             onRejectDate={handleRejectDate}
-                            onCancel={handleCancelOrder}
                         />
                     )}
                 </View>
