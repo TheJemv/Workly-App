@@ -62,12 +62,15 @@ export default function PriceBreakdown(props: Props) {
         merchandiseTotal = subtotal.totalAmount;
     } else {
         const { pricing } = props;
+        // Órdenes viejas (de antes de `addons`/`interval`) pueden traer `pricing`
+        // sin esos campos — nunca asumir que vienen.
+        const addons = pricing.addons ?? [];
         baseAmount = pricing.baseAmount;
-        intervalLine = pricing.interval;
-        includedText = pricing.addons
+        intervalLine = pricing.interval ?? null;
+        includedText = addons
             .map((l) => `${l.minQuantity} ${pluralizeUnit(l.unitLabel, l.minQuantity)}`)
             .join(" · ");
-        extraLines = pricing.addons
+        extraLines = addons
             .filter((l) => l.extraUnits > 0)
             .map((l) => ({
                 key: l.addonId,
