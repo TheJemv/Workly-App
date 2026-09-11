@@ -8,7 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
    // 2. Nombre dinámico para distinguirla en tu pantalla de inicio
    name: IS_DEV ? "Workly (Dev)" : "Workly",
    slug: "workly-services",
-   version: "0.7.1",
+   version: "0.9.1",
    orientation: "portrait",
    icon: "./assets/icon.png",
    userInterfaceStyle: "light",
@@ -29,11 +29,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
          : "./firebase/production/GoogleService-Info.plist",
       config: {
          googleSignIn: {
-            reservedClientId: "com.googleusercontent.apps.642547837410-ua5umahbh07furo9f5vtvhfceejqghqk"
+            reservedClientId:
+               "com.googleusercontent.apps.642547837410-ua5umahbh07furo9f5vtvhfceejqghqk",
          },
       },
       cocoapods: {
-         "post_install": "(installer) => {\n  installer.pods_project.targets.each do |target|\n    target.build_configurations.each do |config|\n      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'\n    end\n  end\n}"
+         post_install:
+            "(installer) => {\n  installer.pods_project.targets.each do |target|\n    target.build_configurations.each do |config|\n      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'\n    end\n  end\n}",
       },
       infoPlist: {
          NSLocationWhenInUseUsageDescription:
@@ -141,10 +143,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                   "RNFBApp",
                   "RNFBAuth",
                   "RNFBCrashlytics",
-                  "RNFBMessaging"
-               ]
+                  "RNFBMessaging",
+               ],
             },
          },
       ],
    ],
 });
+
