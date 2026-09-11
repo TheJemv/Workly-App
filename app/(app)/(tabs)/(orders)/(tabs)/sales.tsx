@@ -12,11 +12,12 @@ const SalesOrdersEmpty = require("assets/Empty/SalesEmpty.png")
 
 export default function SalesPage() {
     const handleSale = (data) => {
+        // Solo el id — el objeto completo ya vive en el store global (`sales`);
+        // pasarlo por params lo corrompería (expo-router serializa cada valor a
+        // string) y aquí no hace falta.
         router.push({
             pathname: "/(app)/order",
-            params: {
-                ...data
-            }
+            params: { id: data.id }
         })
     }
 
