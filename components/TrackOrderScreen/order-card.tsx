@@ -26,11 +26,7 @@ export function OrderCard({ order, onPress }: Props) {
                   className="text-xs text-text font-medium"
                   numberOfLines={3}
                >
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Explicabo laboriosam molestias voluptates enim exercitationem
-                  reiciendis excepturi eligendi. Corporis fuga, consequuntur
-                  quis tempora, inventore nisi est perferendis unde at, ut
-                  doloribus?
+                  {order?.notes || order?.serviceDescription}
                </Text>
             </View>
 

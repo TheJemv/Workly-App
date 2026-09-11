@@ -137,7 +137,7 @@ const ServiceHire = () => {
                 return;
             }
             if (dataService.locationMode === ServiceLocationModeEnum.CustomerLocation && !selectedLocation) {
-                Alert.alert("Error", "Selecciona una ubicación de entrega.");
+                Alert.alert("Error", "Selecciona una ubicación para el servicio.");
                 return;
             }
             if (dataService.indefinite && Math.round(valuePrice * 100) < MIN_AMOUNT) {
@@ -380,9 +380,9 @@ const ServiceHire = () => {
                             </Container>
                         )}
 
-                        {/* Fecha de entrega */}
+                        {/* Fecha y hora del servicio */}
                         <Container>
-                            <CardInfo title="Fecha de Entrega" icon="calendar" variant="heading" />
+                            <CardInfo title="Fecha y hora" icon="calendar" variant="heading" />
                             <CardContent divided={false}>
                                 <TouchableOpacity
                                     onPress={() => setShowPickerDate(true)}
@@ -395,10 +395,10 @@ const ServiceHire = () => {
                             </CardContent>
                         </Container>
 
-                        {/* Ubicación de entrega — solo si el servicio la pide */}
+                        {/* Ubicación del servicio — solo si el servicio la pide (modo customer_location) */}
                         {dataService.locationMode === ServiceLocationModeEnum.CustomerLocation && (
                             <Container>
-                                <CardInfo title="Ubicación de entrega" icon="map-pin" variant="heading" />
+                                <CardInfo title="Ubicación del servicio" icon="map-pin" variant="heading" />
                                 {locations.length === 0 ? (
                                     <CardContent divided={false}>
                                         <View className="px-4 py-3 flex-row items-center flex-wrap" style={{ gap: 4 }}>
