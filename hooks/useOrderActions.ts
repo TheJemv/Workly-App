@@ -85,7 +85,7 @@ export const useOrderActions = (order: Order) => {
         try {
             Alert.alert(
                 "Aprobar Cambio",
-                `¿Aceptas la nueva fecha de entrega?\n\n${formatDateService(new Date(order.dateRequest))}`,
+                `¿Aceptas la nueva fecha?\n\n${formatDateService(new Date(order.dateRequest))}`,
                 [
                     {
                         text: "No",
@@ -157,8 +157,8 @@ export const useOrderActions = (order: Order) => {
     const handleConfirmDelivery = async () => {
         try {
             Alert.alert(
-                "Confirmar Entrega",
-                "¿Confirmas que el pedido fue entregado?\n\nEsto liberará el pago al vendedor.",
+                "Confirmar Finalización",
+                "¿Confirmas que el servicio fue completado?\n\nEsto liberará el pago a la empresa.",
                 [
                     {
                         text: "Cancelar",
@@ -172,7 +172,7 @@ export const useOrderActions = (order: Order) => {
                                 await confirmDelivery(order.id);
                                 // updateOrderInState(response.data);
                                 Alert.alert(
-                                    "Entrega Confirmada",
+                                    "Finalización Confirmada",
                                     "El pago ha sido liberado exitosamente"
                                 );
                             } catch (error) {

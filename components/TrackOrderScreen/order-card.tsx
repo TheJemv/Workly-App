@@ -61,7 +61,7 @@ export function OrderCard({ order, onPress }: Props) {
                {order.status === OrderStatusEnum.PENDING && "Orden pendiente"}
                {order.status === OrderStatusEnum.DATE_MODIFIED && "Fecha modificada"}
                {order.status === OrderStatusEnum.CONFIRMED && "Orden en curso"}
-               {order.status === OrderStatusEnum.DELIVERED && "Orden entregada"}
+               {order.status === OrderStatusEnum.DELIVERED && "Orden completada"}
                {order.status === OrderStatusEnum.CANCELLED && "Orden cancelada"}
                {order.status === OrderStatusEnum.FAILED && "Pedido fallido"}
             </Text>

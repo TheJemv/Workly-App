@@ -53,7 +53,7 @@ export function CustomerActions({
             <View className="p-2 w-full" style={{ gap: 8 }}>
                 <View className="bg-blue-50 border border-blue-200 p-3 rounded-md">
                     <Text className="text-sm text-blue-800 text-center font-semibold">
-                        La empresa propuso una nueva fecha de entrega
+                        La empresa propuso una nueva fecha
                     </Text>
                 </View>
 
@@ -97,7 +97,7 @@ export function CustomerActions({
             <View className="p-2 w-full">
                 <View className="bg-green-50 border border-green-200 p-3 rounded-md mb-2">
                     <Text className="text-sm text-green-800 text-center">
-                        ✓ Pedido confirmado. Esperando entrega...
+                        ✓ Pedido confirmado. Esperando finalización...
                     </Text>
                 </View>
 
