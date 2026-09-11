@@ -1,5 +1,6 @@
 import { Company } from "types/Company";
 import { Addon } from "./Addon.types";
+import { ServiceInterval } from "./Interval.types";
 import ServiceLocationModeEnum from "enum/ServiceLocationModeEnum";
 import { CompanyLocation } from "@/types/Location";
 
@@ -19,8 +20,11 @@ interface Service {
     price: string;
     product: string;
     currency: string;
+    /** Precio del servicio. Si `interval` no es `null`, es el precio de 1 intervalo (ej. $/noche), no el total. */
     unit_amount: number;
     indefinite: boolean;
+    /** `null` = precio fijo, como siempre. Si tiene valor, el servicio se cobra "por intervalo". */
+    interval?: ServiceInterval | null;
     /** Reemplaza al viejo `requiresLocation: boolean`. */
     locationMode: ServiceLocationModeEnum;
     /** Solo no-null cuando `locationMode === "company_location"`. */

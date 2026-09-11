@@ -43,6 +43,9 @@ export const PerUnitAddonSchema = z
         maxQuantity: intField(2, 1_000_000, "La cantidad máxima"),
         step: intField(1, 1_000_000, "El incremento"),
         pricePerExtraUnit: intField(100, 10_000_000, "El precio por unidad extra"),
+        // Solo importa si el servicio tiene `interval` (ej. $/noche). `false` =
+        // cargo único; `true` = se repite por cada intervalo elegido.
+        perInterval: z.boolean().optional().default(false),
     })
     .superRefine((data, ctx) => {
         if (data.maxQuantity <= data.minQuantity) {

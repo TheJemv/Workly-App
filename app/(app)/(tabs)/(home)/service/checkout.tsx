@@ -58,6 +58,7 @@ export default function ServiceCheckout() {
                 notes: draft.notes,
                 addonSelections: draft.addonSelections,
                 customPrice: draft.customPrice ?? null,
+                intervalCount: draft.intervalCount ?? null,
             });
             if (!mountedRef.current) return;
             setData(res);

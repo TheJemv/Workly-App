@@ -1,6 +1,7 @@
 import Service from "./Service.types"
 import { Addon, AddonSelection, AddonType, PerUnitAddon } from "./Addon.types"
-import { ServicePricing, ServicePricingLine } from "./Pricing.types"
+import { ServiceInterval } from "./Interval.types"
+import { ServicePricing, ServicePricingLine, ServicePricingInterval } from "./Pricing.types"
 
 export {
     Service,
@@ -8,6 +9,8 @@ export {
     AddonSelection,
     AddonType,
     PerUnitAddon,
+    ServiceInterval,
     ServicePricing,
     ServicePricingLine,
+    ServicePricingInterval,
 }

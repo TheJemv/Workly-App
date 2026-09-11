@@ -30,11 +30,13 @@ import { getServiceShareUrl } from "utils/shareLinks"
 import { Feather } from "@expo/vector-icons";
 
 import AddonStepper from "components/Service/AddonStepper";
+import IntervalStepper from "components/Service/IntervalStepper";
 import PriceBreakdown from "components/Service/PriceBreakdown";
 import ServiceGallery from "components/Service/ServiceGallery";
 import { serviceGallery } from "utils/serviceGallery";
 import {
     computeMerchandiseSubtotal,
+    defaultIntervalQuantity,
     defaultSelections,
     selectionsToArray,
 } from "utils/pricing";
@@ -68,6 +70,8 @@ const ServiceHire = () => {
     const [valuePrice, setValuePrice] = useState<number>(0);
     // Cantidades elegidas por addon: { [addonId]: quantity }
     const [selections, setSelections] = useState<Record<string, number>>({});
+    // Cantidad elegida del selector de intervalo (ej. noches). Solo aplica si `interval` no es null.
+    const [intervalQuantity, setIntervalQuantity] = useState<number>(1);
 
     const [locations, setLocations] = useState<Location[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -85,6 +89,7 @@ const ServiceHire = () => {
                 setDataService(svc);
                 setValuePrice((svc?.unit_amount ?? 0) / 100);
                 setSelections(defaultSelections(svc ?? { addons: [] }));
+                setIntervalQuantity(defaultIntervalQuantity(svc ?? { interval: null }));
             } catch (error: any) {
                 Alert.alert("Error", getUserMessage(error));
             } finally {
@@ -116,10 +121,12 @@ const ServiceHire = () => {
             {
                 unit_amount: isIndefinite ? Math.round(valuePrice * 100) : dataService.unit_amount,
                 addons: isIndefinite ? [] : dataService.addons,
+                interval: isIndefinite ? null : dataService.interval,
             },
             selections,
+            intervalQuantity,
         );
-    }, [dataService, valuePrice, selections]);
+    }, [dataService, valuePrice, selections, intervalQuantity]);
 
     const handleContinue = () => {
         if (!dataService) return;
@@ -166,6 +173,7 @@ const ServiceHire = () => {
                 notes: infoUserNote.trim() ? infoUserNote.trim() : null,
                 addonSelections: dataService.indefinite ? [] : selectionsToArray(selections),
                 customPrice: dataService.indefinite ? Math.round(valuePrice * 100) : undefined,
+                intervalCount: !dataService.indefinite && dataService.interval ? intervalQuantity : undefined,
             });
 
             router.push("/(app)/(tabs)/(home)/service/checkout");
@@ -239,6 +247,7 @@ const ServiceHire = () => {
     }
 
     const addons = dataService.indefinite ? [] : dataService.addons ?? [];
+    const interval = dataService.indefinite ? null : dataService.interval ?? null;
     const gallery = serviceGallery(dataService);
     const galleryPhotos = gallery.length ? gallery : [FALLBACK_PHOTO_URL];
 
@@ -332,6 +341,21 @@ const ServiceHire = () => {
                             </CardContent>
                         </Container>
 
+                        {/* Precio por intervalo (ej. noches, horas) */}
+                        {interval && (
+                            <Container>
+                                <CardInfo title="Cantidad" icon="hash" variant="heading" />
+                                <CardContent divided={false}>
+                                    <IntervalStepper
+                                        interval={interval}
+                                        unitAmount={dataService.unit_amount}
+                                        quantity={intervalQuantity}
+                                        onChange={setIntervalQuantity}
+                                    />
+                                </CardContent>
+                            </Container>
+                        )}
+
                         {/* Complementos */}
                         {addons.length > 0 && (
                             <Container>
@@ -344,6 +368,11 @@ const ServiceHire = () => {
                                             quantity={selections[addon.id] ?? addon.minQuantity}
                                             onChange={(q) =>
                                                 setSelections((prev) => ({ ...prev, [addon.id]: q }))
+                                            }
+                                            interval={
+                                                subtotal?.intervalLine
+                                                    ? { quantity: subtotal.intervalLine.quantity, unitLabel: subtotal.intervalLine.interval.unitLabel }
+                                                    : null
                                             }
                                         />
                                     ))}

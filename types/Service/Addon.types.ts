@@ -27,6 +27,12 @@ export interface PerUnitAddon {
     step: number;
     /** Centavos por CADA unidad por encima de `minQuantity`. */
     pricePerExtraUnit: number;
+    /**
+     * Solo importa si el servicio tiene `interval` configurado (ej. $/noche).
+     * `false` (default) = cargo único para toda la compra. `true` = se
+     * repite por cada intervalo elegido (ej. "persona extra" × noches).
+     */
+    perInterval?: boolean;
 }
 
 export type Addon = PerUnitAddon;
